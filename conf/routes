@@ -4,6 +4,7 @@
 
 # The home page
 GET     /                                   controllers.Projects.index
+GET		/base								controllers.TempBase.hello
 
 # Authentication
 GET     /login                              controllers.Application.login
