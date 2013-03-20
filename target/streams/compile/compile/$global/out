@@ -1,0 +1,30 @@
+[info] Compiling 15 Scala sources and 1 Java source to D:\workspace\play\genesis\target\scala-2.10\classes...
+[warn] D:\workspace\play\genesis\app\scalation\Integrator.scala:11: imported `VectorD' is permanently hidden by definition of object VectorD in package scalation
+[warn] import scalation.VectorD
+[warn]                  ^
+[warn] D:\workspace\play\genesis\app\scalation\Integrator.scala:12: imported `Error' is permanently hidden by definition of trait Error in package scalation
+[warn] import scalation.Error
+[warn]                  ^
+[warn] D:\workspace\play\genesis\app\scalation\Matrix.scala:12: imported `Error' is permanently hidden by definition of trait Error in package scalation
+[warn] import scalation.Error
+[warn]                  ^
+[warn] D:\workspace\play\genesis\app\scalation\Matrix.scala:13: imported `VectorD' is permanently hidden by definition of object VectorD in package scalation
+[warn] import scalation.VectorD
+[warn]                  ^
+[warn] D:\workspace\play\genesis\app\scalation\MatrixD.scala:14: imported `Error' is permanently hidden by definition of trait Error in package scalation
+[warn] import scalation.Error
+[warn]                  ^
+[warn] D:\workspace\play\genesis\app\scalation\RungeKutta.scala:12: imported `MatrixD' is permanently hidden by definition of object MatrixD in package scalation
+[warn] import scalation.{MatrixD, VectorD}
+[warn]                   ^
+[warn] D:\workspace\play\genesis\app\scalation\RungeKutta.scala:12: imported `VectorD' is permanently hidden by definition of object VectorD in package scalation
+[warn] import scalation.{MatrixD, VectorD}
+[warn]                            ^
+[warn] D:\workspace\play\genesis\app\scalation\RungeKutta.scala:13: imported `Error' is permanently hidden by definition of trait Error in package scalation
+[warn] import scalation.Error
+[warn]                  ^
+[warn] D:\workspace\play\genesis\app\scalation\VectorD.scala:12: imported `Matrix' is permanently hidden by definition of trait Matrix in package scalation
+[warn] import scalation.Matrix
+[warn]                  ^
+[warn] there were 1 feature warnings; re-run with -feature for details
+[warn] 10 warnings found
