@@ -1,7 +1,12 @@
-@(message: String)
-
+@(message : String)
 @main("Welcome to GENESIS") {
     
-    @play20.welcome(message)
+        <header>
+            <h1>@message</h1>
+                <dd>
+                    <a href="@routes.Application.logout()">Logout</a>
+                </dd>
+            
+        </header>
     
 }

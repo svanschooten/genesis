@@ -13,7 +13,7 @@ object Projects extends Controller with Secured {
   def index = IsAuthenticated { username => _ =>
     User.findByInlog(username).map { user =>
       Ok(
-       html.index("ss")   
+       html.index("Welcome to GENESIS")   
       )
     }.getOrElse(Forbidden)
 }

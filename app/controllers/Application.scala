@@ -24,6 +24,15 @@ object Application extends Controller {
   def login = Action { implicit request =>
     Ok(html.login(loginForm))
   }
+  
+  /**
+   * Logout
+   */
+  def logout = Action {
+    Redirect(routes.Application.login).withNewSession.flashing(
+      "success" -> "You've been logged out"
+    )
+  }
 
   /**
    * Handle login form submission.
