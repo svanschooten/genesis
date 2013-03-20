@@ -1,4 +1,4 @@
-@(title: String, rk: rungekuttatest)
+@(title: String, rk: Rungekuttatest)
 
 <!DOCTYPE html>
 
@@ -7,6 +7,8 @@
         <title>@title</title>
     </head>
     <body>
-        @rk.test()
+    	@for(el <- rk.test()) {
+    		@el <br>
+    	}
     </body>
 </html>

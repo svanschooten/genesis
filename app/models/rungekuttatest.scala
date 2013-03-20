@@ -5,18 +5,18 @@ import scalation.Integrator
 import scalation.Derivatives.DerivativeV
 import scalation.RungeKutta
 
-case class rungekuttatest (){
+case class Rungekuttatest (){
   
 	val t0 = 0.0                         // initial time
     val tf = 5.0                         // final time
-    val n  = 100                        // number of time steps
+    val n  = 200                        // number of time steps
 
     val kf = (1.0,  1.0,  0.5)     // forward reaction rates
     val kb = (0.02, 0.02, 0.01)    // backward reaction rates
 
     // concentrations    H2, O2, O,   H,  OH, H2O
     //                   0   1   2    3   4   5
-    var c = new VectorD (6.0, 6.0, 0.0, .01, 0.0, 1.0)
+    var c = new VectorD (4.0, 6.0, 0.0, .02, 0.1, 0.8)
 
     // define the system of Ordinary Differential Equations (ODEs)
 
@@ -43,12 +43,13 @@ case class rungekuttatest (){
     val dt = tf / n                                 // time step
     var t  = t0 + dt    
     
-    def test() = {
+    def test() : List[String] = {
+	  var l: List[String] = List()
 	  for (i <- 1 to n) {
     	c = RungeKutta.integrateVV (odes, c, dt)      // compute new concentrations using RK
-
-        println ("> at t = " + "%6.3f".format (t) + " c = " + c)
+        l = l ++ ("> at t = " + "%6.3f".format (t) + " c = " + c :: List())
         t += dt
 	  }
+	  return l
 	}
 }

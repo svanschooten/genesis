@@ -2,11 +2,11 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import models.rungekuttatest
+import models.Rungekuttatest
 
 object Application extends Controller {
   
-  val rkt = rungekuttatest()
+  val rkt = Rungekuttatest()
   
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
