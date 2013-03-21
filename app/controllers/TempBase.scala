@@ -9,6 +9,6 @@ import views._
 object TempBase extends Controller {
 	
 	def hello() = Action {
-	  Ok(html.base("TITLE LIKES CAPS LOCK"))
+		Ok(html.base("TITLE LIKES CAPS LOCK"))
 	}
 }

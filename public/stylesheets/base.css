@@ -6,6 +6,10 @@
 	max-width: 1200px;
 }
 
+#navbar-inner-right {
+	float: right;
+}
+
 #logo-img {
 	overflow: auto;
 }
