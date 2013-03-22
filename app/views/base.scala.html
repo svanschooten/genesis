@@ -1,4 +1,4 @@
-@(title : String)
+@(title : String)(content : Html)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,13 +30,12 @@
           <div class="navbar-inner">
             <div class="container">
               <ul id="navbar-inner-left" class="nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#">Projects</a></li>
+                <li class="active"><a href="/home">Home</a></li>
               </ul>
               <ul id="navbar-inner-right" class="nav">
-              	<li><a href="#">Help</a></li>
-              	<li><a href="#">Settings</a></li>
-                <li><a href="#">About</a></li>
+              	<li><a href="/help">Help</a></li>
+              	<li><a href="/settings">Settings</a></li>
+                <li><a href="/about">About</a></li>
               </ul>
           </div>
         </div><!-- /.navbar -->
@@ -44,8 +43,8 @@
        
 	<div class="container-fluid">
 		<div class="row-fluid">
-			<section class="content span10">Content section</section>
-			<section class="sidebar span2">Sidebar section</section>
+			<section class="content span10">@content</section>
+			<section class="sidebar span2" style="background-color: white;">Sidebar section</section>
 		</div>
 	</div>
 	
