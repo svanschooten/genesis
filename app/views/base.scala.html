@@ -29,13 +29,18 @@
         <div class="navbar">
           <div class="navbar-inner">
             <div class="container">
+            
+            @active(t : String) = {
+              @if(title equals t){class="active"}
+            }
+            
               <ul id="navbar-inner-left" class="nav">
-                <li class="active"><a href="/home">Home</a></li>
+                <li @active("Home")><a href="/home">Home</a></li>
               </ul>
               <ul id="navbar-inner-right" class="nav">
-              	<li><a href="/help">Help</a></li>
-              	<li><a href="/settings">Settings</a></li>
-                <li><a href="/about">About</a></li>
+              	<li @active("Help")><a href="/help">Help</a></li>
+              	<li @active("Settings")><a href="/settings">Settings</a></li>
+                <li @active("About")><a href="/about">About</a></li>
               </ul>
           </div>
         </div><!-- /.navbar -->
