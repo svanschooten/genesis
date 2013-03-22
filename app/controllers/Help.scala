@@ -10,7 +10,7 @@ object Help extends Controller {
 
   val helpText = "A lot of useful text"
   
-  def help() = Action {
+  def help = Action {
     Ok(html.base("Help")(Html.apply(helpText)))
   }
   

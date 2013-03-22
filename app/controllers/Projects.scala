@@ -16,6 +16,6 @@ object Projects extends Controller with Secured {
        html.index("Welcome to GENESIS")   
       )
     }.getOrElse(Forbidden)
-}
+  }
 }
 

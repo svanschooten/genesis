@@ -10,7 +10,7 @@ object Home extends Controller {
   
   val homeText = "Some text that'll make you feel right at home"
 
-  def home() = Action {
+  def home = Action {
     Ok(html.base("Home")(Html.apply(homeText)))
   }
   

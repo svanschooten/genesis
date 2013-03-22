@@ -8,7 +8,7 @@ import play.api.templates.Html
 
 object TempBase extends Controller {
 	
-	def hello() = Action {
+	def hello = Action {
 		Ok(html.base("TITLE LIKES CAPS LOCK")(Html.apply("Some placeholder text")))
 	}
 	

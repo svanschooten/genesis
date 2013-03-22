@@ -10,7 +10,7 @@ object About extends Controller {
   
   val aboutText = "A lot of About text"
 
-  def about() = Action {
+  def about = Action {
     Ok(html.base("About")(Html.apply(aboutText)))
   }
   

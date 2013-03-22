@@ -10,7 +10,7 @@ object Settings extends Controller {
 	
   val settingsForm = "Some Form"
   
-  def settings() = Action {
+  def settings = Action {
     Ok(html.base("Settings")(Html.apply(settingsForm)))
   }
   

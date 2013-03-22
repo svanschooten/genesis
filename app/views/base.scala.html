@@ -8,7 +8,7 @@
 	    	    
 		<!-- bootstrap -->
 		<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/genesis-logo64x64.png")">
 		<script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
         
 		<!-- jQuery -->
@@ -30,9 +30,10 @@
           <div class="navbar-inner">
             <div class="container">
             
-            @active(t : String) = {
-              @if(title equals t){class="active"}
-            }
+              @active(t : String) = {
+              	@* Change the "active" class highlighting the button in the navbar of the current page *@
+                @if(title equals t){class="active"}
+              }
             
               <ul id="navbar-inner-left" class="nav">
                 <li @active("Home")><a href="/home">Home</a></li>
@@ -42,6 +43,7 @@
               	<li @active("Settings")><a href="/settings">Settings</a></li>
                 <li @active("About")><a href="/about">About</a></li>
               </ul>
+              
           </div>
         </div><!-- /.navbar -->
       </div>
