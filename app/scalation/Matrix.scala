@@ -8,9 +8,7 @@
 
 package scalation
 
-import Math.abs
-import scalation.Error
-import scalation.VectorD
+import math.abs
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 /** The Matrix trait specifies the operations to be defined by four concrete

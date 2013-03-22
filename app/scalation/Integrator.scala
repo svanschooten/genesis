@@ -8,9 +8,6 @@
 
 package scalation
 
-import scalation.VectorD
-import scalation.Error
-
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 /** This object is used to define types of time derivative functions.
  */

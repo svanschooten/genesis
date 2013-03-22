@@ -8,10 +8,9 @@
 
 package scalation
 
-import Math.{abs, max}
+import math.{abs, max}
 
 import scalation.Basic.oneIf
-import scalation.Error
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 /** The MatrixD class stores and operates on Numeric Matrices of type Double.

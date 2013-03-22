@@ -8,9 +8,7 @@
 
 package scalation
 
-import Math.{abs, E, pow, round}
-import scalation.{MatrixD, VectorD}
-import scalation.Error
+import math.{abs, E, pow, round}
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 /**  Given an unknown, time-dependent function y(t) governed by an Ordinary

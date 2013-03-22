@@ -8,7 +8,7 @@
 
 package scalation
 
-import Math.log                             // natural log
+import math.log                             // natural log
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 /** This object provides additional methods for computing logarithms and a

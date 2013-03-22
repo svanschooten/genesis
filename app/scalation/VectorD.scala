@@ -7,9 +7,8 @@
  */
 
 package scalation
-import Math.sqrt
+import math.sqrt
 import scalation.DoubleWithExp._
-import scalation.Matrix
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 /** The VectorD class stores and operates on Numeric Vectors of base type Double.
