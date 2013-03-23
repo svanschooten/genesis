@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="SBT: org.apache.httpcomponents:httpclient:4.1.2">
-    <CLASSES>
-      <root url="jar://D:/Projects/Play/repository/local/org.apache.httpcomponents/httpclient/4.1.2/jars/httpclient.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

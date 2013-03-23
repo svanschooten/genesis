@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="SBT: xerces:xercesImpl:2.9.1">
-    <CLASSES>
-      <root url="jar://D:/Projects/Play/repository/local/xerces/xercesImpl/2.9.1/jars/xercesImpl.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
