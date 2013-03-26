@@ -28,7 +28,7 @@ object Derivatives {
  *  first-order ODE.
  *  @see scalation.dynamics.LinearDiffEq.scala
  */
-trait Integrator extends Error {
+trait Integrator {
 
     import Derivatives.{Derivative, DerivativeV}
 
@@ -70,15 +70,10 @@ trait Integrator extends Error {
                    t0: Double = 0.0, step: Double = defaultStepSize): VectorD = {
 
         val n = y0.dim
-        if(n != f.length) {
-            flaw ("integrateV", "incompatible dimensions between f and y0")
-            null
-        } else {
-            val y = new VectorD(n)
-            for(i <- 0 until n)
-                y(i) = integrate(f(i), y0(i), t, t0, step)
-            y
-        }
+        if(n != f.length)
+            throw new IllegalArgumentException("Initial values and derivatives have different dimensions.")
+        else
+            new VectorD( (f,y0()).zipped.map((x,y)=>integrate(x,y,t,t0,step)) )
     }
 
     /** Use numerical integration to compute the trajectory of an unknown, time-

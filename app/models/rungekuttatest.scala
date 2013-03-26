@@ -14,10 +14,6 @@ case class Rungekuttatest (){
     val kf = (1.0,  1.0,  0.5)     // forward reaction rates
     val kb = (0.02, 0.02, 0.01)    // backward reaction rates
 
-    // concentrations    H2, O2, O,   H,  OH, H2O
-    //                   0   1   2    3   4   5
-    var c = new VectorD (4.0, 6.0, 0.0, .02, 0.1, 0.8)
-
     // define the system of Ordinary Differential Equations (ODEs)
 
     // d[H2]/dt                         = - kf1 [H2] [O] + kb1 [H] [OH] - kf3 [H2] [OH] + kb3 [H2O] [H]
@@ -41,15 +37,19 @@ case class Rungekuttatest (){
     val odes: Array [DerivativeV] = Array (dh2_dt, do2_dt, do_dt, dh_dt, doh_dt, dh2o_dt)
   
     val dt = tf / n                                 // time step
-    var t  = t0 + dt    
     
     def test() : List[String] = {
-	  var l: List[String] = List()
-	  for (i <- 1 to n) {
-    	c = RungeKutta.integrateVV (odes, c, dt)      // compute new concentrations using RK
-        l = l ++ ("> at t = " + "%6.3f".format (t) + " c = " + c :: List())
-        t += dt
-	  }
-	  return l
-	}
+        // concentrations    H2, O2, O,   H,  OH, H2O
+        //                   0   1   2    3   4   5
+        var c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
+
+        var t  = t0 + dt
+        var l: List[String] = List()
+        for (i <- 1 to n) {
+            c = RungeKutta.integrateVV (odes, c, dt)      // compute new concentrations using RK
+            l = l ++ ("> at t = " + "%6.3f".format (t) + " c = " + c :: List())
+            t += dt
+        }
+        return l
+    }
 }

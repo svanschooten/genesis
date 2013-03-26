@@ -26,7 +26,7 @@ object RungeKutta extends Integrator {
         // time interval
         val t_t0 = t - t0
         // number of steps
-        val steps: Int = (round (t_t0 / step)).asInstanceOf[Int]
+        val steps = round(t_t0 / step).asInstanceOf[Int]
         // adjusted step size
         var h = t_t0 / steps.asInstanceOf[Double]
         // initialize ith time ti to t0
@@ -52,9 +52,7 @@ object RungeKutta extends Integrator {
             y += h/6.0 * (a + 2*b + 2*c + d)
 
             if(abs (y) > Double.MaxValue / 10.0)
-                flaw("integrate", "probable overflow since y = " + y)
-            if(i % 1000 == 0)
-                println("integrate: iteration " + i + " ti = " + ti + " y = " + y)
+                throw new RuntimeException("Probable overflow since y = "+y)
         }
         y
     }
@@ -71,20 +69,15 @@ object RungeKutta extends Integrator {
     def integrateVV (f: Array[DerivativeV], y0: VectorD, t: Double,
                      t0: Double = 0.0, step: Double = defaultStepSize): VectorD = {
         // time interval
-        val t_t0       = t - t0
+        val t_t0 = t - t0
         // number of steps
         val steps: Int = (round (t_t0 / step)).asInstanceOf[Int]
         // adjusted step size
-        var h          = t_t0 / steps.asInstanceOf[Double]
+        var h = t_t0 / steps.asInstanceOf[Double]
         // initialize ith time ti to t0
-        var ti         = t0
+        var ti = t0
         // initialize y = f(t) to y0
-        val y          = y0
-
-        val a = new VectorD(y.dim)
-        val b = new VectorD(y.dim)
-        val c = new VectorD(y.dim)
-        val d = new VectorD(y.dim)
+        val y = y0
 
         for(i <- 1 to steps) {
             // take the next step
@@ -95,21 +88,16 @@ object RungeKutta extends Integrator {
                 ti = t
             }
 
-            for(j <- 0 until y.dim)
-                a(j) = f(j) (ti, y)
-            for(j <- 0 until y.dim)
-                b(j) = f(j)(ti + h/2.0, y + a * h/2.0)
-            for(j <- 0 until y.dim)
-                c(j) = f(j)(ti + h/2.0, y + b * h/2.0)
-            for(j <- 0 until y.dim)
-                d(j) = f(j)(ti + h, y + c * h)
+            val a = new VectorD(f.map(fun=>fun(ti,y)))
+            val b = new VectorD(f.map(fun=>fun(ti + h/2.0, y + a * h/2.0)))
+            val c = new VectorD(f.map(fun=>fun(ti + h/2.0, y + b * h/2.0)))
+            val d = new VectorD(f.map(fun=>fun(ti + h, y + c * h)))
+
             for(j <- 0 until y.dim)
                 y(j) += h/6.0 * (a(j) + 2.0*b(j) + 2.0*c(j) + d(j))
 
             if(abs (y(0)) > Double.MaxValue / 10.0)
-                flaw("integrateVV", "probable overflow since y = " + y)
-            if(i % 1000 == 0)
-                println("integrateVV: iteration " + i + " ti = " + ti + " y = " + y)
+                throw new RuntimeException("Probable overflow because y = "+y)
         }
         y
     }
