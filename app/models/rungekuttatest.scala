@@ -35,7 +35,7 @@ case class Rungekuttatest (){
     def dh2o_dt(t: Double, c: VectorD) =  kf._3*c(0)*c(4) - kb._3*c(5)*c(3)
 
     val odes: Array [DerivativeV] = Array (dh2_dt, do2_dt, do_dt, dh_dt, doh_dt, dh2o_dt)
-  
+
     val dt = tf / n                                 // time step
     
     def test() : List[String] = {
