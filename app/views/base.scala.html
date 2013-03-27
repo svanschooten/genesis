@@ -21,11 +21,12 @@
 	
 	<body>
 	<div class="mainpage">
-	<div class="masthead">
-	<div id="logo-img">
-		<img id="top-logo" src="@routes.Assets.at("images/genesis-logo64x64.png")"></img>
-        <h2 id="title">@title</h3>
-        </div>
+	<header>
+		<div id="logo-img">
+			<img id="top-logo" src="@routes.Assets.at("images/genesis-logo64x64.png")" />
+        	<h2 id="title">@title</h3>
+    	</div>
+        
         <div class="navbar">
           <div class="navbar-inner">
             <div class="container">
@@ -41,12 +42,11 @@
               <ul id="navbar-inner-right" class="nav">
               	<li @active("Help")><a href="/help">Help</a></li>
               	<li @active("Settings")><a href="/settings">Settings</a></li>
-                <li @active("About")><a href="/about">About</a></li>
               </ul>
               
           </div>
         </div><!-- /.navbar -->
-      </div>
+      </header>
        
 	<div class="container-fluid">
 		<div class="row-fluid">
@@ -55,9 +55,14 @@
 		</div>
 	</div>
 	
-	<div class="footer">
-	&copy; Team JAMES
+	<footer>
+	<div class="footer-left">
+		<p>&copy; Team JAMES</p>
 	</div>
+	<div class="footer-right">		
+		<a href="/about">About</a>
+	</div>
+	</footer>
 	
 	</div>
 	</body>
