@@ -14,7 +14,7 @@ object Home extends Controller with Secured{
 
     def home = IsAuthenticated { username => _ =>
     User.findByInlog(username).map { user =>
-    	Ok(html.base("Home")(Html.apply(homeText)))
+    	Ok(html.main("Home")(Html.apply(homeText)))
     }.getOrElse(Forbidden)
 
   }

@@ -13,7 +13,7 @@ object Help extends Controller with Secured {
   
   def help = IsAuthenticated { username => _ =>
     User.findByInlog(username).map { user =>
-    	Ok(html.base("Help")(Html.apply(helpText)))
+    	Ok(html.main("Help")(Html.apply(helpText)))
     }.getOrElse(Forbidden)
 
   }

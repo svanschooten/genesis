@@ -13,7 +13,7 @@ object About extends Controller with Secured{
   
   def about = IsAuthenticated { username => _ =>
     User.findByInlog(username).map { user =>
-    	Ok(html.base("About")(Html.apply(aboutText)))
+    	Ok(html.main("About")(Html.apply(aboutText)))
     }.getOrElse(Forbidden)
   }
 }
