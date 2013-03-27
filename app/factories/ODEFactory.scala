@@ -2,7 +2,6 @@ package factories
 
 import scala.collection.immutable.List
 
-import scalation.Derivatives.DerivativeV
 import scalation.VectorD
 import scalation.DoubleWithExp._
 import models._
@@ -24,8 +23,8 @@ object ODEFactory {
                        (t: Double, c: VectorD) => ks(1)*c(id+1) -ds(1)*c(id) ) ::: mkODEs(new ProteinChain(protein.children, List[List[Double]]()))
             case ProteinRepressor(_,id,pids,ks,ds,km,n) => (t: Double, c: VectorD) =>
                 List( (t: Double, c: VectorD) => ks(0) * km ~^ n / ( km ~^ n + foldConcentrations(pids) ~^ n) - ds(0) * c(id+1),
-                      (t: Double, c: VectorD) => ks(1) * c(id+1) - ds(1) * c(id) )
-            case _ => List()//throw new IllegalArgumentException("Unsupported protein type.")
+                      (t: Double, c: VectorD) => ks(1) * c(id+1) - ds(1) * c(id) ) ::: mkODEs(new ProteinChain(protein.children, List[List[Double]]()))
+            case _ => throw new IllegalArgumentException("Unsupported protein type.")
         }
     }
 
