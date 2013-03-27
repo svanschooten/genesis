@@ -12,7 +12,7 @@ object Settings extends Controller with Secured{
 	
   val settingsForm = "Some Form"
   
-   def settings() = IsAuthenticated { username => _ =>
+   def settings = IsAuthenticated { username => _ =>
     User.findByInlog(username).map { user =>
     	Ok(html.base("Settings")(Html.apply(settingsForm)))
     }.getOrElse(Forbidden)

@@ -16,5 +16,6 @@ object Home extends Controller with Secured{
     User.findByInlog(username).map { user =>
     	Ok(html.base("Home")(Html.apply(homeText)))
     }.getOrElse(Forbidden)
+
   }
 }

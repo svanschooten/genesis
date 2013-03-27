@@ -55,9 +55,7 @@ trait Secured {
    */
   private def username(request: RequestHeader) = request.session.get("inlog")
 
-  /**
-   * Redirect to login if the user in not authorized.
-   */
+
   private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Application.login)
   
   /** 
