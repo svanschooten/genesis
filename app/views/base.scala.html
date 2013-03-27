@@ -5,7 +5,16 @@
 	
 	<head>
 	<title>@title</title>
-	    	    
+	    	   
+
+		<!-- Individual YUI CSS files -->
+		<link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/tabview.css")">
+		<!-- Individual YUI JS files -->
+		<script type="text/javascript" src="@routes.Assets.at("javascripts/yahoo-dom-event.js")"></script>
+		<script type="text/javascript" src="@routes.Assets.at("javascripts/element-min.js")"></script>
+		<script type="text/javascript" src="@routes.Assets.at("javascripts/tabview-min.js")"></script>
+		<script type="text/javascript" src="@routes.Assets.at("javascripts/tab.js")"></script>	
+ 
 		<!-- bootstrap -->
 		<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
@@ -41,10 +50,27 @@
               	<li @active("Help")><a href="/help">Help</a></li>
               	<li @active("Settings")><a href="/settings">Settings</a></li>
                 <li @active("About")><a href="/about">About</a></li>
+				<li><a href="@routes.Application.logout()">Logout</a></li>
               </ul>
           </div>
         </div><!-- /.navbar -->
       </div>
+	<!-- button -->
+	<input type="button" value="remove tab" onclick="removeTab();" >
+	<input type="button" value="add tab" onclick="addTab();" >
+
+	<!-- begin tabs -->
+	<div id="demo" class="yui-navset">
+   		<ul class="yui-nav">
+        	<li class="selected"><a href="#tab1"><em>Circuit 1</em></a>
+    	</ul>            
+    	<div class="yui-content">
+        	<div> <canvas id="canvas" style="border:solid 1px #000000;"></canvas>
+        	</div>
+    	</div>
+	</div>
+	<!-- end tabs -->
+
        
 	<div class="container-fluid">
 		<div class="row-fluid">
