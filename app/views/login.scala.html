@@ -1,33 +1,39 @@
 @(form: Form[(String,String)])(implicit flash: Flash)
 
 @head = {
-	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/login.css")">
+	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/login.css")">
 }
 
 @base("Welcome to GENESIS")(head) {	
-        @helper.form(routes.Application.authenticate) {
-        	<div id="tbody">
-            <div class="hero-unit">
-	            <h1>Sign in</h1>
-	            
-	            @form.globalError.map { error =>
-	                <p class="error">
-						@error.message
-	                </p>
-	            }
-	            
-	            @flash.get("success").map { message =>
-	                <p class="success">
-						@message
-	                </p>
-	            }
-	            
-	            <p><input type="inlog" name="inlog" placeholder="Username" id="inlog"></p>
-	            <p><input type="password" name="password" placeholder="Password" id="password"></p>
-	            <p><button type="submit" id="loginbutton" class="btn btn-primary btn-large">Login</button></p>
-            </div>
-            </div>
-        }      
+	<div class="container">
+		<div class="row-fluid">
+			<div id="container-left" class="span6">
+				@helper.form(routes.Application.authenticate, 'class -> "form-signin") {
+			
+							@form.globalError.map { error =>
+								<p class="error">@error.message</p>
+							} 
+							
+							@flash.get("success").map { message =>
+								<p class="success">@message</p>
+							}				
+							
+							<h2 class="form-signin-heading">Please sign in</h2>
+							<input class="input-block-level" type="inlog" name="inlog" placeholder="Username">
+							<input class="input-block-level" type="password" name="password" placeholder="Password">
+							<label class="checkbox"> 
+								<input type="checkbox" value="remember-me"> Remember me
+							</label>
+							<button class="btn btn-large btn-primary" type="submit">Sign in</button>
+				}
+			</div>
+			
+			<div id="container-right" class="span6">
+				A little bit of lorem ipsum
+			</div>
+		</div>   
+	</div>
+	
 }
 
 
