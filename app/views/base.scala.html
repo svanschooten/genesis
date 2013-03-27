@@ -1,18 +1,10 @@
-@(title : String)(body : Html)
+@(title : String)(head : Html)(body : Html)
 
 <!DOCTYPE html>
 <html lang="en">
 	
 	<head>
 		<title>@title</title>
-
-		<!-- Individual YUI CSS files -->
-		<link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/tabview.css")">
-		<!-- Individual YUI JS files -->
-		<script type="text/javascript" src="@routes.Assets.at("javascripts/yahoo-dom-event.js")"></script>
-		<script type="text/javascript" src="@routes.Assets.at("javascripts/element-min.js")"></script>
-		<script type="text/javascript" src="@routes.Assets.at("javascripts/tabview-min.js")"></script>
-		<script type="text/javascript" src="@routes.Assets.at("javascripts/tab.js")"></script>	
 
 		<!-- bootstrap -->
 		<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
@@ -24,6 +16,8 @@
 		
 		<!-- CSS -->
 		<link rel="stylesheet" href="@routes.Assets.at("stylesheets/base.css")">
+		
+		@head
 		
 	</head>
 	

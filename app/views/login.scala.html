@@ -1,8 +1,12 @@
 @(form: Form[(String,String)])(implicit flash: Flash)
 
-@base("Welcome to GENESIS") {	
-		<!-- werkt niet <img src="/public/images/genesis-logo64x64.png" alt="genesis.png"/> -->
+@head = {
+	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/login.css")">
+}
+
+@base("Welcome to GENESIS")(head) {	
         @helper.form(routes.Application.authenticate) {
+        	<div id="tbody">
             <div class="hero-unit">
 	            <h1>Sign in</h1>
 	            
@@ -18,9 +22,10 @@
 	                </p>
 	            }
 	            
-	            <p><input type="inlog" name="inlog" placeholder="Inlog" id="inlog"></p>
+	            <p><input type="inlog" name="inlog" placeholder="Username" id="inlog"></p>
 	            <p><input type="password" name="password" placeholder="Password" id="password"></p>
 	            <p><button type="submit" id="loginbutton" class="btn btn-primary btn-large">Login</button></p>
+            </div>
             </div>
         }      
 }
