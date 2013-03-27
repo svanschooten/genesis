@@ -4,7 +4,7 @@
 
 # The home page
 #GET     /                                   controllers.Projects.index
-GET		/								controllers.Home.home
+GET		/									controllers.Home.home
 
 # The about page
 GET		/about								controllers.About.about

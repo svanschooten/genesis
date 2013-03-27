@@ -1,4 +1,9 @@
-@(title: String)
+@(title: String)(content: Html)
+
+@* Change the "active" class highlighting the button in the navbar of the current page *@
+@active(t : String) = {
+  @if(title equals t){class=active"}
+}
 
 @base(title) {	
 	<div class="mainpage">
@@ -12,13 +17,8 @@
 	          <div class="navbar-inner">
 	            <div class="container">
 	            
-	              @* Change the "active" class highlighting the button in the navbar of the current page *@
-	              @active(t : String) = {
-	                @if(title equals t){class="active"}
-	              }
-	            
 	              <ul id="navbar-inner-left" class="nav">
-	                <li @active("Home")><a href="/home">Home</a></li>
+	                <li @active("Home")><a href="/">Home</a></li>
 	              </ul>
 	              <ul id="navbar-inner-right" class="nav">
 	              	<li @active("Help")><a href="/help">Help</a></li>
