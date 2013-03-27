@@ -4,29 +4,23 @@
 		<!-- werkt niet <img src="/public/images/genesis-logo64x64.png" alt="genesis.png"/> -->
         @helper.form(routes.Application.authenticate) {
             <div class="hero-unit">
-            <h1>Sign in</h1>
-            
-            @form.globalError.map { error =>
-                <p class="error">
-					@error.message
-                </p>
-            }
-            
-            @flash.get("success").map { message =>
-                <p class="success">
-					@message
-                </p>
-            }
-            
-            <p>
-                <input type="inlog" name="inlog" placeholder="Inlog" id="inlog">
-            </p>
-            <p>
-                <input type="password" name="password" placeholder="Password" id="password">
-            </p>
-            <p>
-                <button type="submit" id="loginbutton" class="btn btn-primary btn-large">Login</button>
-            </p>
+	            <h1>Sign in</h1>
+	            
+	            @form.globalError.map { error =>
+	                <p class="error">
+						@error.message
+	                </p>
+	            }
+	            
+	            @flash.get("success").map { message =>
+	                <p class="success">
+						@message
+	                </p>
+	            }
+	            
+	            <p><input type="inlog" name="inlog" placeholder="Inlog" id="inlog"></p>
+	            <p><input type="password" name="password" placeholder="Password" id="password"></p>
+	            <p><button type="submit" id="loginbutton" class="btn btn-primary btn-large">Login</button></p>
             </div>
         }      
 }
