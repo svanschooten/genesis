@@ -1,7 +1,6 @@
 package models
 
 import scalation.VectorD
-import scalation.Integrator
 import scalation.Derivatives.DerivativeV
 import scalation.RungeKutta
 
