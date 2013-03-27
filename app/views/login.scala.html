@@ -1,16 +1,6 @@
 @(form: Form[(String,String)])(implicit flash: Flash)
 
-@main("Welcome to GENESIS") {
-<html>
-    <head>
-        <title>Genesis</title>
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/genesis-logo64x64.png")">
-        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/login.css")">
-    </head>
-    <body>
-        <header>
-            <a href="@routes.Home.home" id="logo"></a>
-        </header>	
+@base("Welcome to GENESIS") {	
 		<!-- werkt niet <img src="/public/images/genesis-logo64x64.png" alt="genesis.png"/> -->
         @helper.form(routes.Application.authenticate) {
             <div class="hero-unit">
@@ -39,8 +29,6 @@
             </p>
             </div>
         }      
-    </body>
-</html>
 }
 
 
