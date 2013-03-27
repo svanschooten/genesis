@@ -2,7 +2,7 @@
 
 @* Change the "active" class highlighting the button in the navbar of the current page *@
 @active(t : String) = {
-  @if(title equals t){class=active"}
+	@if(title equals t){class="active"}
 }
 
 @base(title) {	
@@ -16,6 +16,8 @@
 	        <div class="navbar">
 	          <div class="navbar-inner">
 	            <div class="container">
+	            
+	              
 	            
 	              <ul id="navbar-inner-left" class="nav">
 	                <li @active("Home")><a href="/">Home</a></li>
