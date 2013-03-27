@@ -3,7 +3,6 @@
 # ~~~~
 
 # The home page
-#GET     /                                   controllers.Projects.index
 GET		/									controllers.Home.home
 
 # The about page
