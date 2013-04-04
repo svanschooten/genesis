@@ -331,14 +331,6 @@ class VectorD (val dim: Int, protected var v: Array[Double] = null)
 
     /** Convert this vector to a string.
      */
-    override def toString: String = {
-        val range = 0 until dim
-        val sb = new StringBuilder("VectorD(")
-        for(i <- range) {
-            sb.append (v(i))
-            sb.append("\t")
-        }
-        sb.replace(sb.length - 1, sb.length, ")").mkString
-    }
+    override def toString: String = "VectorD(" + v.mkString(" ") + ")"
   
 }
