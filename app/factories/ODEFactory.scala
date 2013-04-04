@@ -7,26 +7,39 @@ import scalation.DoubleWithExp._
 import models._
 
 object ODEFactory {
-    var c = Array[Double]()
 
-    def init(conc: List[Double]) {
-        c = new Array(conc.length*2)
-        for(i <- 0 until conc.length)
-            c(i*2) = conc(i)
+    /**
+     *  ODE: dy/dt = f(t,y)
+     *  t is the double, y is the VectorD
+     */
+    type ODE = (Double, VectorD) => Double
+
+    /**
+     *  We're going to make a list of pairs of ODEs:
+     *  each pair will have one function for the mRNA concentration
+     *  and one function for the Protein concentration.
+     *  The functions will differ in the number of elements they expect their vector to have.
+     */
+    def mkODEs(parts: List[Part]): List[(ODE, ODE)] = parts.map( mkTuple )
+
+    /**
+     *  This function builds the pairs from given parts.
+     *  The second element of each pair is the protein concentration,
+     *  which is straightforward.
+     *  The first element will require three or four inputs depending on which
+     *  kind of promotor we have; both take as final elements the (current) mRNA concentration and
+     *  the (current) output protein concentration, but:
+     *  NotPromotors take one TF (input) concentration and AndPromotors take two TF (input) concentrations
+     */
+    def mkTuple(part: Part): (ODE, ODE) = part match {
+        case NotGate(Gene(k2, (d1, d2)), k1, km, n) => (
+            //concs(0):[TF]; concs(1): [mRNA]; concs(2): [Protein]
+            (time: Double, concs: VectorD) => (k1 * km ~^ n) / (km ~^ n + concs(0) ~^ n) - d1 * concs(1),
+            (time: Double, concs: VectorD) => k2 * concs(1) - d2 * concs(2))
+        case AndGate(Gene(k2, (d1, d2)), k1, km, n) => (
+            // concs(0): [TF1]; concs(1): [TF2]; concs(2): [mRNA]; concs(3): [Protein]
+            (time: Double, concs: VectorD) => (k1 * (concs(0) * concs(1)) ~^ n) / (km ~^ n + (concs(0) * concs(1)) ~^ n) - d1 * concs(2),
+            (time: Double, concs: VectorD) => k2 * concs(2) - d2 * concs(3))
     }
 
-    //TODO disgusting; figure out how to give a proper return type
-    def mkODEs(proteins: ProteinChain):List[Any] = {
-        for(protein <- proteins.startNodes) yield protein match {
-            case ProteinActivator(_,id,pids,ks,ds,km,n) =>
-                List(  (t: Double, c: VectorD) => ks(0) * foldConcentrations(pids) ~^ n/(km ~^ n + foldConcentrations(pids) ~^ n) - ds(0) * c(id+1),
-                       (t: Double, c: VectorD) => ks(1)*c(id+1) -ds(1)*c(id) ) ::: mkODEs(new ProteinChain(protein.children, List[List[Double]]()))
-            case ProteinRepressor(_,id,pids,ks,ds,km,n) => (t: Double, c: VectorD) =>
-                List( (t: Double, c: VectorD) => ks(0) * km ~^ n / ( km ~^ n + foldConcentrations(pids) ~^ n) - ds(0) * c(id+1),
-                      (t: Double, c: VectorD) => ks(1) * c(id+1) - ds(1) * c(id) ) ::: mkODEs(new ProteinChain(protein.children, List[List[Double]]()))
-            case _ => throw new IllegalArgumentException("Unsupported protein type.")
-        }
-    }
-
-    def foldConcentrations(indexes: List[Int]): Double = indexes.foldLeft(1.0)( (x,y) => x*c(y))
 }
