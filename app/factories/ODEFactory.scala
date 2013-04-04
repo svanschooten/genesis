@@ -16,8 +16,8 @@ object ODEFactory {
 
     /**
      *  We're going to make a list of pairs of ODEs:
-     *  each pair will have one function for the mRNA concentration
-     *  and one function for the Protein concentration.
+     *  each pair will have one function for the mRNA concentration (d[mRNA]/dt)
+     *  and one function for the Protein concentration (d[Protein]/dt).
      *  The functions will differ in the number of elements they expect their vector to have.
      */
     def mkODEs(parts: List[Part]): List[(ODE, ODE)] = parts.map( mkTuple )
@@ -27,9 +27,9 @@ object ODEFactory {
      *  The second element of each pair is the protein concentration,
      *  which is straightforward.
      *  The first element will require three or four inputs depending on which
-     *  kind of promotor we have; both take as final elements the (current) mRNA concentration and
+     *  kind of gate we have; both take as final elements the (current) mRNA concentration and
      *  the (current) output protein concentration, but:
-     *  NotPromotors take one TF (input) concentration and AndPromotors take two TF (input) concentrations
+     *  NotGates take one TF (input) concentration and AndGates take two TF (input) concentrations
      */
     def mkTuple(part: Part): (ODE, ODE) = part match {
         case NotGate(Gene(k2, (d1, d2)), k1, km, n) => (
