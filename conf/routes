@@ -3,11 +3,21 @@
 # ~~~~
 
 # The home page
-GET     /                                   controllers.Projects.index
+GET		/									controllers.Home.home
+
+# The about page
+GET		/about								controllers.About.about
+
+# The settings page
+GET		/settings							controllers.Settings.settings
+
+# The help page
+GET		/help								controllers.Help.help
 
 # Authentication
 GET     /login                              controllers.Application.login
 POST    /login                              controllers.Application.authenticate
+GET     /logout                             controllers.Application.logout
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
