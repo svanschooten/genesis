@@ -14,7 +14,7 @@ object Settings extends Controller with Secured{
   
    def settings = IsAuthenticated { username => _ =>
     User.findByInlog(username).map { user =>
-    	Ok(html.main("Settings")(Html.apply(settingsForm)))
+    	Ok(html.settings("Settings")(Html.apply(settingsForm)))
     }.getOrElse(Forbidden)
   }
 }
