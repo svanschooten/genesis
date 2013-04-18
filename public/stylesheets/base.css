@@ -6,10 +6,6 @@ body {
 	max-width: 1200px;
 }
 
-.footer-right {
-	float: right;
-}
-
 #logo-img {
 	overflow: auto;
 }
