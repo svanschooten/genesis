@@ -20,22 +20,22 @@
 		<header>
 			<div id="logo-img">
 				<img id="top-logo" src="@routes.Assets.at("images/genesis-logo64x64.png")" />
-	        	<h2 id="title">@title</h3>
+	        	<h2 id="title">@title</h2>
 	    	</div>
 	        
 	        <div class="navbar">
 	          <div class="navbar-inner">
 	            <div class="container">
 	            
-	              <ul id="navbar-inner-left" class="nav">
+	              <ul class="nav pull-left">
 	                <li @active("Home")><a href="/">Home</a></li>
 	              </ul>
-	              <ul id="navbar-inner-right" class="nav">
+	              <ul class="nav pull-right">
 	              	<li @active("Help")><a href="/help">Help</a></li>
 	              	<li @active("Settings")><a href="/settings">Settings</a></li>
 	              	<li><a href="/logout">Logout</a></li>
 	              </ul>
-	              
+	             </div> 
 	          </div>
 	        </div>  
 		</header>
@@ -48,11 +48,11 @@
 		</div>
 		
 		<footer>
-			<div class="footer-left">
+			<div class="pull-left">
 				<p>&copy; Team JAMES</p>
 			</div>
 			
-			<div class="footer-right">		
+			<div class="pull-right">		
 				<a href="/about">About</a>
 			</div>
 		</footer>
