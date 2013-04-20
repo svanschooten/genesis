@@ -1,9 +1,14 @@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(form: Form[(String,String,String,String)])
 
 @main(title) {
 	
 	<div>
-		@content
+		@helper.form(routes.Settings.saveSettings) {
+			@helper.inputText(form("username"))
+			@helper.inputPassword(form("password"))
+			@helper.inputText(form("fname"))
+			@helper.inputText(form("lname"))
+		}
 	</div>
 	
 }

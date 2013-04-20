@@ -6,7 +6,7 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
-case class User(inlog: String, name: String, password: String)
+case class User(inlog: String, password: String, fname: String, lname: String)
 
 object User {
   
@@ -18,9 +18,10 @@ object User {
    */
   val simple = {
     get[String]("user.inlog") ~
-    get[String]("user.name") ~
-    get[String]("user.password") map {
-      case inlog~name~password => User(inlog, name, password)
+    get[String]("user.password") ~
+    get[String]("user.fname") ~
+    get[String]("user.lname") map {
+      case inlog~password~fname~lname => User(inlog, password, fname, lname)
     }
   }
   

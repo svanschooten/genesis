@@ -78,3 +78,190 @@ select * from user where           inlog = ? and password = ? [42122-168]
 	at scala.concurrent.forkjoin.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:975)
 	at scala.concurrent.forkjoin.ForkJoinPool.runWorker(ForkJoinPool.java:1478)
 	at scala.concurrent.forkjoin.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:104)
+04-05 17:12:47 jdbc[2]: null
+org.h2.message.DbException: The connection was not closed by the application and is garbage collected [90018-170]
+	at org.h2.message.DbException.get(DbException.java:169)
+	at org.h2.message.DbException.get(DbException.java:146)
+	at org.h2.message.DbException.get(DbException.java:135)
+	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:175)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:120)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:93)
+	at org.h2.Driver.connect(Driver.java:72)
+	at org.h2.server.web.WebServer.getConnection(WebServer.java:645)
+	at org.h2.server.web.WebApp.test(WebApp.java:839)
+	at org.h2.server.web.WebApp.process(WebApp.java:215)
+	at org.h2.server.web.WebApp.processRequest(WebApp.java:164)
+	at org.h2.server.web.WebThread.process(WebThread.java:137)
+	at org.h2.server.web.WebThread.run(WebThread.java:93)
+	at java.lang.Thread.run(Thread.java:722)
+Caused by: org.h2.jdbc.JdbcSQLException: The connection was not closed by the application and is garbage collected [90018-170]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:329)
+	... 14 more
+04-05 17:14:02 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "DELETE *[*] FROM USER"; expected "identifier"; SQL statement:
+DELETE * FROM USER [42001-170]
+04-05 17:14:06 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "DELETE *[*] FROM USER"; expected "identifier"; SQL statement:
+DELETE * FROM USER [42001-170]
+04-05 17:14:33 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "DROP USER"; expected "identifier"; SQL statement:
+DROP USER [42001-170]
+04-05 17:20:28 jdbc[2]: null
+org.h2.message.DbException: The connection was not closed by the application and is garbage collected [90018-170]
+	at org.h2.message.DbException.get(DbException.java:169)
+	at org.h2.message.DbException.get(DbException.java:146)
+	at org.h2.message.DbException.get(DbException.java:135)
+	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:175)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:120)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:93)
+	at org.h2.Driver.connect(Driver.java:72)
+	at org.h2.server.web.WebServer.getConnection(WebServer.java:645)
+	at org.h2.server.web.WebApp.test(WebApp.java:839)
+	at org.h2.server.web.WebApp.process(WebApp.java:215)
+	at org.h2.server.web.WebApp.processRequest(WebApp.java:164)
+	at org.h2.server.web.WebThread.process(WebThread.java:137)
+	at org.h2.server.web.WebThread.run(WebThread.java:93)
+	at java.lang.Thread.run(Thread.java:722)
+Caused by: org.h2.jdbc.JdbcSQLException: The connection was not closed by the application and is garbage collected [90018-170]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:329)
+	... 14 more
+04-05 17:37:25 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "ALTER TABLE USER
+RENAME COLUMN_NAME[*] USERNAME EMAIL "; expected "TO"; SQL statement:
+ALTER TABLE user
+RENAME COLUMN_NAME username email [42001-170]
+04-05 17:37:36 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "ALTER TABLE USER
+RENAME COLUMN_NAME[*] USERNAMETO  EMAIL "; expected "TO"; SQL statement:
+ALTER TABLE user
+RENAME COLUMN_NAME usernameTO  email [42001-170]
+04-05 17:37:39 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "ALTER TABLE USER
+RENAME COLUMN_NAME[*] USERNAME TO  EMAIL "; expected "TO"; SQL statement:
+ALTER TABLE user
+RENAME COLUMN_NAME username TO  email [42001-170]
+04-05 17:37:44 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "ALTER TABLE USER RENAME COLUMN_NAME[*] USERNAME TO  EMAIL "; expected "TO"; SQL statement:
+ALTER TABLE user RENAME COLUMN_NAME username TO  email [42001-170]
+04-05 17:38:00 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "ALTER TABLE USER RENAME COLUMN[*] USERNAME TO  EMAIL "; expected "TO"; SQL statement:
+ALTER TABLE user RENAME COLUMN username TO  email [42001-170]
+04-05 17:39:04 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "ALTER TABLE USER RENAME COLUMN[*] TO USERNAME TO  EMAIL "; expected "TO"; SQL statement:
+ALTER TABLE user RENAME COLUMN TO username TO  email [42001-170]
+04-05 17:39:26 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Column "RENAME" not found; SQL statement:
+ALTER TABLE user ALTER COLUMN RENAME TO username TO  email [42122-170]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:329)
+	at org.h2.message.DbException.get(DbException.java:169)
+	at org.h2.message.DbException.get(DbException.java:146)
+	at org.h2.table.Table.getColumn(Table.java:605)
+	at org.h2.command.Parser.parseAlterTable(Parser.java:4884)
+	at org.h2.command.Parser.parseAlter(Parser.java:4314)
+	at org.h2.command.Parser.parsePrepared(Parser.java:305)
+	at org.h2.command.Parser.parse(Parser.java:278)
+	at org.h2.command.Parser.parse(Parser.java:250)
+	at org.h2.command.Parser.prepareCommand(Parser.java:217)
+	at org.h2.engine.Session.prepareLocal(Session.java:414)
+	at org.h2.engine.Session.prepareCommand(Session.java:363)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:164)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:152)
+	at org.h2.server.web.WebApp.getResult(WebApp.java:1311)
+	at org.h2.server.web.WebApp.query(WebApp.java:1001)
+	at org.h2.server.web.WebApp$1.next(WebApp.java:964)
+	at org.h2.server.web.WebApp$1.next(WebApp.java:953)
+	at org.h2.server.web.WebThread.process(WebThread.java:166)
+	at org.h2.server.web.WebThread.run(WebThread.java:93)
+	at java.lang.Thread.run(Thread.java:722)
+04-05 17:40:49 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Unknown data type: ; SQL statement:
+ALTER TABLE user ADD COLUMN email [50004-170]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:329)
+	at org.h2.message.DbException.get(DbException.java:169)
+	at org.h2.message.DbException.get(DbException.java:146)
+	at org.h2.command.Parser.parseColumnWithType(Parser.java:3653)
+	at org.h2.command.Parser.parseColumnForTable(Parser.java:3516)
+	at org.h2.command.Parser.parseAlterTableAddColumn(Parser.java:4986)
+	at org.h2.command.Parser.parseAlterTable(Parser.java:4831)
+	at org.h2.command.Parser.parseAlter(Parser.java:4314)
+	at org.h2.command.Parser.parsePrepared(Parser.java:305)
+	at org.h2.command.Parser.parse(Parser.java:278)
+	at org.h2.command.Parser.parse(Parser.java:250)
+	at org.h2.command.Parser.prepareCommand(Parser.java:217)
+	at org.h2.engine.Session.prepareLocal(Session.java:414)
+	at org.h2.engine.Session.prepareCommand(Session.java:363)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:164)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:152)
+	at org.h2.server.web.WebApp.getResult(WebApp.java:1311)
+	at org.h2.server.web.WebApp.query(WebApp.java:1001)
+	at org.h2.server.web.WebApp$1.next(WebApp.java:964)
+	at org.h2.server.web.WebApp$1.next(WebApp.java:953)
+	at org.h2.server.web.WebThread.process(WebThread.java:166)
+	at org.h2.server.web.WebThread.run(WebThread.java:93)
+	at java.lang.Thread.run(Thread.java:722)
+04-05 17:41:10 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "ALTER TABLE USER COLUMN[*] EMAIL "; expected "., ADD, SET, RENAME, DROP, ALTER"; SQL statement:
+ALTER TABLE user COLUMN email [42001-170]
+04-05 17:41:35 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "ALTER TABLE USER COLUMN[*] EMAIL VARCHAR(255) "; expected "., ADD, SET, RENAME, DROP, ALTER"; SQL statement:
+ALTER TABLE user COLUMN email varchar(255) [42001-170]
+04-05 17:42:13 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "ALTER TABLE USER ADD COLUMN EMAIL VARCHAR(255) UNIQUE[*] NOT NULL "; SQL statement:
+ALTER TABLE user ADD COLUMN email varchar(255) UNIQUE NOT NULL [42000-170]
+04-05 17:42:29 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "ALTER TABLE USER ADD COLUMN EMAIL VARCHAR(255) UNIQUE[*] "; SQL statement:
+ALTER TABLE user ADD COLUMN email varchar(255) UNIQUE [42000-170]
+04-05 17:44:16 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "ALTER TABLE USER ADD CONSTRAINT UNIQUE[*](EMAIL) "; expected "identifier"; SQL statement:
+ALTER TABLE user ADD CONSTRAINT UNIQUE(email) [42001-170]
+04-05 17:44:27 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "ALTER TABLE USER ADD CONSTRAINT EMAIL UNIQUE "; expected "identifier"; SQL statement:
+ALTER TABLE user ADD CONSTRAINT email UNIQUE [42001-170]
+04-05 17:46:28 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "CREATE TABLE USER VALUES[*](ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  EMAIL VARCHAR(255) UNIQUE NOT NULL,
+  PASSWORD VARCHAR(255) NOT NULL,
+  FNAME VARCHAR(255),
+  LNAME VARCHAR(255)) "; SQL statement:
+CREATE TABLE user VALUES(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  fname VARCHAR(255),
+  lname VARCHAR(255)) [42000-170]
+04-05 17:47:13 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "CREATE TABLE USER VALUES[*](ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  EMAIL VARCHAR(255) UNIQUE NOT NULL,
+  PASSWORD VARCHAR(255) NOT NULL,
+  FNAME VARCHAR(255),
+  LNAME VARCHAR(255)) "; SQL statement:
+CREATE TABLE user VALUES(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  fname VARCHAR(255),
+  lname VARCHAR(255)) [42000-170]
+04-05 17:47:14 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "CREATE TABLE USER VALUES[*](ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  EMAIL VARCHAR(255) UNIQUE NOT NULL,
+  PASSWORD VARCHAR(255) NOT NULL,
+  FNAME VARCHAR(255),
+  LNAME VARCHAR(255)) "; SQL statement:
+CREATE TABLE user VALUES(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  fname VARCHAR(255),
+  lname VARCHAR(255)) [42000-170]
+04-05 17:47:27 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "CREATE TABLE USER VALUES[*](
+  ID INT PRIMARY KEY AUTO_INCREMENT,
+  EMAIL VARCHAR(255) UNIQUE NOT NULL,
+  PASSWORD VARCHAR(255) NOT NULL,
+  FNAME VARCHAR(255),
+  LNAME VARCHAR(255)) "; SQL statement:
+CREATE TABLE user VALUES(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  fname VARCHAR(255),
+  lname VARCHAR(255)) [42000-170]
