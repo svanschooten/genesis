@@ -9,6 +9,7 @@ import models._
 import views._
 
 object Application extends Controller {
+  
   val loginForm = Form(
     tuple(
       "inlog" -> text,

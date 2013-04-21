@@ -1,6 +1,8 @@
 package models
 
 import play.api._
+import play.api.mvc._
+import play.api.data._
 
 abstract class Gate
 case class AndGate(in1: Protein, in2: Protein, out: Protein) extends Gate{

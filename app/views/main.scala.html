@@ -1,5 +1,7 @@
 @(title: String)(content: Html)
 
+@import helper._
+
 <!DOCTYPE html>
 
 <html>
@@ -15,7 +17,17 @@
     </head>
     <body>
 		<div class ="container">
-        @content
+        	@content
+        	
+        	<script type="text/javascript">  </script>
+		</div>
+		<div id="forms">
+			@form(action = routes.Project.formFunction) {
+				@helper.inputText(ProteinForm("name"))
+			}
+			<p class="buttons">
+	            <input type="submit" id="submit">
+	        <p>
 		</div>
     </body>
 </html>
