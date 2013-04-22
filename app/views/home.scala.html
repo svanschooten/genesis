@@ -6,18 +6,61 @@
 }
 
 @main(title) {	
-	    <div>
-			<input type="button" value="add circuit" onclick="addTab();" >
-			<input type="button" value="remove circuit" onclick="removeTab();" >
-			<input type="button" value="change circuit name" onclick="changeTabName();" >
-		</div>
-
-		<div id="tab" class="yui-navset">
-    		<ul class="yui-nav">
-        		<li class="selected"><a href="#tab1"><em>Tab One Label</em></a></li>
-    		</ul>            
-    		<div class="yui-content">
-        		<div id="tab1"><canvas id="canvas" style="border:solid 1px #000000;"></canvas></div>
-    		</div>
+		<div>
+			<ul class="nav nav-tabs" id="myTab">
+				<li class="active">
+					<a href="#hellow" data-toggle="tab">
+						Hellow  <button class="close" type="button">&times;</button>
+					</a>
+				</li>
+				<li>
+					<a href="#yolo" data-toggle="tab">
+						Yolo  <button class="close" type="button">&times;</button>
+					</a>
+				</li>
+				<li>
+					<a href="#short" data-toggle="tab">
+						Short  <button class="close" type="button">&times;</button>
+					</a>
+				</li>
+				<li>
+						<button class="btn btn-link" onclick="addTab(5)">+</button>
+				</li>
+			</ul>
+			
+			<div class="tab-content">
+				<div class="tab-pane" id="hellow">
+					Something here
+				</div>
+				
+				<div class="tab-pane" id="yolo">
+					Yolo
+				</div>
+				
+				<div class="tab-pane" id="short">
+					More stuff here
+				</div>
+			</div>
+			
+			<script>
+				function addTab(id) {
+					$('.tab-content').append(
+						$("<div>Hello world</div>").addClass('tab-pane').attr('id', id)
+					);
+					
+					$('#myTab').append(
+						$("<li></li>").append(
+							$("<a></a>")
+								.attrs({
+									href: id,
+									'data-toggle': 'tab'
+								})
+						)
+					);
+					
+					$(id).tabs('show')
+				}
+			</script>
+			
 		</div>
 }
