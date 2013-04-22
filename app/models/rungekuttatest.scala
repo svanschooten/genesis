@@ -45,8 +45,12 @@ case class Rungekuttatest (){
         var l: List[String] = List()
         var t = t0
         for (i <- 1 to n - 1) {
+          if ( results.isEmpty){
+            c = new VectorD(Array(0.0))
+          } else {
             c = results.head
             results = results.tail
+          }
             l = l ++ ("> at t = " + "%6.3f".format (t) + " c = " + c :: List())
             t += dt
         }
