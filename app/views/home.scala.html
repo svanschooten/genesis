@@ -5,68 +5,19 @@
   @if(title equals t){class=active"}
 }
 
+@head = {
+	<script src="@routes.Assets.at("stylesheets/javascripts/home.js")" type="text/javascript"></script>
+}
+
 @main(title) {	
 		<div>
 			<ul class="nav nav-tabs" id="myTab">
-				<li class="active">
-					<a href="#hellow" data-toggle="tab">
-						Hellow  <button class="close" type="button">&times;</button>
-					</a>
-				</li>
-				<li>
-					<a href="#yolo" data-toggle="tab">
-						Yolo  <button class="close" type="button">&times;</button>
-					</a>
-				</li>
-				<li>
-					<a href="#short" data-toggle="tab">
-						Short  <button class="close" type="button">&times;</button>
-					</a>
-				</li>
 				<li id="add-tab-button">
 						<button class="btn btn-link" onclick="addTab()">+</button>
 				</li>
 			</ul>
 			
 			<div class="tab-content">
-				<div class="tab-pane" id="hellow">
-					Something here
-				</div>
-				
-				<div class="tab-pane" id="yolo">
-					Yolo
-				</div>
-				
-				<div class="tab-pane" id="short">
-					More stuff here
-				</div>
 			</div>
-			
-			<script>
-				function addTab() {
-					id=prompt("Please enter a name for your circuit");
-					
-					var close_button = "<button class=\"close\" type=\"button\" onclick="closeTab()">&times;</button>"
-					
-					$('.tab-content').append(
-						$('<div>').attr({
-							id: id,
-							class: 'tab-pane'
-						}).text(id)
-					);
-					
-					var tab = $('<li>').html(
-							$('<a>').attr({
-								href: '#'+id,
-								'data-toggle': 'tab'
-							}).html(id +" "+ close_button)
-					);
-					
-					tab.insertBefore($('#add-tab-button'));
-					
-					$('#myTab a:last').tab('show');
-				}
-			</script>
-			
 		</div>
 }
