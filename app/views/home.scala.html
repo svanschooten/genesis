@@ -23,8 +23,8 @@
 						Short  <button class="close" type="button">&times;</button>
 					</a>
 				</li>
-				<li>
-						<button class="btn btn-link" onclick="addTab(5)">+</button>
+				<li id="add-tab-button">
+						<button class="btn btn-link" onclick="addTab()">+</button>
 				</li>
 			</ul>
 			
@@ -43,22 +43,28 @@
 			</div>
 			
 			<script>
-				function addTab(id) {
+				function addTab() {
+					id=prompt("Please enter a name for your circuit");
+					
+					var close_button = "<button class=\"close\" type=\"button\" onclick="closeTab()">&times;</button>"
+					
 					$('.tab-content').append(
-						$("<div>Hello world</div>").addClass('tab-pane').attr('id', id)
+						$('<div>').attr({
+							id: id,
+							class: 'tab-pane'
+						}).text(id)
 					);
 					
-					$('#myTab').append(
-						$("<li></li>").append(
-							$("<a></a>")
-								.attrs({
-									href: id,
-									'data-toggle': 'tab'
-								})
-						)
+					var tab = $('<li>').html(
+							$('<a>').attr({
+								href: '#'+id,
+								'data-toggle': 'tab'
+							}).html(id +" "+ close_button)
 					);
 					
-					$(id).tabs('show')
+					tab.insertBefore($('#add-tab-button'));
+					
+					$('#myTab a:last').tab('show');
 				}
 			</script>
 			
