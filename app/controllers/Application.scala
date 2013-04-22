@@ -11,10 +11,10 @@ import views._
 object Application extends Controller {
   val loginForm = Form(
     tuple(
-      "inlog" -> text,
+      "email" -> text,
       "password" -> text
-    ) verifying ("Wrong inlog or password", result => result match {
-      case (inlog, password) => User.authenticate(inlog, password).isDefined
+    ) verifying ("Wrong email or password", result => result match {
+      case (email, password) => User.authenticate(email, password).isDefined
     })
   )
 

@@ -13,11 +13,10 @@ object User {
   // -- Parsers
   
   /**
-   * 
    * Parse a User from a ResultSet
    */
   val simple = {
-    get[String]("user.inlog") ~
+    get[String]("user.email") ~
     get[String]("user.password") ~
     get[String]("user.fname") ~
     get[String]("user.lname") map {
@@ -28,12 +27,12 @@ object User {
   // -- Queries
   
   /**
-   * Retrieve an User from inlog.
+   * Retrieve a User from inlog.
    */
-  def findByInlog(inlog: String): Option[User] = {
+  def findByInlog(email: String): Option[User] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from user where inlog = {inlog}").on(
-        'inlog -> inlog
+      SQL("select * from user where email = {email}").on(
+        'email -> email
       ).as(User.simple.singleOpt)
     }
   }
@@ -47,10 +46,10 @@ object User {
       SQL(
         """
          select * from user where 
-         inlog = {inlog} and password = {password}
+         email = {email} and password = {password}
         """
       ).on(
-        'inlog -> inlog,
+        'email -> inlog,
         'password -> password
       ).as(User.simple.singleOpt)
     }
