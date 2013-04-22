@@ -19,7 +19,7 @@ object Projects extends Controller with Secured {
       {
         case (name1, name2) => {
           
-          Ok(html.pform(name1, name2, 1, 2, 3))
+          Ok(html.formResult(name1, name2, 1, 2, 3))
         }   
       }
     )
