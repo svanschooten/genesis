@@ -5,7 +5,7 @@ import play.api.mvc._
 import models.Rungekuttatest
 
 object Application extends Controller {
-  
+
   val rkt = Rungekuttatest()
   
   def index = Action {
@@ -13,6 +13,7 @@ object Application extends Controller {
   }
   
   def rk = Action {
+
     Ok(views.html.rungekutte("Runge-Kutta test app", rkt))
   }
   
