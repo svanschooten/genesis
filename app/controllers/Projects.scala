@@ -16,22 +16,27 @@ object Projects extends Controller with Secured {
   def formFunction = Action { implicit request =>
     ProteinForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.index("error")),
-      {case (name, val1, val2) => Ok(html.proteinform(name, val1, val2))}
+      {
+        case (name1, name2) => {
+          
+          Ok(html.pform(name1, name2, 1, 2, 3))
+        }   
+      }
     )
   }
   
   val ProteinForm = Form(
     tuple(
-      "name" -> text,
-      "val1" -> number(min = 1, max = 100),
-      "val2" -> number(min = 0, max = 10)
+      "name1" -> text,
+      "name2" -> optional(text)
     )
   )
 
   def index = IsAuthenticated { username => _ =>
     User.findByInlog(username).map { user =>
       Ok(
-       html.index("ss")   
+       /*html.index("Welcome")*/
+       html.proteinform(ProteinForm)
       )
     }.getOrElse(Forbidden)
   }
