@@ -1,8 +1,7 @@
 package models
 
-import scalation.VectorD
+import scalation.{VectorD, RungeKutta}
 import scalation.Derivatives.DerivativeV
-import scalation.RungeKutta
 
 case class Rungekuttatest (){
   
@@ -42,13 +41,38 @@ case class Rungekuttatest (){
         //                   0   1   2    3   4   5
         var c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
 
-        var t  = t0 + dt
+        var results = Rungekuttatest.solveFolding(t0, dt, odes, c)
         var l: List[String] = List()
-        for (i <- 1 to n) {
-            c = RungeKutta.integrateVV (odes, c, dt)      // compute new concentrations using RK
+        var t = t0
+        for (i <- 1 to n - 1) {
+            c = results.head
+            results = results.tail
             l = l ++ ("> at t = " + "%6.3f".format (t) + " c = " + c :: List())
             t += dt
         }
         return l
     }
 }
+
+object Rungekuttatest {
+
+  private def solveSingle(odes: Array [DerivativeV], cVec: VectorD, dt: Double): VectorD = {
+    RungeKutta.integrateVV (odes, cVec, dt)
+  }
+
+  def solveFolding(t: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
+    setupCVec((0.0 to t by dt).toList, cVec).foldLeft(List(cVec))((l: List[VectorD], v: VectorD) => l match {
+      case h::t => solveSingle(odes, h, dt) :: h :: t
+      case Nil => List()
+    }).reverse
+  }
+
+  private def setupCVec(steps: List[Double], cVec: VectorD): List[VectorD] = {
+    steps match {
+      case _::t => cVec.clone() :: setupCVec(t, cVec)
+      case Nil => List()
+      case _ => throw new IllegalArgumentException()
+    }
+  }
+}
+
