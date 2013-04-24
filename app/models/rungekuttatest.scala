@@ -41,7 +41,7 @@ case class Rungekuttatest (){
         //                   0   1   2    3   4   5
         var c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
 
-        var results = Rungekuttatest.solveFolding(t0, dt, odes, c)
+        var results = Rungekuttatest.solveFolding(tf, dt, odes, c)
         var l: List[String] = List()
         var t = t0
         for (i <- 1 to n - 1) {
@@ -51,7 +51,7 @@ case class Rungekuttatest (){
             c = results.head
             results = results.tail
           }
-            l = l ++ ("> at t = " + "%6.3f".format (t) + " c = " + c :: List())
+            l = l ++ ("> at t = " + "%6.3f".format(t) + " c = " + c :: List())
             t += dt
         }
         return l
@@ -66,7 +66,7 @@ object Rungekuttatest {
 
   def solveFolding(t: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
     setupCVec((0.0 to t by dt).toList, cVec).foldLeft(List(cVec))((l: List[VectorD], v: VectorD) => l match {
-      case h::t => solveSingle(odes, h, dt) :: h :: t
+      case h::t => solveSingle(odes, v, dt) :: h :: t
       case Nil => List()
     }).reverse
   }
@@ -79,4 +79,3 @@ object Rungekuttatest {
     }
   }
 }
-
