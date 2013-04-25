@@ -88,9 +88,11 @@ object Rungekuttatest {
   */
   def solveRecursive(time: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
     require(math.abs(time / dt) > 1000.0,"Resolution too high, provide smaller step size.")
-    if (time <= 0.0)
+    if (time <= 0.0) {
       List()
-    else
-      solveSingle(odes, cVec, dt) :: solveRecursive(time - dt, dt, odes, res.clone())
+    } else {
+      val res = solveSingle(odes, cVec, dt)
+      res :: solveRecursive(time - dt, dt, odes, res.clone())
+    }
   }
 }
