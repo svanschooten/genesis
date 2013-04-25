@@ -20,8 +20,13 @@ object Application extends Controller {
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
+        controllers.routes.javascript.Application.getJsonTest
       )
     ).as("text/javascript")
+  }
+
+  def getJsonTest = Action {
+    Ok(Rungekuttatest.getJsonTest)
   }
   
 }

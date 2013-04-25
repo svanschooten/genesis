@@ -48,13 +48,13 @@ case class Rungekuttatest (){
 
     def testResults(): List[VectorD] = {
         val c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
-        c :: Rungekuttatest.solveRecursive(tf, dt, odes, c.clone())
+        c :: Rungekuttatest.solveRecursive(t0, tf, dt, odes, c.clone())
         //c :: Rungekuttatest.solveFolding(t0, dt, odes, c)
     }
 
     def printTestBare() = {
       val c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
-      val results = c :: Rungekuttatest.solveRecursive(tf, dt, odes, c.clone())
+      val results = c :: Rungekuttatest.solveRecursive(t0, tf, dt, odes, c.clone())
       val printRes = Rungekuttatest.printBareCVec(results, t0, dt)
       Rungekuttatest.print(printRes)
     }
@@ -63,13 +63,17 @@ case class Rungekuttatest (){
     def convert(l: List[VectorD]): List[List[Double]] = l.map(_.getConts)
 
     def genJson(): JsValue = Json.toJson(
-        Map("t" -> Json.toJson((0.0 to 5.0 by 0.01).toList),
+        Map("t" -> Json.toJson((t0 to tf by dt).toList),
             "vectors" -> Json.toJson(convert(testResults()))
-           )
         )
+    )
 }
 
 object Rungekuttatest {
+
+  def getJsonTest: JsValue = {
+    Rungekuttatest().genJson()
+  }
 
   def print(results: List[String]) = {
     results.foreach((s: String) => System.out.println(s))
@@ -119,13 +123,13 @@ object Rungekuttatest {
   * @param cVec The concentration vector used in the ODE's
   * @return The list of concentrations.
   */
-  def solveRecursive(time: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
+  def solveRecursive(t0: Double, time: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
     require(math.abs(time / dt) <= 1000.0,"Resolution too high, provide smaller step size.")
-    if (time <= 0.0) {
+    if (time <= t0) {
       List()
     } else {
       val res = solveSingle(odes, cVec, dt)
-      res :: solveRecursive(time - dt, dt, odes, res.clone())
+      res :: solveRecursive(t0, time - dt, dt, odes, res.clone())
     }
   }
 }
