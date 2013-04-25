@@ -28,6 +28,8 @@ class VectorD (val dim: Int, protected var v: Array[Double] = null)
 
     def update(x: Int,y: Double) { v(x) = y }
 
+    def getConts: List[Double] = v.clone().toList
+
     override def clone() = new VectorD(dim, v.clone)
 
     def length: Int = v.length
