@@ -1,15 +1,14 @@
-@(title: String, rk: Rungekuttatest)
+@(title: String)
 
 <!DOCTYPE html>
 
 <html>
 <head>
     <title>@title</title>
-
+    <script src=@routes.Assets.at("javascripts/script.js") ></script>
 </head>
 <body>
-@for(el <- rk.test()){
-    @el <br>
-}
+@routes.Application.getRKdata()
+<canvas class="tripCanvas" width="200" height="200" ></canvas>
 </body>
 </html>

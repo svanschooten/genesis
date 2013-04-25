@@ -3,6 +3,7 @@ package controllers
 import play.api._
 import play.api.mvc._
 import models.Rungekuttatest
+import play.libs.Json
 
 object Application extends Controller {
   
@@ -11,7 +12,11 @@ object Application extends Controller {
   }
   
   def rk = Action {
-    Ok(views.html.rungekutte("Runge-Kutta test app", Rungekuttatest()))
+    Ok(views.html.rungekutte("Runge-Kutta test app"))
+  }
+
+  def getRKdata = Action {
+      Ok(Rungekuttatest().test())
   }
   
 }

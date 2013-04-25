@@ -46,6 +46,11 @@ case class Rungekuttatest (){
         val results = c :: Rungekuttatest.solveRecursive(tf, dt, odes, c.clone())
         Rungekuttatest.printCVec(results, t0, dt)
     }
+
+  def printTest(): String = {
+    List[String] = test()
+
+  }
 }
 
 object Rungekuttatest {
