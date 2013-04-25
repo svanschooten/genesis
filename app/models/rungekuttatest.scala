@@ -2,13 +2,12 @@ package models
 
 import scalation.{VectorD, RungeKutta}
 import scalation.Derivatives.DerivativeV
-import scala.Array
 
 case class Rungekuttatest (){
   
 	val t0 = 0.0                         // initial time
     val tf = 5.0                         // final time
-    val n  = 200                        // number of time steps
+    val n  = 1001                        // number of time steps
 
     val kf = (1.0,  1.0,  0.5)     // forward reaction rates
     val kb = (0.02, 0.02, 0.01)    // backward reaction rates
@@ -43,9 +42,8 @@ case class Rungekuttatest (){
         val c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
 
         //val results = Rungekuttatest.solveFolding(t0, dt, odes, c)
-        val results = c :: Rungekuttatest.solveRecursive(n, dt, odes, c.clone())
-        List()
-        //Rungekuttatest.printCVec(results, t0, dt)
+        val results = c :: Rungekuttatest.solveRecursive(tf, dt, odes, c.clone())
+        Rungekuttatest.printCVec(results, t0, dt)
     }
 }
 
@@ -64,17 +62,15 @@ object Rungekuttatest {
   }
 
   /** Does not work yet...
-   * @param t
+   * @param t0
    * @param dt
    * @param odes
    * @param cVec
    * @return
    */
-  def solveFolding(t: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
-    setupCVec((0.0 to t by dt).toList, cVec).foldLeft(List(cVec))((l: List[VectorD], v: VectorD) => l match {
-      case h::t => {val res = solveSingle(odes, h, dt)
-        System.out.println(res.toString)       //TODO
-        res :: h :: t}
+  def solveFolding(t0: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
+    setupCVec((0.0 to t0 by dt).toList, cVec).foldLeft(List(cVec))((l: List[VectorD], v: VectorD) => l match {
+      case h::t => solveSingle(odes, h, dt) :: h :: t
       case Nil => List()
     }).reverse
   }
@@ -88,12 +84,14 @@ object Rungekuttatest {
   * @return The list of concentrations.
   */
   def solveRecursive(time: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
-    time match {
-        case 0 => List()
-        case _ => {
-          val res = solveSingle(odes, cVec, dt)
-          res :: solveRecursive(time - dt, dt, odes, res.clone())
-        }
+    if (time / dt > 1000.0) {
+      throw new IllegalArgumentException("Resolution too high, provide smaller step size.")
+    }
+    if (time <= 0.0) {
+      List()
+    } else {
+      val res = solveSingle(odes, cVec, dt)
+      res :: solveRecursive(time - dt, dt, odes, res.clone())
     }
   }
 
