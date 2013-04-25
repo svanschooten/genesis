@@ -90,29 +90,29 @@ object User {
   def updatePassword(id: Int, oldPass: String, newPass: String) = {
     DB.withConnection{ implicit connection =>
       SQL(
-         """
-           SELECT password
-           FROM User
-           WHERE id = {id} AND password = {oldPass}
-         """
-         ).on(
-           'id -> id,    
-           'password -> oldPass
-         ).as(scalar[String].singleOpt) 
+       """
+       SELECT password
+       FROM User
+       WHERE id = {id} AND password = {oldPass}
+       """
+     ).on(
+       'id -> id,    
+       'password -> oldPass
+     ).as(scalar[String].singleOpt) 
          
       match {
         case None => None
         case Some(_) => 
           SQL(
-              """
-                UPDATE User
-                SET password = {newPass}
-                WHERE id = {id}
-              """
-              ).on(
-                'newPass -> newPass,
-                'id -> id
-              ).executeUpdate
+            """
+            UPDATE User
+            SET password = {newPass}
+            WHERE id = {id}
+            """
+          ).on(
+            'newPass -> newPass,
+            'id -> id
+          ).executeUpdate
       } 
     }
   }
