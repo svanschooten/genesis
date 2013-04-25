@@ -63,16 +63,16 @@ object Rungekuttatest {
   }
 
   /** Does not work yet...
-   * @param t0
+   * @param t
    * @param dt
    * @param odes
    * @param cVec
    * @return
    */
-  def solveFolding(t0: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
-    setupCVec((0.0 to t0 by dt).toList, cVec).foldLeft(List(cVec))((l: List[VectorD], v: VectorD) => l match {
-      case h::t => solveSingle(odes, h, dt) :: h :: t
-      case Nil => List()
+  def solveFolding(t: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
+    (0.0 to t by dt).toList.foldLeft(List[VectorD]())((l: List[VectorD], step: Double) => l match {
+      case h::t => RungeKutta.integrateVV(odes, cVec.clone(), step, 0.0, dt) :: h :: t
+      case Nil => cVec :: Nil
     }).reverse
   }
 
@@ -93,14 +93,6 @@ object Rungekuttatest {
     } else {
       val res = solveSingle(odes, cVec, dt)
       res :: solveRecursive(time - dt, dt, odes, res.clone())
-    }
-  }
-
-  private def setupCVec(steps: List[Double], cVec: VectorD): List[VectorD] = {
-    steps match {
-      case _::t => cVec.clone() :: setupCVec(t, cVec)
-      case Nil => List()
-      case _ => throw new IllegalArgumentException()
     }
   }
 }
