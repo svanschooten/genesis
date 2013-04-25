@@ -7,7 +7,7 @@ case class Rungekuttatest (){
   
 	val t0 = 0.0                         // initial time
     val tf = 5.0                         // final time
-    val n  = 1001                        // number of time steps
+    val n  = 200                        // number of time steps
 
     val kf = (1.0,  1.0,  0.5)     // forward reaction rates
     val kb = (0.02, 0.02, 0.01)    // backward reaction rates
@@ -87,7 +87,7 @@ object Rungekuttatest {
   * @return The list of concentrations.
   */
   def solveRecursive(time: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
-    require(math.abs(time / dt) > 1000.0,"Resolution too high, provide smaller step size.")
+    require(math.abs(time / dt) <= 1000.0,"Resolution too high, provide smaller step size.")
     if (time <= 0.0) {
       List()
     } else {
