@@ -6,9 +6,9 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
-case class User(email: String, password: String, fname: String = null, lname: String = null)
+//case class User(email: String, password: String, fname: Option[String], lname: Option[String])
 
-object User {
+class User(email: String, password: String, fname: Option[String], lname: Option[String]) {
   
   // -- Parsers
   
@@ -20,10 +20,7 @@ object User {
     get[String]("user.password") ~
     get[Option[String]]("user.fname") ~
     get[Option[String]]("user.lname") map {
-      case email~password~Some(_fname: String)~Some(_lname: String) => User(email, password, _fname, _lname)
-      case email~password~Some(_fname: String)~None => User(email, password, fname=_fname)
-      case email~password~None~Some(_lname: String) => User(email, password, lname=_lname)
-      case email~password~None~None => User(email, password)
+      case email~password~fname~lname => new User(email, password, fname, lname)
     }
   }
   
@@ -36,7 +33,7 @@ object User {
     DB.withConnection { implicit connection =>
       SQL("select * from user where email = {email}")
         .on('email -> email)
-        .as(User.simple.singleOpt)
+        .as(simple.singleOpt)
     }
   }
 
@@ -54,7 +51,23 @@ object User {
       ).on(
         'email -> email,
         'password -> password
-      ).as(User.simple.singleOpt)
+      ).as(simple.singleOpt)
+    }
+  }
+  
+  def save(email: String, password: String, fname: Option[String], lname: Option[String]) = {
+    DB.withConnection{ implicit connection =>
+      SQL(
+        """
+        INSERT INTO User
+        VALUES ({email}, {password}, {fname}, {lname})
+        """
+      ).on(
+        'email -> this.email,
+        'password -> password,
+        'fname -> fname,
+        'lname -> lname
+      )
     }
   }
   
