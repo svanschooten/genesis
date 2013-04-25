@@ -1,13 +1,14 @@
-@(title: String)(content: Html)(form: Form[(String,String,String,String)])
+@(title: String)(content: Html)(form: Form[User])
 
 @main(title) {
 	
 	<div>
-		@helper.form(routes.Settings.saveSettings) {
+		@helper.form(action = routes.Settings.saveSettings) {
 			@helper.inputText(form("Email"))
 			@helper.inputPassword(form("Password"))
 			@helper.inputText(form("First name"))
 			@helper.inputText(form("Last name"))
+			<button class='btn btn-primary' type='submit'>Save</button>
 		}
 	</div>
 	
