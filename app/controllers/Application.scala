@@ -40,7 +40,7 @@ object Application extends Controller {
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => Redirect(routes.Home.home).withSession("inlog" -> user._1)
+      user => Redirect(routes.Home.home).withSession("userid" -> user._1)
     )
   }
 }
@@ -53,7 +53,7 @@ trait Secured {
   /**
    * Retrieve the connected user inlog.
    */
-  private def username(request: RequestHeader) = request.session.get("inlog")
+  private def username(request: RequestHeader) = request.session.get("userid")
 
 
   private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Application.login)
