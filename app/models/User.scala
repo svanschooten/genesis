@@ -38,9 +38,7 @@ object User {
   }
 
   
-  /**
-   * Authenticate a User.
-   */
+  /** Authenticates a User. */
   def authenticate(email: String, password: String): Option[User] = {
     DB.withConnection { implicit connection =>
       SQL(
@@ -55,11 +53,12 @@ object User {
     }
   }
   
-  def insert(email: String, password: String, fname: Option[String], lname: Option[String]) = {
+  /** Creates a new User */
+  def create(email: String, password: String, fname: Option[String], lname: Option[String]) = {
     DB.withConnection{ implicit connection =>
       SQL(
         """
-        INSERT INTO User
+        INSERT INTO User( email, password, fname, lname )
         VALUES ({email}, {password}, {fname}, {lname})
         """
       ).on(
@@ -67,30 +66,54 @@ object User {
         'password -> password,
         'fname -> fname,
         'lname -> lname
-      )
+      ).executeUpdate
     }
   }
-    
-  def update(id: Int, email: String,	 password: String, fname: Option[String], lname: Option[String]) = {
+  
+  /** Updates user's email */
+  def updateEmail(id: Int, email: String) = {
     DB.withConnection{ implicit connection =>
       SQL(
         """
         UPDATE User
-        SET 
-          email={email},
-          password={password},
-          fname={fname},
-          lname={lname}
-        WHERE
-          id = {id}
+        SET email={email}
+        WHERE id = {id}
         """
       ).on(
-        'email -> email,
-        'password -> password,
-        'fname -> fname,
-        'lname -> lname,
-        'id -> id
-      )
+        'id -> id,
+        'email -> email
+      ).executeUpdate
+    }
+  }
+  
+  /** Update the password, given that the user can insert the old password. */
+  def updatePassword(id: Int, oldPass: String, newPass: String) = {
+    DB.withConnection{ implicit connection =>
+      SQL(
+         """
+           SELECT password
+           FROM User
+           WHERE id = {id} AND password = {oldPass}
+         """
+         ).on(
+           'id -> id,    
+           'password -> oldPass
+         ).as(scalar[String].singleOpt) 
+         
+      match {
+        case None => None
+        case Some(_) => 
+          SQL(
+              """
+                UPDATE User
+                SET password = {newPass}
+                WHERE id = {id}
+              """
+              ).on(
+                'newPass -> newPass,
+                'id -> id
+              ).executeUpdate
+      } 
     }
   }
   
