@@ -18,23 +18,25 @@ object User {
   val simple = {
     get[String]("user.email") ~
     get[String]("user.password") ~
-    get[String]("user.fname") ~
-    get[String]("user.lname") map {
-      case email~password~fname~lname => User(email, password, fname, lname)
-      case email~password => User(email, password)
+    get[Option[String]]("user.fname") ~
+    get[Option[String]]("user.lname") map {
+      case email~password~Some(_fname: String)~Some(_lname: String) => User(email, password, _fname, _lname)
+      case email~password~Some(_fname: String)~None => User(email, password, fname=_fname)
+      case email~password~None~Some(_lname: String) => User(email, password, lname=_lname)
+      case email~password~None~None => User(email, password)
     }
   }
   
   // -- Queries
   
   /**
-   * Retrieve a User from inlog.
+   * Retrieve a User from the user database.
    */
   def findByInlog(email: String): Option[User] = {
     DB.withConnection { implicit connection =>
       SQL("select * from user where email = {email}")
         .on('email -> email)
-        .as(simple.singleOpt)
+        .as(User.simple.singleOpt)
     }
   }
 
