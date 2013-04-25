@@ -1,5 +1,7 @@
 package models
 
+import play.api.libs.json._
+
 import scalation.{VectorD, RungeKutta}
 import scalation.Derivatives.DerivativeV
 
@@ -42,6 +44,7 @@ case class Rungekuttatest (){
         val c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
 
         //val results = Rungekuttatest.solveFolding(t0, dt, odes, c)
+       System.out.println(tf / dt)
         val results = c :: Rungekuttatest.solveRecursive(tf, dt, odes, c.clone())
         printTestBare()
         Rungekuttatest.printCVec(results, t0, dt)
@@ -54,6 +57,14 @@ case class Rungekuttatest (){
       Rungekuttatest.print(printRes)
     }
 
+
+    def convert(l: List[VectorD]): List[List[Double]] = l.map(_.getConts)
+
+    def genJson(): JsValue = Json.toJson(
+        Map("t" -> Json.toJson((0.0 to 5.0 by 0.01).toList),
+            "vectors" -> Json.toJson(convert(Rungekuttatest.solveFolding(5.0,0.01,odes,new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8)))))
+           )
+        )
 }
 
 object Rungekuttatest {
