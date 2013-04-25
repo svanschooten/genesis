@@ -16,7 +16,7 @@ object Application extends Controller {
   }
 
   def getRKdata = Action {
-      Ok(Rungekuttatest().test())
+      Ok(Rungekuttatest().printTest())
   }
   
 }

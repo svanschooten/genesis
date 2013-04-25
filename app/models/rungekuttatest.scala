@@ -48,8 +48,8 @@ case class Rungekuttatest (){
     }
 
   def printTest(): String = {
-    List[String] = test()
-
+    val test: List[String] = this.test()
+    test.foldLeft("")(_ + _)
   }
 }
 
