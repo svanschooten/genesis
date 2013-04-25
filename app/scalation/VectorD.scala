@@ -11,7 +11,8 @@ import scalation.DoubleWithExp._
 class VectorD (val dim: Int, protected var v: Array[Double] = null)
       extends PartiallyOrdered[VectorD] with Serializable {
 
-    if(v == null)
+
+  if(v == null)
         v = Array.ofDim[Double](dim)
     else if (dim != v.length)
         throw new IllegalArgumentException("Dim doesn't match input's dimension.")
@@ -28,6 +29,8 @@ class VectorD (val dim: Int, protected var v: Array[Double] = null)
     def update(x: Int,y: Double) { v(x) = y }
 
     override def clone() = new VectorD(dim, v.clone)
+
+    def length() = v.length
 
     /** Construct a vector from two or more values (repeated values Double*).
      *  @param u0  the first value
