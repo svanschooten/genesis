@@ -16,10 +16,10 @@ object Settings extends Controller with Secured{
     
   val form = Form(
       tuple(
-          "username" -> nonEmptyText,
-          "password" -> text,
-          "fname" -> text,
-          "lname" -> text
+          "Email" -> nonEmptyText,
+          "Password" -> text,
+          "First name" -> text,
+          "Last name" -> text
       )
   )
   
@@ -29,7 +29,7 @@ object Settings extends Controller with Secured{
     	Ok(
     	    html.settings("Settings")
     	    	(Html.apply(settingsText))
-    	    	(form.fill(user.inlog, user.password, user.fname, user.lname))
+    	    	(form.fill(user.email, user.password, user.fname, user.lname))
     	)
     }.getOrElse(Forbidden)
   }

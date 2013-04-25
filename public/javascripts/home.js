@@ -1,3 +1,9 @@
+function addID() {
+  $('#myTab li').each(
+    function(i) {this.id = i+1;}
+  );
+}
+
 function addTab() {
   var id = prompt("Please enter a name for your circuit");
 				
@@ -24,10 +30,11 @@ function addTab() {
         .html(id +" "+ close_button);
 
   var tab = $('<li>')
-    .attr('id', id)
+    .attr('id', 'tab-'+id)
     .html(tab_link);
 	
-  tab.insertBefore($('#add-tab-button'));	
+  tab.insertBefore($('#add-tab-button'));
+	
   $('#myTab a:last').tab('show');
 }
 
