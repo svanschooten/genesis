@@ -40,6 +40,7 @@ object ODEFactory {
             // concs(0): [TF1]; concs(1): [TF2]; concs(2): [mRNA]; concs(3): [Protein]
             (time: Double, concs: VectorD) => (k1 * (concs(0) * concs(1)) ~^ n) / (km ~^ n + (concs(0) * concs(1)) ~^ n) - d1 * concs(2),
             (time: Double, concs: VectorD) => k2 * concs(2) - d2 * concs(3))
+        case Gene(_,_) => ((t:Double, c: VectorD)=> 0.0, (t:Double, c: VectorD)=>0.0)
     }
 
 }
