@@ -37,6 +37,10 @@ object Application extends Controller {
       formWithErrors => BadRequest(html.login(formWithErrors)),
       user => Redirect(routes.Projects.index).withSession("inlog" -> user._1))
   }
+  
+   def rk = Action {
+    Ok(html.rungekutte("Runge-Kutta test app", rkt))
+  }
 }
 
 /**
@@ -59,10 +63,6 @@ trait Secured {
    */
   def IsAuthenticated(f: => String => Request[AnyContent] => Result) = Security.Authenticated(username, onUnauthorized) { user =>
     Action(request => f(user)(request))
-  }
-
-  def rk = Action {
-    Ok(html.rungekutte("Runge-Kutta test app", rkt))
   }
   
 }
