@@ -6,8 +6,8 @@ import scalation.Derivatives.DerivativeV
 case class Rungekuttatest (){
   
 	val t0 = 0.0                         // initial time
-    val tf = 5.0                         // final time
-    val n  = 200                        // number of time steps
+    val tf = 50.0                         // final time
+    val n  = 1000                        // number of time steps
 
     val kf = (1.0,  1.0,  0.5)     // forward reaction rates
     val kb = (0.02, 0.02, 0.01)    // backward reaction rates
@@ -60,22 +60,11 @@ case class Rungekuttatest (){
 
 object Rungekuttatest {
 
-  private def solveSingle(odes: Array [DerivativeV], cVec: VectorD, dt: Double): VectorD = {
-    RungeKutta.integrateVV (odes, cVec, dt)
-  }
-
   def solveFolding(t: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
-    setupCVec((0.0 to t by dt).toList, cVec).foldLeft(List(cVec))((l: List[VectorD], v: VectorD) => l match {
-      case h::t => solveSingle(odes, v, dt) :: h :: t
-      case Nil => List()
+    (0.0 to t by dt).toList.foldLeft(List[VectorD]())((l: List[VectorD], step: Double) => l match {
+      case h::t => RungeKutta.integrateVV(odes, cVec.clone(), step, 0.0, dt) :: h :: t
+      case Nil => cVec :: Nil
     }).reverse
   }
 
-  private def setupCVec(steps: List[Double], cVec: VectorD): List[VectorD] = {
-    steps match {
-      case _::t => cVec.clone() :: setupCVec(t, cVec)
-      case Nil => List()
-      case _ => throw new IllegalArgumentException()
-    }
-  }
 }
