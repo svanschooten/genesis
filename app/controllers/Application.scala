@@ -4,6 +4,7 @@ import play.api._
 import play.api.mvc._
 import models.Rungekuttatest
 import play.libs.Json
+import templates.Html
 
 object Application extends Controller {
   
@@ -12,11 +13,15 @@ object Application extends Controller {
   }
   
   def rk = Action {
-    Ok(views.html.rungekutte("Runge-Kutta test app"))
+    Ok(views.html.rungekutte("Runge-Kutta test app", Rungekuttatest()))
   }
 
-  def getRKdata = Action {
-      Ok(Rungekuttatest().printTest())
+  def javascriptRoutes = Action { implicit request =>
+    import routes.javascript._
+    Ok(
+      Routes.javascriptRouter("jsRoutes")(
+      )
+    ).as("text/javascript")
   }
   
 }

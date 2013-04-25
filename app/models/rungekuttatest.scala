@@ -42,22 +42,37 @@ case class Rungekuttatest (){
         val c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
 
         //val results = Rungekuttatest.solveFolding(t0, dt, odes, c)
-       System.out.println(tf / dt)
         val results = c :: Rungekuttatest.solveRecursive(tf, dt, odes, c.clone())
+        printTestBare()
         Rungekuttatest.printCVec(results, t0, dt)
     }
 
-  def printTest(): String = {
-    val test: List[String] = this.test()
-    test.foldLeft("")(_ + _)
-  }
+    def printTestBare() = {
+      val c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
+      val results = c :: Rungekuttatest.solveRecursive(tf, dt, odes, c.clone())
+      val printRes = Rungekuttatest.printBareCVec(results, t0, dt)
+      Rungekuttatest.print(printRes)
+    }
+
 }
 
 object Rungekuttatest {
 
+  def print(results: List[String]) = {
+    results.foreach((s: String) => System.out.println(s))
+  }
+
   def printCVec(vecs: List[VectorD], t0: Double, dt: Double): List[String] = {
     vecs match {
       case h::t => "> at t = " + "%6.3f".format (t0) + " c = " + h :: printCVec(t, t0 + dt, dt)
+      case Nil => List()
+      case _ => throw new IllegalArgumentException
+    }
+  }
+
+  def printBareCVec(vecs: List[VectorD], t0: Double, dt: Double): List[String] = {
+    vecs match {
+      case h::t => ">t:" + "%6.3f".format (t0) + " c:" + h.toStringBare + "" :: printBareCVec(t, t0 + dt, dt )
       case Nil => List()
       case _ => throw new IllegalArgumentException
     }

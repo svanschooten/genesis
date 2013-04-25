@@ -30,7 +30,9 @@ class VectorD (val dim: Int, protected var v: Array[Double] = null)
 
     override def clone() = new VectorD(dim, v.clone)
 
-    def length() = v.length
+    def length: Int = v.length
+
+    def toStringBare: String = v.mkString(" ")
 
     /** Construct a vector from two or more values (repeated values Double*).
      *  @param u0  the first value
