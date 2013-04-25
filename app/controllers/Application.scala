@@ -29,4 +29,7 @@ object Application extends Controller {
     Ok(Rungekuttatest.getJsonTest)
   }
   
+  def jsontest = Action {
+    Ok(views.html.rungekutte("Runge-Kutta json test",Rungekuttatest()))
+  }
 }
