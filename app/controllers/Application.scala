@@ -4,11 +4,14 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import models.Rungekuttatest
 
 import models._
 import views._
 
 object Application extends Controller {
+  
+  val rkt = Rungekuttatest()
   
   val loginForm = Form(
     tuple(
@@ -32,8 +35,7 @@ object Application extends Controller {
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => Redirect(routes.Projects.index).withSession("inlog" -> user._1)
-    )
+      user => Redirect(routes.Projects.index).withSession("inlog" -> user._1))
   }
 }
 
@@ -58,4 +60,9 @@ trait Secured {
   def IsAuthenticated(f: => String => Request[AnyContent] => Result) = Security.Authenticated(username, onUnauthorized) { user =>
     Action(request => f(user)(request))
   }
+
+  def rk = Action {
+    Ok(html.rungekutte("Runge-Kutta test app", rkt))
+  }
+  
 }

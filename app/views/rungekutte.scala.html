@@ -1,0 +1,14 @@
+@(title: String, rk: Rungekuttatest)
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>@title</title>
+    </head>
+    <body>
+    	@for(el <- rk.test()) {
+    		@el <br>
+    	}
+    </body>
+</html>

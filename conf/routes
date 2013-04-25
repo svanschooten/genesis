@@ -4,6 +4,7 @@
 
 # The home page
 GET     /                                   controllers.Projects.index
+GET		/rk							controllers.Application.rk
 
 # Authentication
 GET     /login                              controllers.Application.login
