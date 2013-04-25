@@ -6,9 +6,9 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
-//case class User(email: String, password: String, fname: Option[String], lname: Option[String])
+case class User(email: String, password: String, fname: Option[String], lname: Option[String])
 
-class User(email: String, password: String, fname: Option[String], lname: Option[String]) {
+object User {
   
   // -- Parsers
   
@@ -20,7 +20,7 @@ class User(email: String, password: String, fname: Option[String], lname: Option
     get[String]("user.password") ~
     get[Option[String]]("user.fname") ~
     get[Option[String]]("user.lname") map {
-      case email~password~fname~lname => new User(email, password, fname, lname)
+      case email~password~fname~lname => User(email, password, fname, lname)
     }
   }
   
@@ -33,7 +33,7 @@ class User(email: String, password: String, fname: Option[String], lname: Option
     DB.withConnection { implicit connection =>
       SQL("select * from user where email = {email}")
         .on('email -> email)
-        .as(simple.singleOpt)
+        .as(User.simple.singleOpt)
     }
   }
 
@@ -51,11 +51,11 @@ class User(email: String, password: String, fname: Option[String], lname: Option
       ).on(
         'email -> email,
         'password -> password
-      ).as(simple.singleOpt)
+      ).as(User.simple.singleOpt)
     }
   }
   
-  def save(email: String, password: String, fname: Option[String], lname: Option[String]) = {
+  def insert(email: String, password: String, fname: Option[String], lname: Option[String]) = {
     DB.withConnection{ implicit connection =>
       SQL(
         """
@@ -63,10 +63,33 @@ class User(email: String, password: String, fname: Option[String], lname: Option
         VALUES ({email}, {password}, {fname}, {lname})
         """
       ).on(
-        'email -> this.email,
+        'email -> email,
         'password -> password,
         'fname -> fname,
         'lname -> lname
+      )
+    }
+  }
+    
+  def update(id: Int, email: String,	 password: String, fname: Option[String], lname: Option[String]) = {
+    DB.withConnection{ implicit connection =>
+      SQL(
+        """
+        UPDATE User
+        SET 
+          email={email},
+          password={password},
+          fname={fname},
+          lname={lname}
+        WHERE
+          id = {id}
+        """
+      ).on(
+        'email -> email,
+        'password -> password,
+        'fname -> fname,
+        'lname -> lname,
+        'id -> id
       )
     }
   }
