@@ -42,6 +42,7 @@ case class Rungekuttatest (){
         val c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
 
         //val results = Rungekuttatest.solveFolding(t0, dt, odes, c)
+       System.out.println(tf / dt)
         val results = c :: Rungekuttatest.solveRecursive(tf, dt, odes, c.clone())
         Rungekuttatest.printCVec(results, t0, dt)
     }
