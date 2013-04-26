@@ -55,26 +55,8 @@ function drawRK(jsvalue) {
     xrange=time[time.length-1]-time[0];
     yrange=max_conc-min_conc;
     c=canvas.getContext("2d");
-    c.lineWidth = 1;
-    c.font="10px Arial";
-    c.textBaseline="top";
-    c.strokeStyle = "#d0d0d0"
     //draw the horizontal grid lines and axis legends
-    for(i = 0; i < heightParts + 1; i++) {
-        c.beginPath();
-        c.moveTo(axisWidth, (height / heightParts) * i);
-        c.lineTo(width + axisWidth, (height / heightParts) * i);
-        c.stroke();
-        c.fillText((yrange - ((yrange / heightParts) * i)).toFixed(3), 1, (height / heightParts) * i);
-    }
-    //draw the vertical grid lines and axis legends
-    for(i = 0; i < widthParts + 1; i++) {
-        c.beginPath();
-        c.moveTo((width / widthParts) * i + axisWidth, 0);
-        c.lineTo((width / widthParts) * i + axisWidth, height);
-        c.stroke();
-        c.fillText(((xrange / widthParts) * i).toFixed(3), ((width / widthParts) * i) + axisWidth, height + 1);
-    }
+    drawGrid(c, heightParts, widthParts);
     c.lineWidth = 3;
     for(var i=0;i<vectors[0].length;i++){
         //Begin drawing the plotline
@@ -87,8 +69,7 @@ function drawRK(jsvalue) {
             c.lineTo(time[j+1]/xrange*width + axisWidth,height-vectors[j+1][i]/yrange*height);
         }
         //Set stroke color to semi-random using the HSV colorcircle
-        color = toRGB(i * (360/ (vectors[0].length + 1)), 1 - (Math.random() * 0.2), 0.3 + ((Math.random() * 0.2) - (0.2 * 0.5)));
-        c.strokeStyle = rgbToHex(color[0], color[1], color[2]);
+        c.strokeStyle = randomRGB(i, (360/ (vectors[0].length + 1)));
         c.stroke();
         c.closePath();
         //Begin drawing the legenda
@@ -100,6 +81,42 @@ function drawRK(jsvalue) {
         c.lineTo(width + 25 + axisWidth, elemHeight);
         c.stroke();
         c.fillText(names[i],width + 30 + axisWidth, elemHeight);
+    }
+}
+
+/**
+Method to get a random RGB color according to the part in the HSV domain the counter is in.
+The counter multiplied with a step size to get a different color for every iteration.
+*/
+function randomRGB(i, stepSize) {
+    var color = toRGB(i * stepSize, 1 - (Math.random() * 0.2), 0.3 + ((Math.random() * 0.2) - (0.2 * 0.5)));
+    return rgbToHex(color[0], color[1], color[2]);
+}
+
+/**
+Extracted method to draw a grid on the canvas using an equal distribution
+and adding the axis according to the height and width parts.
+*/
+function drawGrid(context, heightParts, widthParts) {
+    context.lineWidth = 1;
+    context.font="10px Arial";
+    context.textBaseline="top";
+    context.strokeStyle = "#d0d0d0"
+    //draw the horizontal grid lines and axis legends
+    for(i = 0; i < heightParts + 1; i++) {
+        context.beginPath();
+        context.moveTo(axisWidth, (height / heightParts) * i);
+        context.lineTo(width + axisWidth, (height / heightParts) * i);
+        context.stroke();
+        context.fillText((yrange - ((yrange / heightParts) * i)).toFixed(3), 1, (height / heightParts) * i);
+    }
+    //draw the vertical grid lines and axis legends
+    for(i = 0; i < widthParts + 1; i++) {
+        context.beginPath();
+        context.moveTo((width / widthParts) * i + axisWidth, 0);
+        context.lineTo((width / widthParts) * i + axisWidth, height);
+        context.stroke();
+        context.fillText(((xrange / widthParts) * i).toFixed(3), ((width / widthParts) * i) + axisWidth, height + 1);
     }
 }
 
