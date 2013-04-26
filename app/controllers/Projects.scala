@@ -20,16 +20,32 @@ object Projects extends Controller with Secured {
       formWithErrors => BadRequest(html.index("error")),
       {
         case (name1, name2) => {
-          val rkt = new Rungekuttatest()
           val c = new Gene(4.1585,(0.0235,0.8338))
           val ag = new AndGate(c,4.5272,238.9569,3)
-          val odes = new ODEFactory().mkODEs(List(ag));
+          val odes = ODEFactory.mkODEs(Array(ag))
           val cVec = new VectorD(Array(8.0,5.0,7.0))
           //solveFolding(t: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD)
-          List[VectorD] result = rkt.solveFolding(1, 2, odes, cVec)
-          val vd1 = new VectorD(Array(1.0,2.0,3.0))
-          val vd2 = new VectorD(Array(4.0,5.0,6.0))
-          Ok(html.formResult(List(vd1,vd2)))
+          val result = Rungekuttatest.solveFolding(1, 2, odes, cVec)
+          //val vd1 = new VectorD(Array(1.0,2.0,3.0))
+          //val vd2 = new VectorD(Array(4.0,5.0,6.0))
+	      var l: List[String] = List()
+	      // concentrations    H2, O2, O,   H,  OH, H2O
+	      //                   0   1   2    3   4   5
+	      var con = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
+	
+	      var results = Rungekuttatest.solveFolding(tf, dt, odes, con)
+	      var t = t0
+	      for (i <- 1 to n - 1) {
+	          if ( results.isEmpty){
+	            c = new VectorD(Array(0.0))
+	          } else {
+	            c = results.head
+	            results = results.tail
+	          }
+	            l = l ++ ("> at t = " + "%6.3f".format(t) + " c = " + c :: List())
+	            t += dt
+	        }
+          Ok(html.formResult(l))
         }   
       }
     )
