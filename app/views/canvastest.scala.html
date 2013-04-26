@@ -43,16 +43,9 @@ function draw(vecs) {
             if(min_conc>=w) min_conc=w;
         });
     });
-    cv=document.getElementById("gdraw");
+    cv=$("#gdraw")[0];
 	cv.width=cv.width;
 	c=cv.getContext("2d");
-    //c.fillStyle="#000";
-	//c.fillRect(0,0,cv.width,cv.height);
-	//c.arc(cv.width/2,cv.height/2,166.5,0,2*Math.PI,true);
-	//c.closePath();
-	//c.strokeStyle="#AAA";
-	//c.stroke();
-	//c.fill();
     c.fillStyle="#000";
     c.strokeRect(1,1,cv.width-1,cv.height-1);
     var xrange=time[time.length-1]-time[0];
@@ -70,11 +63,6 @@ function draw(vecs) {
         c.stroke();
         c.closePath();
 	}
-	c.strokeStyle="#FFF";
-	c.stroke();
-	//c.fillStyle="#DDD";
-	//c.fill();
-	c.closePath();
 }
 </script>
 </head>
