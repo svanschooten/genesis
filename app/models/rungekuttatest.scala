@@ -56,7 +56,7 @@ case class Rungekuttatest (){
       val c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
       val results = c :: Rungekuttatest.solveRecursive(t0, tf, dt, odes, c.clone())
       val printRes = Rungekuttatest.printBareCVec(results, t0, dt)
-      Rungekuttatest.print(printRes)
+      //Rungekuttatest.print(printRes)
     }
 
 
