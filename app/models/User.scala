@@ -15,7 +15,7 @@ object User {
   /**
    * Parse a User from a ResultSet
    */
-  val simple = {
+  val userParser = {
     get[Int]("user.id") ~
     get[String]("user.email") ~
     get[String]("user.password") ~
@@ -34,7 +34,7 @@ object User {
     DB.withConnection { implicit connection =>
       SQL("select * from user where email = {email}")
         .on('email -> email)
-        .as(User.simple.singleOpt)
+        .as(User.userParser.singleOpt)
     }
   }
 
@@ -52,7 +52,7 @@ object User {
       ).on(
         'email -> email,
         'password -> password
-      ).as(User.simple.singleOpt)
+      ).as(User.userParser.singleOpt)
     }
   }
   
