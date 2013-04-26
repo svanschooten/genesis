@@ -59,8 +59,7 @@ case class Rungekuttatest (){
    */
   def testResults(): List[(VectorD,VectorD)] = {
       val c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
-      val b = Rungekuttatest.zeros(c)
-      (b,c) :: Rungekuttatest.solveFolding(t0, tf, dt, odes.zip(odes), c.clone())
+      Rungekuttatest.solveFolding(t0, tf, dt, odes.zip(odes), c.clone())
   }
 
   def genJson = {
