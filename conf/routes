@@ -4,7 +4,7 @@
 
 # The home page
 GET     /                                   controllers.Projects.index
-GET		/rk							controllers.Application.rk
+GET     /jsontest                   		controllers.Application.jsontest
 
 # Authentication
 GET     /login                              controllers.Application.login
@@ -14,7 +14,7 @@ POST    /login                              controllers.Application.authenticate
 GET		/formTest							controllers.Projects.formFunction
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file               		controllers.Assets.at(path="/public", file)
 
 # Javascript routing
-GET    /assets/javascripts/routes      controllers.Application.javascriptRoutes()
+GET    /assets/javascripts/routes      		controllers.Application.javascriptRoutes()

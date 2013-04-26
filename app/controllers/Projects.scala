@@ -20,31 +20,24 @@ object Projects extends Controller with Secured {
       formWithErrors => BadRequest(html.index("error")),
       {
         case (name1, name2) => {
-          val c = new Gene(4.1585,(0.0235,0.8338))
-          val ag = new AndGate(c,4.5272,238.9569,3)
-          val odes = ODEFactory.mkODEs(List(ag))
+          var l: List[String] = List()
+          val pa = new ProteinActivator("A",0,List(),List(1,2),List(3,4),5,6)
+          val pb = new ProteinActivator("B",0,List(),List(1,2),List(3,4),5,6)
+          val pc = new ProteinActivator("C",0,List(pa,pb),List(1,2),List(3,4),5,6)
+          val chain = new ProteinChain(List(pa,pb),List(List(1,2),List(3)))
+          val parts = Part.parseProteinChain(chain)
+          val odes = ODEFactory.mkODEs(parts).toArray
+          l::=chain.toString()
+          l::=("parts.length: "+parts.length.toString())
+          odes.foreach(r => l = l:+r.toString)
           val cVec = new VectorD(Array(8.0,5.0,7.0))
-          //solveFolding(t: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD)
-          val result = Rungekuttatest.solveFolding(1, 2, odes, cVec)
-          //val vd1 = new VectorD(Array(1.0,2.0,3.0))
-          //val vd2 = new VectorD(Array(4.0,5.0,6.0))
-	      var l: List[String] = List()
-	      // concentrations    H2, O2, O,   H,  OH, H2O
-	      //                   0   1   2    3   4   5
-	      var con = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
-	
-	      var results = Rungekuttatest.solveFolding(tf, dt, odes, con)
+          val t0 = 0.0
+	      val tf = 5.0
+	      val n  = 200.0
+	      val dt = tf / n
+	      var result = Rungekuttatest.solveFolding(0.0, 0.01, odes, cVec)
 	      var t = t0
-	      for (i <- 1 to n - 1) {
-	          if ( results.isEmpty){
-	            c = new VectorD(Array(0.0))
-	          } else {
-	            c = results.head
-	            results = results.tail
-	          }
-	            l = l ++ ("> at t = " + "%6.3f".format(t) + " c = " + c :: List())
-	            t += dt
-	        }
+	      result.foreach(r => l::=("t = " + "%6.3f".format(t) + " : " + (r._1+r._2).toString))
           Ok(html.formResult(l))
         }   
       }
@@ -61,9 +54,9 @@ object Projects extends Controller with Secured {
   def index = IsAuthenticated { username => _ =>
     User.findByInlog(username).map { user =>
       Ok(
-       /*html.index("Welcome")*/
-       //html.proteinform(ProteinForm)
-    	html.rungekutte("Runge-Kutta test app", Rungekuttatest())
+       //html.index("Welcome")
+       html.proteinform(ProteinForm)
+    	//html.rungekutte("Runge-Kutta test app", Rungekuttatest())
       )
     }.getOrElse(Forbidden)
   }

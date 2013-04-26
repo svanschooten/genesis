@@ -40,7 +40,7 @@ object Application extends Controller {
       user => Redirect(routes.Projects.index).withSession("inlog" -> user._1))
   }
   
-   def rk = Action {
+   def jsontest = Action {
     Ok(views.html.rungekutte("Runge-Kutta test app", Rungekuttatest()))
   }
 
@@ -48,7 +48,7 @@ object Application extends Controller {
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-        controllers.routes.javascript.Application.getJsonTest
+        //controllers.routes.javascript.Application.getJsonTest
       )
     ).as("text/javascript")
   }
@@ -79,5 +79,4 @@ trait Secured {
   def IsAuthenticated(f: => String => Request[AnyContent] => Result) = Security.Authenticated(username, onUnauthorized) { user =>
     Action(request => f(user)(request))
   }
-  
 }
