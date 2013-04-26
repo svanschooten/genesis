@@ -19,7 +19,7 @@ object Application extends Controller {
   )
 
   val database = Db.query[Protein].fetch()
-  
+  //val database = Db.fetchWithSql[Protein]("SELECT id FROM protein")
   /**
    * Login page.
    */

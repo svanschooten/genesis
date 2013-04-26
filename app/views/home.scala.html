@@ -10,8 +10,8 @@
  <body class="yui-skin-sam">
     <div class="btn-group" data-toggle="buttons-checkbox">
     	<button type="button" class="btn btn-primary" id="add-tab">New circuit</button>
-    	<button type="button" class="btn btn-primary">Save circuit</button>
-    	<button type="button" class="btn btn-primary">Open circuit</button>
+    	<button type="button" class="btn btn-primary">Save circuit (not implemented)</button>
+    	<button type="button" class="btn btn-primary">Open circuit (not implemented)</button>
     </div>
 <div id="demo" class="yui-navset">
 <br>
@@ -19,17 +19,16 @@
     <div class="yui-content"></div>
 </div>
 <br>
-    <div class="span4">
-      <div class="well sidebar-nav">
-            <ul class="nav nav-list">
-				<li class="nav-header">Protein</li>
+<div class="span3" style="text-align:right">
+    <div class="well sidebar-nav">
+         <ul class="nav nav-list">
+		 	<li class="nav-header">ProteinList</li>
 				@for(protein <- proteins) {
 					<li> </li>
-					<li href="#" id = "blob" class="btn large primary" rel="popover" style="margin-top: 1px">@protein</li>
+					<li class="btn small primary">Protein : @protein.getName, Valk : @protein.getValk</li>
 			} 
-            </ul>
-      </div><!--/.well -->
-    </div><!--/span-->
-  </div><!--/row-->
+          </ul>      
+    </div>
+</div>
 
 }

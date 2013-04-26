@@ -2592,3 +2592,264 @@ CREATE TABLE protein
     valk_2 DOUBLE NOT NULL,
     name CLOB NOT NULL,
     PRIMARY KEY (id) ) [42101-168]
+04-26 12:01:51 jdbc[154]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:02:09 jdbc[168]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:03:02 jdbc[180]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:04:52 jdbc[192]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:05:59 jdbc[207]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:16:27 jdbc[218]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:17:08 jdbc[233]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:17:55 jdbc[244]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:23:51 jdbc[257]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:24:09 jdbc[271]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:33:32 jdbc[285]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:33:54 jdbc[297]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:38:27 jdbc[310]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:39:23 jdbc[321]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:39:58 jdbc[334]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:40:58 jdbc[348]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:50:32 jdbc[360]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:52:26 jdbc[373]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:56:06 jdbc[386]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:56:34 jdbc[399]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:57:59 jdbc[411]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 12:58:17 jdbc[425]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 13:00:21 jdbc[438]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 13:02:27 jdbc[451]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 13:03:10 jdbc[464]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 13:04:13 jdbc[476]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 13:12:18 jdbc[12]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 13:13:53 jdbc[26]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
+04-26 13:20:23 jdbc[36]: exception
+org.h2.jdbc.JdbcSQLException: Table "PROTEIN" already exists; SQL statement:
+CREATE TABLE protein  
+  ( id BIGINT AUTO_INCREMENT NOT NULL,
+    vald_2 DOUBLE NOT NULL,
+    vald_1 DOUBLE NOT NULL,
+    valk_2 DOUBLE NOT NULL,
+    name CLOB NOT NULL,
+    PRIMARY KEY (id) ) [42101-168]
