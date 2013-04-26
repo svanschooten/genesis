@@ -6,6 +6,14 @@ body {
 	max-width: 1200px;
 }
 
+.footer-right {
+	float: right;
+}
+
+#navbar-inner-right {
+	float: right;
+}
+
 #logo-img {
 	overflow: auto;
 }

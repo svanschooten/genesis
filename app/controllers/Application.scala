@@ -11,13 +11,15 @@ import views._
 object Application extends Controller {
   val loginForm = Form(
     tuple(
-      "email" -> text,
+      "inlog" -> text,
       "password" -> text
-    ) verifying ("Wrong email or password", result => result match {
-      case (email, password) => User.authenticate(email, password).isDefined
+    ) verifying ("Wrong inlog or password", result => result match {
+      case (inlog, password) => User.authenticate(inlog, password).isDefined
     })
   )
 
+  val database = Db.query[Protein].fetch()
+  
   /**
    * Login page.
    */
@@ -40,7 +42,7 @@ object Application extends Controller {
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => Redirect(routes.Home.home).withSession("userid" -> user._1)
+      user => Redirect(routes.Home.home).withSession("inlog" -> user._1)
     )
   }
 }
@@ -53,7 +55,7 @@ trait Secured {
   /**
    * Retrieve the connected user inlog.
    */
-  private def username(request: RequestHeader) = request.session.get("userid")
+  private def username(request: RequestHeader) = request.session.get("inlog")
 
 
   private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Application.login)
