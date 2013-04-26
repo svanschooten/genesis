@@ -46,15 +46,17 @@ case class Rungekuttatest (){
         Rungekuttatest.printCVec(results, t0, dt)
     }
 
-    def testResults(): List[VectorD] = {
+    def testResults(): List[(VectorD,VectorD)] = {
         val c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
-        c :: Rungekuttatest.solveRecursive(t0, tf, dt, odes, c.clone())
+        val b = Rungekuttatest.zeros(c)
+        (b,c) :: Rungekuttatest.solveRecursive(t0, tf, dt, odes.zip(odes), b.clone(), c.clone())
         //c :: Rungekuttatest.solveFolding(t0, dt, odes, c)
     }
 
     def printTestBare() = {
       val c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
-      val results = c :: Rungekuttatest.solveRecursive(t0, tf, dt, odes, c.clone())
+      val b = Rungekuttatest.zeros(c)
+      val results = (b,c) :: Rungekuttatest.solveRecursive(t0, tf, dt, odes.zip(odes), b.clone(), c.clone())
       val printRes = Rungekuttatest.printBareCVec(results, t0, dt)
       Rungekuttatest.print(printRes)
     }
@@ -64,12 +66,14 @@ case class Rungekuttatest (){
 
     def genJson(): JsValue = Json.toJson(
         Map("t" -> Json.toJson((t0 to tf by dt).toList),
-            "vectors" -> Json.toJson(convert(testResults()))
+            "vectors" -> Json.toJson(convert(testResults().map(_._2)))
         )
     )
 }
 
 object Rungekuttatest {
+
+  private def zeros(v: VectorD): VectorD = new VectorD(Array.fill(v.length)(0.0))
 
   def getJsonTest: JsValue = {
     Rungekuttatest().genJson()
@@ -79,17 +83,17 @@ object Rungekuttatest {
     results.foreach((s: String) => System.out.println(s))
   }
 
-  def printCVec(vecs: List[VectorD], t0: Double, dt: Double): List[String] = {
+  def printCVec(vecs: List[(VectorD,VectorD)], t0: Double, dt: Double): List[String] = {
     vecs match {
-      case h::t => "> at t = " + "%6.3f".format (t0) + " c = " + h :: printCVec(t, t0 + dt, dt)
+      case h::t => "> at t = " + "%6.3f".format (t0) + " c = " + h._2 :: printCVec(t, t0 + dt, dt)
       case Nil => List()
       case _ => throw new IllegalArgumentException
     }
   }
 
-  def printBareCVec(vecs: List[VectorD], t0: Double, dt: Double): List[String] = {
+  def printBareCVec(vecs: List[(VectorD,VectorD)], t0: Double, dt: Double): List[String] = {
     vecs match {
-      case h::t => ">t:" + "%6.3f".format (t0) + " c:" + h.toStringBare + "" :: printBareCVec(t, t0 + dt, dt )
+      case h::t => ">t:" + "%6.3f".format (t0) + " c:" + h._2.toStringBare + "" :: printBareCVec(t, t0 + dt, dt )
       case Nil => List()
       case _ => throw new IllegalArgumentException
     }
@@ -108,10 +112,11 @@ object Rungekuttatest {
    * @param cVec The initial concentrations
    * @return The list of concentration at each time increment 0.0+dt*i
    */
-  def solveFolding(t: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
-    (0.0 to t by dt).toList.foldLeft(List[VectorD]())((l: List[VectorD], step: Double) => l match {
-      case h::t => RungeKutta.integrateVV(odes, cVec.clone(), step, 0.0, dt) :: h :: t
-      case Nil => cVec :: Nil
+  def solveFolding(t: Double, dt: Double, odes: Array [(DerivativeV,DerivativeV)], cVec: VectorD): List[(VectorD,VectorD)] = {
+    (0.0 to t by dt).toList.foldLeft(List[(VectorD,VectorD)]())((l: List[(VectorD,VectorD)], step: Double) => l match {
+      case h::t => (RungeKutta.integrateVV(odes.map(_._1), zeros(cVec), step, 0.0, dt),
+                    RungeKutta.integrateVV(odes.map(_._2), cVec.clone(), step, 0.0, dt)) :: h :: t
+      case Nil => (new VectorD(Array.fill(cVec.length)(0.0)),cVec) :: Nil
     }).reverse
   }
 
@@ -123,13 +128,13 @@ object Rungekuttatest {
   * @param cVec The concentration vector used in the ODE's
   * @return The list of concentrations.
   */
-  def solveRecursive(t0: Double, time: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
+  def solveRecursive(t0: Double, time: Double, dt: Double, odes: Array [(DerivativeV,DerivativeV)], bVec: VectorD, cVec: VectorD): List[(VectorD,VectorD)] = {
     require(math.abs(time / dt) <= 1000.0,"Resolution too high, provide smaller step size.")
     if (time <= t0) {
       List()
     } else {
-      val res = solveSingle(odes, cVec, dt)
-      res :: solveRecursive(t0, time - dt, dt, odes, res.clone())
+      val res = (solveSingle(odes.map(_._1), bVec, dt),solveSingle(odes.map(_._2), cVec, dt))
+      res :: solveRecursive(t0, time - dt, dt, odes, res._1.clone(), res._2.clone())
     }
   }
 }
