@@ -3,6 +3,8 @@ package controllers
 import play.api._
 import play.api.mvc._
 import models.Rungekuttatest
+import play.libs.Json
+import templates.Html
 
 object Application extends Controller {
   
@@ -27,4 +29,15 @@ object Application extends Controller {
     ).as("text/javascript")
   }
 
+  def getJsonTest = Action {
+    Ok(Rungekuttatest.getJsonTest)
+  }
+  
+  def jsontest = Action {
+    Ok(Rungekuttatest().genJson).as("text/plain")
+  }
+
+  def canvastest = Action {
+    Ok(views.html.canvastest("just a quick test with a canvas"))
+  }
 }

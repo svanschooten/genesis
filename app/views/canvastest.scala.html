@@ -1,0 +1,85 @@
+@(title: String)
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>@title</title>
+<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+<script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+<script type="text/javascript">
+function go() {
+    var xmlhttp=new XMLHttpRequest();
+	xmlhttp.onreadystatechange=function(){
+		if(xmlhttp.readyState==4 && xmlhttp.status==200)
+            draw(jQuery.parseJSON(xmlhttp.responseText));
+	};
+	xmlhttp.open("GET","/jsontest",true);
+	xmlhttp.send();
+}
+
+function colswitch(i) {
+    switch(i){
+    case 0: return "#000";
+    case 1: return "#A00";
+    case 2: return "#00A";
+    case 3: return "#0A0";
+    case 4: return "#AA0";
+    case 5: return "#A0A";
+    case 6: return "#0AA";
+    case 7: return "#FFF";
+    default: return "#000";
+    }
+}
+
+function draw(vecs) {
+    var time = vecs["t"];
+    var vectors = vecs["vectors"];
+    var max_conc=-1;
+    var min_conc=1E10;
+    vectors.forEach(function(v){
+        v.forEach(function(w){
+            if(max_conc<=w) max_conc=w;
+            if(min_conc>=w) min_conc=w;
+        });
+    });
+    cv=document.getElementById("gdraw");
+	cv.width=cv.width;
+	c=cv.getContext("2d");
+    //c.fillStyle="#000";
+	//c.fillRect(0,0,cv.width,cv.height);
+	//c.arc(cv.width/2,cv.height/2,166.5,0,2*Math.PI,true);
+	//c.closePath();
+	//c.strokeStyle="#AAA";
+	//c.stroke();
+	//c.fill();
+    c.fillStyle="#000";
+    c.strokeRect(1,1,cv.width-1,cv.height-1);
+    var xrange=time[time.length-1]-time[0];
+    var yrange=max_conc-min_conc;
+	for(var i=0;i<vectors[0].length;i++){
+        var j;
+        c.beginPath();
+		for(j=0;j<time.length-1;j++){
+            var current_x = time[j]/xrange*cv.width;
+            var current_y = cv.height-vectors[j][i]/yrange*cv.heigh;
+			c.moveTo(current_x,current_y);
+			c.lineTo(time[j+1]/xrange*cv.width,cv.height-vectors[j+1][i]/yrange*cv.height);
+		}
+        c.strokeStyle=colswitch(i);
+        c.stroke();
+        c.closePath();
+	}
+	c.strokeStyle="#FFF";
+	c.stroke();
+	//c.fillStyle="#DDD";
+	//c.fill();
+	c.closePath();
+}
+</script>
+</head>
+
+<body onload="go()">
+<canvas id="gdraw" width="1000" height="500"></canvas>
+</body>
+</html>
