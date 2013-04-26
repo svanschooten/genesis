@@ -9,7 +9,7 @@ case class Rungekuttatest (){
   
 	val t0 = 0.0                         // initial time
     val tf = 5.0                         // final time
-    val n  = 200                        // number of time steps
+    val n  = 500                        // number of time steps
 
     val kf = (1.0,  1.0,  0.5)     // forward reaction rates
     val kb = (0.02, 0.02, 0.01)    // backward reaction rates

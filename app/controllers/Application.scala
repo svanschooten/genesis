@@ -18,10 +18,10 @@ object Application extends Controller {
 
   def javascriptRoutes = Action { implicit request =>
     import routes.javascript._
-    Ok(
+    Ok("wut"/*
       Routes.javascriptRouter("jsRoutes")(
         controllers.routes.javascript.Application.getJsonTest
-      )
+      )*/
     ).as("text/javascript")
   }
 
@@ -30,6 +30,10 @@ object Application extends Controller {
   }
   
   def jsontest = Action {
-    Ok(views.html.rungekutte("Runge-Kutta json test",Rungekuttatest()))
+    Ok(Rungekuttatest().genJson).as("text/plain")
+  }
+
+  def canvastest = Action {
+    Ok(views.html.canvastest("just a quick test with a canvas"))
   }
 }
