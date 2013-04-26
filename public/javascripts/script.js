@@ -5,7 +5,7 @@ $(document).ready(function(){
 });
 
 function setupTestCanvas(){
-    jsRoutes.controllers.Application.getJsonTest().ajax({
+    jsRoutes.controllers.Application.jsontest().ajax({
         success: function(response) {
             drawRK(response)
         },
