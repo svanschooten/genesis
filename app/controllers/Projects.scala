@@ -22,7 +22,7 @@ object Projects extends Controller with Secured {
         case (name1, name2) => {
           val c = new Gene(4.1585,(0.0235,0.8338))
           val ag = new AndGate(c,4.5272,238.9569,3)
-          val odes = ODEFactory.mkODEs(Array(ag))
+          val odes = ODEFactory.mkODEs(List(ag))
           val cVec = new VectorD(Array(8.0,5.0,7.0))
           //solveFolding(t: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD)
           val result = Rungekuttatest.solveFolding(1, 2, odes, cVec)
