@@ -53,6 +53,10 @@ case class Rungekuttatest (){
       Rungekuttatest.printCVec(results, t0, dt)
   }
 
+  /**
+   * Generalized test method to get the results of the ODE in this test object.
+   * @return The list of tuples containing the results.
+   */
   def testResults(): List[(VectorD,VectorD)] = {
       val c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
       val b = Rungekuttatest.zeros(c)
@@ -67,10 +71,29 @@ case class Rungekuttatest (){
 
 object Rungekuttatest {
 
+  /**
+   * Initializer method for a VectorD with only zeros.
+   * @param v The vector to be filled with zeros.
+   * @return The vector filled with zeros.
+   */
   private def zeros(v: VectorD): VectorD = new VectorD(Array.fill(v.length)(0.0))
 
+  /**
+   * A helper method for the mapping of results to JSON.
+   * @param l The list to be mapped.
+   * @return the mapped list of lists.
+   */
   private def convert(l: List[VectorD]): List[List[Double]] = l.map(_.getConts)
 
+
+  /**
+   * This method maps all the results in the given list to a JSON object.
+   * @param t0 Starting time.
+   * @param tf Ending time.
+   * @param dt Time increments.
+   * @param results The list with result vectors.
+   * @return A JSON object containing the results.
+   */
   protected def resultsToJson(t0: Double, tf: Double, dt: Double, results: List[(VectorD,VectorD)]): JsValue = Json.toJson(
     Map("t" -> Json.toJson((t0 to tf by dt).toList),
       "vectors" -> Json.toJson(convert(results.map(_._2))),
@@ -78,11 +101,29 @@ object Rungekuttatest {
     )
   )
 
+  /**
+   * Generalised method for solving the ODE's given and returns a JSON value.
+   * @param t0 The starting time.
+   * @param tf The end time for the simulations.
+   * @param dt The time increments.
+   * @param odes The Array of methods the be solved.
+   * @param cVec The initial concentration vector.
+   * @return A JSON object containing all the results.
+   */
   def solve(t0: Double, tf: Double, dt: Double, odes: Array [(DerivativeV,DerivativeV)], cVec: VectorD): JsValue = {
     val results = solveFolding(t0, tf, dt, odes, cVec)
     resultsToJson(t0, tf, dt, results)
   }
 
+  /**
+   * Used to return a formatted List[String] from the result list.
+   * The format is:
+   * > at t = 'specific time in 3 decimals' c = ['all elements in the vector for that specific time']
+   * @param vecs The list of results.
+   * @param t0 Starting time.
+   * @param dt The time increments.
+   * @return The List[String] as the format is described.
+   */
   def printCVec(vecs: List[(VectorD,VectorD)], t0: Double, dt: Double): List[String] = {
     vecs match {
       case h::t => "> at t = " + "%6.3f".format (t0) + " c = " + h._2.toStringBare :: printCVec(t, t0 + dt, dt)
@@ -94,7 +135,7 @@ object Rungekuttatest {
   /** Solve a list of ODEs, given start concentrations and time span and return a list of
    * vectors with the concentrations at each point in time; time is sliced according to the
    * step size
-   * @param t The final time (time span will be [0.0, t])
+   * @param t0 The final time (time span will be [0.0, t])
    * @param dt The step size
    * @param odes The list of ODE functions
    * @param cVec The initial concentrations

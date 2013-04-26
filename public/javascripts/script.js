@@ -1,16 +1,21 @@
+/**
+Authors:
+-Jeroen Peperkamp
+-Stijn van Schooten
+*/
+
+
+/**
+Method that fires when the document is loaded.
+Containing all the setup methods and listener setups.
+*/
 $(document).ready(function(){
     setupTestCanvas();
 });
 
-function setupTestCanvas(){
-    jsRoutes.controllers.Application.jsontest().ajax({
-        success: function(response) {
-            drawRK(response)
-        },
-        error: function(response) { alertError(response)}
-    })
-}
-
+/**
+Standard error message for AJAX requests and alerts.
+*/
 function alertError(error) {
     alert(error.responseText);
 }

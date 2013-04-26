@@ -1,10 +1,33 @@
+/**
+Authors:
+-Jeroen Peperkamp
+-Stijn van Schooten
+*/
+
+
+//Global variables
 var width;
 var height;
 var axisWidth;
 var xrange;
 var yrange
 
+/**
+Makes a request for the JSON test method calculating a standard ODE and sending the results in JSON back.
+When received, the results are plotted on the canvas.
+*/
+function setupTestCanvas(){
+    jsRoutes.controllers.Application.jsontest().ajax({
+        success: function(response) {
+            drawRK(response)
+        },
+        error: function(response) { alertError(response)}
+    })
+}
 
+/**
+Method to plot the results of the JSON request on a canvas element using dynamic scaling.
+*/
 function drawRK(jsvalue) {
     var canvas = $("#plotCanvas")[0];
     var data = $.parseJSON(jsvalue);
@@ -19,7 +42,9 @@ function drawRK(jsvalue) {
             if(min_conc>=w) min_conc=w;
         });
     });
-    //Start drawing the grid on the canvas.
+    //Start drawing on the canvas.
+    //First set all the correct elements for re-use
+    //and compensate for axiswidth
     width = canvas.width;
     height = canvas.height;
     var heightParts = 4;
@@ -34,7 +59,7 @@ function drawRK(jsvalue) {
     c.font="10px Arial";
     c.textBaseline="top";
     c.strokeStyle = "#d0d0d0"
-    //c.strokeRect(20,0, width, height)
+    //draw the horizontal grid lines and axis legends
     for(i = 0; i < heightParts + 1; i++) {
         c.beginPath();
         c.moveTo(axisWidth, (height / heightParts) * i);
@@ -42,6 +67,7 @@ function drawRK(jsvalue) {
         c.stroke();
         c.fillText((yrange - ((yrange / heightParts) * i)).toFixed(3), 1, (height / heightParts) * i);
     }
+    //draw the vertical grid lines and axis legends
     for(i = 0; i < widthParts + 1; i++) {
         c.beginPath();
         c.moveTo((width / widthParts) * i + axisWidth, 0);
@@ -60,6 +86,7 @@ function drawRK(jsvalue) {
             c.moveTo(current_x + axisWidth,current_y);
             c.lineTo(time[j+1]/xrange*width + axisWidth,height-vectors[j+1][i]/yrange*height);
         }
+        //Set stroke color to semi-random using the HSV colorcircle
         color = toRGB(i * (360/ (vectors[0].length + 1)), 1 - (Math.random() * 0.2), 0.3 + ((Math.random() * 0.2) - (0.2 * 0.5)));
         c.strokeStyle = rgbToHex(color[0], color[1], color[2]);
         c.stroke();
@@ -76,24 +103,35 @@ function drawRK(jsvalue) {
     }
 }
 
+/**
+Method to clear the mouseposition div.
+*/
 function clearMouseOverCanvas() {
-
     $("#canvasMouse")[0].innerHTML = " ";
 }
 
+/**
+Method to set the mouseposition div with the time and concentration for that moment.
+*/
 function mouseOverCanvas(event) {
     var x = event.offsetX;
     var y = event.offsetY;
     if((x > axisWidth && x < axisWidth+width) && (y < height)) {
-        $("#canvasMouse")[0].innerHTML = (((x - axisWidth) / width)* xrange).toFixed(5) + " " + (yrange - ((y / height) * yrange)).toFixed(5);
+        $("#canvasMouse")[0].innerHTML = "t:" + (((x - axisWidth) / width)* xrange).toFixed(5) + " c:" + (yrange - ((y / height) * yrange)).toFixed(5);
     }
 }
 
+/**
+Method to write RGB component to hexadecimal
+*/
 function componentToHex(c) {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
 }
 
+/**
+Method to write RGB to HEX color format
+*/
 function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
