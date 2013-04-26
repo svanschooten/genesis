@@ -28,10 +28,6 @@ object Application extends Controller {
       )
     ).as("text/javascript")
   }
-
-  def getJsonTest = Action {
-    Ok(Rungekuttatest.getJsonTest)
-  }
   
   def jsontest = Action {
     Ok(Rungekuttatest().genJson).as("text/plain")
