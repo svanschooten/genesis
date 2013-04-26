@@ -5,11 +5,15 @@ import play.api.libs.json._
 import scalation.{VectorD, RungeKutta}
 import scalation.Derivatives.DerivativeV
 
+/**
+ * ODE solving class containing some testing values but also contains an actual ODE solving method using the RungeKutta method.
+ * Also contains an method to generate the JSON object containing the results and a method to return the results as a List[Sting] object.
+ */
 case class Rungekuttatest (){
   
 	val t0 = 0.0                         // initial time
-  val tf = 5.0                         // final time
-  val n  = 500                        // number of time steps
+  val tf = 4.0                         // final time
+  val n  = 200                        // number of time steps
 
   val kf = (1.0,  1.0,  0.5)     // forward reaction rates
   val kb = (0.02, 0.02, 0.01)    // backward reaction rates
@@ -38,6 +42,10 @@ case class Rungekuttatest (){
 
   val dt = tf / n                                 // time step
 
+  /**
+   * Testing method for the standard contained test values.
+   * @return A list of Strings that contain the results.
+   */
   def test(): List[String] = {
       // concentrations    H2, O2, O,   H,  OH, H2O
       //                   0   1   2    3   4   5
@@ -65,7 +73,8 @@ object Rungekuttatest {
 
   protected def resultsToJson(t0: Double, tf: Double, dt: Double, results: List[(VectorD,VectorD)]): JsValue = Json.toJson(
     Map("t" -> Json.toJson((t0 to tf by dt).toList),
-      "vectors" -> Json.toJson(convert(results.map(_._2)))
+      "vectors" -> Json.toJson(convert(results.map(_._2))),
+      "names" -> Json.toJson((0 to results.head._1.length).toList)
     )
   )
 
@@ -91,8 +100,8 @@ object Rungekuttatest {
    * @param cVec The initial concentrations
    * @return The list of concentration at each time increment 0.0+dt*i
    */
-  private def solveFolding(t0: Double, t: Double, dt: Double, odes: Array [(DerivativeV,DerivativeV)], cVec: VectorD): List[(VectorD,VectorD)] = {
-    (t0 to t by dt).toList.foldLeft(List[(VectorD,VectorD)]())((l: List[(VectorD,VectorD)], step: Double) => l match {
+  private def solveFolding(t0: Double, tf: Double, dt: Double, odes: Array [(DerivativeV,DerivativeV)], cVec: VectorD): List[(VectorD,VectorD)] = {
+    (t0 to tf by dt).toList.foldLeft(List[(VectorD,VectorD)]())((l: List[(VectorD,VectorD)], step: Double) => l match {
       case h::t => (RungeKutta.integrateVV(odes.map(_._1), zeros(cVec), step, 0.0, dt),
                     RungeKutta.integrateVV(odes.map(_._2), cVec.clone(), step, 0.0, dt)) :: h :: t
       case Nil => (new VectorD(Array.fill(cVec.length)(0.0)),cVec) :: Nil
