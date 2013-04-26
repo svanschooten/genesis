@@ -44,8 +44,10 @@ object User {
     DB.withConnection { implicit connection =>
       SQL(
         """
-         select * from user where 
-         email = {email} and password = {password}
+         SELECT *
+         FROM User
+         WHERE email = {email} 
+          AND password = {password}
         """
       ).on(
         'email -> email,
@@ -71,7 +73,7 @@ object User {
     }
   }
   
-  /** Updates user's email */
+  /** Updates a user's email, provided the user's id */
   def updateEmail(id: Int, email: String) = {
     DB.withConnection{ implicit connection =>
       SQL(
@@ -118,4 +120,35 @@ object User {
     }
   }
   
+  /** Updates a User's first name, provided the user's id */
+  def updateFirstName(id: Int, fname: String) = {
+    DB.withConnection{ implicit connection => 
+      SQL(
+        """
+          UPDATE User
+          SET fname={fname}
+          WHERE id = {id}
+        """
+      ).on(
+        'fname -> fname,
+        'id -> id
+      ).executeUpdate
+    }
+  }
+  
+  /** Updates a User's last name, provided the user's id */
+  def updateLastName(id: Int, lname: String) = {
+    DB.withConnection{ implicit connection => 
+      SQL(
+        """
+          UPDATE User
+          SET lname={lname}
+          WHERE id = {id}
+        """
+      ).on(
+        'lname -> lname,
+        'id -> id
+      ).executeUpdate
+    }
+  }
 }

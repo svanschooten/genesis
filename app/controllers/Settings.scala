@@ -36,7 +36,6 @@ object Settings extends Controller with Secured{
   }
   
   def saveSettings = Action { implicit request =>
-	  
       form.bindFromRequest.fold(
 	     formWithErrors => BadRequest(html.settings("Settings")(Html.apply(settingsText))(formWithErrors)),
 	     value => Ok(Html(value.toString)) // TODO: Implement saving of the settings to DB here!
