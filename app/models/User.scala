@@ -16,12 +16,12 @@ object User {
    * Parse a User from a ResultSet
    */
   val userParser = {
-    get[Int]("user.id") ~
+    get[Long]("user.id") ~
     get[String]("user.email") ~
     get[String]("user.password") ~
     get[Option[String]]("user.fname") ~
     get[Option[String]]("user.lname") map {
-      case id~email~password~fname~lname => User(id, email, password, fname, lname)
+      case id~email~password~fname~lname => User(id.toInt, email, password, fname, lname)
     }
   }
   
@@ -30,7 +30,7 @@ object User {
   /**
    * Retrieve a User from the user database.
    */
-  def findByInlog(email: String): Option[User] = {
+  def findByEmail(email: String): Option[User] = {
     DB.withConnection { implicit connection =>
       SQL("select * from user where email = {email}")
         .on('email -> email)
@@ -39,7 +39,7 @@ object User {
   }
 
   
-  /** Authenticates a User. */
+  /** Authenticates a user given an email and password. */
   def authenticate(email: String, password: String): Option[User] = {
     DB.withConnection { implicit connection =>
       SQL(

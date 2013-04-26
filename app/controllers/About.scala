@@ -11,8 +11,8 @@ object About extends Controller with Secured{
   
   val aboutText = "A lot of About text"
   
-  def about = IsAuthenticated { username => _ =>
-    User.findByInlog(username).map { user =>
+  def about = IsAuthenticated { email => _ =>
+    User.findByEmail(email).map { user =>
     	Ok(html.main("About")(Html.apply(aboutText)))
     }.getOrElse(Forbidden)
   }

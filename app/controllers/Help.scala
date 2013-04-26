@@ -11,8 +11,8 @@ object Help extends Controller with Secured {
 
   val helpText = "A lot of useful text"
   
-  def help = IsAuthenticated { username => _ =>
-    User.findByInlog(username).map { user =>
+  def help = IsAuthenticated { email => _ =>
+    User.findByEmail(email).map { user =>
     	Ok(html.main("Help")(Html.apply(helpText)))
     }.getOrElse(Forbidden)
 
