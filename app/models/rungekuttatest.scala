@@ -143,7 +143,7 @@ object Rungekuttatest {
   private def solveFolding(t0: Double, tf: Double, dt: Double, odes: Array [(DerivativeV,DerivativeV)], cVec: VectorD): List[(VectorD,VectorD)] = {
     (t0 to tf by dt).toList.foldLeft(List[(VectorD,VectorD)]())((l: List[(VectorD,VectorD)], step: Double) => l match {
       case h::t => (RungeKutta.integrateVV(odes.map(_._1), zeros(cVec), step, 0.0, dt),
-                    RungeKutta.integrateVV(odes.map(_._2), odes.map(_._3).clone(), step, 0.0, dt)) :: h :: t
+                    RungeKutta.integrateVV(odes.map(_._2), cVec.clone(), step, 0.0, dt)) :: h :: t
       case Nil => (new VectorD(Array.fill(cVec.length)(0.0)),cVec) :: Nil
     }).reverse
   }
