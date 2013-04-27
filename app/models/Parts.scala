@@ -7,10 +7,17 @@ abstract class Part
 
 /**
  * class for coding sequences
- * the k2 and d tuple govern the speed at which this CS is transcribed into mRNA
- * and the speed at which its mRNA decays
+ * k2 and the d tuple govern the speed at which this CS is translated into protein
+ * and the speed at which its mRNA and the protein decays, respectively
+ * (the constants for the generation of the mRNA are stored in the TFs, see below)
+ * concentration is the initial concentration of the CS
+ * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class Gene(k2:Double, d: (Double,Double), initialConc: Double) extends Part
+case class CodingSeq(k2:Double, d: (Double,Double), concentration: Double, linksTo: Option[Part]) extends Part {
+    // the next link cannot be a CS
+    // unfortunately this check is impossible due to type erasure (any hints would be appreciated)
+    //require(!linksTo.isInstanceOf[Option[CodingSeq]])
+}
 
 /**
  *  class for NOT gates
@@ -19,11 +26,11 @@ case class Gene(k2:Double, d: (Double,Double), initialConc: Double) extends Part
  *  this TF
  *  the other parameters determine the specific type of TF
  */
-case class NotGate(input: Gene, output: Gene, k1: Double, Km: Double, n: Int) extends Part
+case class NotGate(input: CodingSeq, output: CodingSeq, k1: Double, Km: Double, n: Int) extends Part
 
 /**
  *  class for AND gates
  *  the difference with NOT gates is what kind of ODE function will be generated
  *  for this class and the number of inputs
  */
-case class AndGate(input: (Gene, Gene), output: Gene, k1: Double, Km: Double, n: Int) extends Part
+case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq, k1: Double, Km: Double, n: Int) extends Part
