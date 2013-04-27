@@ -12,8 +12,10 @@ abstract class Part
  * (the constants for the generation of the mRNA are stored in the TFs, see below)
  * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
+ * finally, read is a boolean that tells the solver whether the concentration of this
+ * coding sequence is already updated to this round's concentration
  */
-case class CodingSeq(k2:Double, d: (Double,Double), var concentration: (Double, Double), linksTo: Option[Part]) extends Part {
+case class CodingSeq(k2:Double, d: (Double,Double), var concentration: (Double, Double), linksTo: Option[Part], var ready: Boolean = false) extends Part {
     // the next link cannot be a CS
     // unfortunately this check is impossible due to type erasure (any hints would be appreciated)
     //require(!linksTo.isInstanceOf[Option[CodingSeq]])
