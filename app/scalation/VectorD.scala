@@ -12,7 +12,7 @@ class VectorD (val dim: Int, protected var v: Array[Double] = null)
       extends PartiallyOrdered[VectorD] with Serializable {
 
 
-  if(v == null)
+    if(v == null)
         v = Array.ofDim[Double](dim)
     else if (dim != v.length)
         throw new IllegalArgumentException("Dim doesn't match input's dimension.")
@@ -26,20 +26,33 @@ class VectorD (val dim: Int, protected var v: Array[Double] = null)
      */
     def zipWith[A,B,C : scala.reflect.ClassTag](xs: Array[A], ys: Array[B], f: (A,B)=> C): Array[C] = (xs,ys).zipped.map(f).toArray
 
+    /**
+     * Update this vector's xth element to y
+     */
     def update(x: Int,y: Double) { v(x) = y }
 
+    /**
+     * Get the contents of this vector as a List
+     */
     def getConts: List[Double] = v.clone().toList
 
-    override def clone() = new VectorD(dim, v.clone)
+    /**
+     * Return a copy of this vector
+     */
+    override def clone() = new VectorD(dim, v.clone())
 
+    /**
+     * Return the length of this vector
+     */
     def length: Int = v.length
 
+    /**
+     * Generate a Matlab-like string representation of this vector
+     */
     def toStringBare: String = "[" + v.mkString(" ") + "]"
 
-    /** Construct a vector from two or more values (repeated values Double*).
-     *  @param u0  the first value
-     *  @param u1  the second value
-     *  @param u   the rest of the values (zero or more additional values)
+    /** Construct a vector from an Array of Doubles
+     *  @param u The array of Doubles
      */
     def this(u: Array[Double]) {
         this(u.length, u)

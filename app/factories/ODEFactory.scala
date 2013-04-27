@@ -17,47 +17,44 @@ object ODEFactory {
     type ODE = (Double, VectorD) => VectorD
 
     /**
-     * ODEPair: a pair of an ode and a vector of initial concentrations to be fed to it
+     * ODEPair: a pair of an ode and a vector of initial concentrations
      */
     type ODEPair = (ODE, VectorD)
 
     /**
-     *  We're going to make a list of triplets:
-     *  each triplet will have one function for the mRNA concentration
-     *  and one function for the Protein concentration
-     *  and one double for the initial protein concentration of the input protein
+     *  We're going to make a list of ODE pairs:
+     *  each pair will have a function for the ODE that takes a vector for the
+     *  input concentrations ([TF], [mRNA] and [Protein])
+     *  and a vector for the initial concentrations of the input protein and mRNA
      *  The functions will differ in the number of elements they expect their vector to have.
      */
     def mkODEs(parts: List[Part]): List[ODEPair] = parts.map(mkTuple).flatMap(item => item match { case Some(x) => List(x); case None => Nil})
 
     /**
-     *  This function builds a tuple from given parts.
-     *  Each tuple consists of two ODEPairs; the first one
-     *  contains the ODE for the mRNA concentration and the initial mRNA concentration,
-     *  the second one contains the same information for the protein concentration.
-     *  The initial mRNA concentrations are assumed to be zero.
+     *  This function builds an ODEPair from given parts.
      *  The ODEs will require three or four inputs depending on which
      *  kind of promotor we have; both take as final elements the (current) mRNA concentration and
      *  the (current) output protein concentration, but:
-     *  NotPromotors take one TF (input) concentration and AndPromotors take two TF (input) concentrations
+     *  NotGates take one TF (input) concentration and AndGates take two TF (input) concentrations
+     *  If a CodingSeq is encountered, no ODE needs to be generated and None is returned
      */
     def mkTuple(part: Part): Option[ODEPair] = part match {
-        case NotGate(CodingSeq(_, _, c_in, _), CodingSeq(k2, (d1, d2), c_out, _), k1, km, n) => Some(
+        case NotGate(CodingSeq(_, _, (_,c_in), _), CodingSeq(k2, (d1, d2), (c_out_r,c_out_p), _), k1, km, n) => Some(
             //concs(0):[TF]; concs(1): [mRNA]; concs(2): [Protein]
             (   (time: Double, concs: VectorD) => new VectorD(Array(
                     (k1 * km ~^ n) / (km ~^ n + concs(0) ~^ n) - d1 * concs(1),
                     k2 * concs(1) - d2 * concs(2)
                 )),
-                new VectorD(Array(c_in, 0.0, c_out))
+                new VectorD(Array(c_in, c_out_r, c_out_p))
             )
         )
-        case AndGate((CodingSeq(_, _, c_in_1, _), CodingSeq(_, _, c_in_2, _)), CodingSeq(k2, (d1, d2), c_out, _), k1, km, n) => Some(
+        case AndGate((CodingSeq(_, _, (_,c_in_1), _), CodingSeq(_, _, (_,c_in_2), _)), CodingSeq(k2, (d1, d2), (c_out_r,c_out_p), _), k1, km, n) => Some(
             // concs(0): [TF1]; concs(1): [TF2]; concs(2): [mRNA]; concs(3): [Protein]
             (   (time: Double, concs: VectorD) => new VectorD(Array(
                     (k1 * (concs(0) * concs(1)) ~^ n) / (km ~^ n + (concs(0) * concs(1)) ~^ n) - d1 * concs(2),
                     k2 * concs(2) - d2 * concs(3)
                 )),
-                new VectorD(Array(c_in_1, c_in_2, 0.0, c_out))
+                new VectorD(Array(c_in_1, c_in_2, c_out_r, c_out_p))
             )
         )
         case _: CodingSeq => None

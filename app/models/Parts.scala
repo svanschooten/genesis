@@ -10,10 +10,10 @@ abstract class Part
  * k2 and the d tuple govern the speed at which this CS is translated into protein
  * and the speed at which its mRNA and the protein decays, respectively
  * (the constants for the generation of the mRNA are stored in the TFs, see below)
- * concentration is the initial concentration of the CS
+ * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class CodingSeq(k2:Double, d: (Double,Double), concentration: Double, linksTo: Option[Part]) extends Part {
+case class CodingSeq(k2:Double, d: (Double,Double), var concentration: (Double, Double), linksTo: Option[Part]) extends Part {
     // the next link cannot be a CS
     // unfortunately this check is impossible due to type erasure (any hints would be appreciated)
     //require(!linksTo.isInstanceOf[Option[CodingSeq]])
@@ -24,7 +24,7 @@ case class CodingSeq(k2:Double, d: (Double,Double), concentration: Double, links
  *  input is the CS that produces the protein that activates this gate and causes
  *  the output to be repressed; output is the output CS that will be repressed by
  *  this TF
- *  the other parameters determine the specific type of TF
+ *  the other parameters determine the transcription rate of the output
  */
 case class NotGate(input: CodingSeq, output: CodingSeq, k1: Double, Km: Double, n: Int) extends Part
 
