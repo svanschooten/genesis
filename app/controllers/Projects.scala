@@ -21,23 +21,32 @@ object Projects extends Controller with Secured {
       {
         case (name1, name2) => {
           var l: List[String] = List()
-          val pa = new ProteinActivator("A",0,List(),List(1,2),List(3,4),5,6)
+          //CodingSeq(k2:Double, d: (Double,Double), var concentration: (Double, Double))
+          val pa = new CodingSeq(4.6337,(0.0240,0.8466),(1.0,2.0),None)
+          val pb = new CodingSeq(4.6122,(0.0205,0.8627),(2.0,5.0),None)
+          val pc = new CodingSeq(4.1585,(0.0235,0.8338),(0.0,2.0),None)
+          //AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq, k1: Double, Km: Double, n: Int)
+          val g1 = new AndGate((pa,pb),pc,4.5272,238.9569,3)
+          val odes = ODEFactory.mkODEs(List(pa,pb))
+          /*val pa = new ProteinActivator("A",0,List(),List(1,2),List(3,4),5,6)
           val pb = new ProteinActivator("B",0,List(),List(1,2),List(3,4),5,6)
           val pc = new ProteinActivator("C",0,List(pa,pb),List(1,2),List(3,4),5,6)
           val chain = new ProteinChain(List(pa,pb),List(List(1,2),List(3)))
           val parts = Part.parseProteinChain(chain)
-          val odes = ODEFactory.mkODEs(parts).toArray
-          l::=chain.toString()
-          l::=("parts.length: "+parts.length.toString())
+          val odes = ODEFactory.mkODEs(parts).toArray*/
+          
+          l::=odes.length.toString()
+          //l::=("parts.length: "+parts.length.toString())
           odes.foreach(r => l = l:+r.toString)
           val cVec = new VectorD(Array(8.0,5.0,7.0))
           val t0 = 0.0
 	      val tf = 5.0
 	      val n  = 200.0
 	      val dt = tf / n
-	      var result = Rungekuttatest.solveFolding(0.0, 0.01, odes, cVec)
+	      //var result = Rungekuttatest.solve(t0, tf, dt, odes, cVec)
+	      var result = ODEFactory.solve(odes)
 	      var t = t0
-	      result.foreach(r => l::=("t = " + "%6.3f".format(t) + " : " + (r._1+r._2).toString))
+	      result.foreach(r => l::=r.toString)
           Ok(html.formResult(l))
         }   
       }

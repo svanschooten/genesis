@@ -5,8 +5,6 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import models.Rungekuttatest
-import play.libs.Json
-import templates.Html
 
 import models._
 import views._
@@ -39,22 +37,22 @@ object Application extends Controller {
       formWithErrors => BadRequest(html.login(formWithErrors)),
       user => Redirect(routes.Projects.index).withSession("inlog" -> user._1))
   }
-  
-   def jsontest = Action {
-    Ok(views.html.rungekutte("Runge-Kutta test app", Rungekuttatest()))
-  }
 
   def javascriptRoutes = Action { implicit request =>
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-        //controllers.routes.javascript.Application.getJsonTest
+        routes.javascript.Application.jsontest
       )
     ).as("text/javascript")
   }
+  
+  def jsontest = Action {
+    Ok(Rungekuttatest().genJson).as("text/plain")
+  }
 
-  def getJsonTest = Action {
-    Ok(Rungekuttatest.getJsonTest)
+  def canvastest = Action {
+    Ok(views.html.canvastest("just a quick test with a canvas"))
   }
 }
 

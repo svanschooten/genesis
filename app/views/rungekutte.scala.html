@@ -5,14 +5,18 @@
 <html>
 <head>
     <title>@title</title>
-    <script src=@routes.Assets.at("javascripts/script.js") ></script>
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+    <script src=@routes.Assets.at("javascripts/jquery-1.9.1.min.js") ></script>
+    <script src=@routes.Assets.at("javascripts/hsi.min.js") ></script>
 </head>
 <body>
 <div id="canvasContainer">
-<canvas id="plotCanvas" width="1000" height="200" style="border: 1px solid black;"></canvas> <br>
+<canvas id="plotCanvas" width="1500" height="600" style="border: 1px solid black;" onmousemove="mouseOverCanvas(event)" onmouseout="clearMouseOverCanvas()"></canvas><div id="canvasMouse"></div> <br>
 </div>
 @for(str <- rk.test()) {
     @str <br>
 }
+<script src=@routes.Assets.at("javascripts/script.js") ></script>
+<script src=@routes.Assets.at("javascripts/plotcanvas.js") ></script>
 </body>
 </html>

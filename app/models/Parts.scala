@@ -1,50 +1,38 @@
 package models
 
 /**
- *  superclass for coding sequences and TFs
+ *  superclass for CSs and TFs (coding sequences and transcription factors)
  */ 
-sealed abstract class Part
+abstract class Part
+abstract class Gate extends Part
 
 /**
  * class for coding sequences
- * the k2 and d tuple govern the speed at which this CS is transcribed into mRNA
- * and the speed at which its mRNA decays
+ * k2 and the d tuple govern the speed at which this CS is translated into protein
+ * and the speed at which its mRNA and the protein decays, respectively
+ * (the constants for the generation of the mRNA are stored in the TFs, see below)
+ * concentration is the current contentration of this CS as ([mRNA], [Protein])
+ * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class Gene(val k2:Double, val d: (Double,Double)) extends Part
+case class CodingSeq(k2:Double, d: (Double,Double), var concentration: (Double, Double), var linksTo: Option[Gate]) extends Part
 
 /**
  *  class for NOT gates
- *  only include output gene; input is not relevant: only input concentrations will be fed to the ode function
- *  the other parameters determine the specific type of not gate (i.e. the specific TF)
+ *  input is the CS that produces the protein that activates this gate and causes
+ *  the output to be repressed; output is the output CS that will be repressed by
+ *  this TF
+ *  the other parameters determine the transcription rate of the output
  */
-case class NotGate(val output: Gene, val k1: Double, val Km: Double, val n: Int) extends Part
+case class NotGate(input: CodingSeq, output: CodingSeq, k1: Double, Km: Double, n: Int) extends Gate{
+  input.linksTo = Some(this)
+}
 
 /**
  *  class for AND gates
- *  the only difference with NOT gates is what kind of ODE function will be generated for this class
+ *  the difference with NOT gates is what kind of ODE function will be generated
+ *  for this class and the number of inputs
  */
-case class AndGate(val output: Gene, val k1: Double, val Km: Double, val n: Int) extends Part
-
-object Part {
-
-    def parseProteinChain(chain: ProteinChain): List[Part] =
-        (chain.startNodes :\ List[Part]())((protein: Protein, curlist:List[Part]) => curlist match {
-            case Nil => protein match {// first element is copied directly
-                case ProteinActivator(_,_,_,ks,ds,km,n) => Gene(ks(1), (ds(0),ds(1))) :: Nil
-                case ProteinRepressor(_,_,_,ks,ds,km,n) => Gene(ks(1), (ds(0),ds(1))) :: Nil
-                case _ => Nil
-            }
-            case h::t => h match { //
-                case _ => Nil
-            }
-        }
-     )
-
+case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq, k1: Double, Km: Double, n: Int) extends Gate{
+  input._1.linksTo = Some(this)
+  input._2.linksTo = Some(this)
 }
-
-/*
-case class ProteinActivator(val name:String, val id: Int, val parents: List[Protein],
-    val ks: List[Double], val ds: List[Double], val km: Double = 2.0, val n: Int = 4) extends Protein
-case class ProteinRepressor(val name:String, val id: Int, val parents: List[Protein],
-    val ks: List[Double], val ds: List[Double], val km: Double = 2.0, val n: Int = 4) extends 
-*/

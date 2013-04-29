@@ -10,6 +10,10 @@ GET     /jsontest                   		controllers.Application.jsontest
 GET     /login                              controllers.Application.login
 POST    /login                              controllers.Application.authenticate
 
+# test pages for the ODE solver
+GET     /canvastest                 		controllers.Application.canvastest
+GET     /jsontest                   		controllers.Application.jsontest
+
 #Forms
 GET		/formTest							controllers.Projects.formFunction
 
