@@ -11,7 +11,7 @@ import scalation.Derivatives.DerivativeV
  */
 case class Rungekuttatest (){
   
-	val t0 = 0.0                         // initial time
+  val t0 = 0.0                         // initial time
   val tf = 4.0                         // final time
   val n  = 200                        // number of time steps
 
@@ -57,9 +57,9 @@ case class Rungekuttatest (){
    * Generalized test method to get the results of the ODE in this test object.
    * @return The list of tuples containing the results.
    */
-  def testResults(): List[(VectorD,VectorD)] = {
+  def testResults(): List[VectorD] = {
       val c = new VectorD (Array(4.0, 6.0, 0.0, .02, 0.1, 0.8))
-      Rungekuttatest.solveFolding(t0, tf, dt, odes.zip(odes), c.clone())
+      Rungekuttatest.solveFolding(t0, tf, dt, odes, c.clone())
   }
 
   def genJson = {
@@ -71,19 +71,11 @@ case class Rungekuttatest (){
 object Rungekuttatest {
 
   /**
-   * Initializer method for a VectorD with only zeros.
-   * @param v The vector to be filled with zeros.
-   * @return The vector filled with zeros.
-   */
-  private def zeros(v: VectorD): VectorD = new VectorD(Array.fill(v.length)(0.0))
-
-  /**
    * A helper method for the mapping of results to JSON.
    * @param l The list to be mapped.
    * @return the mapped list of lists.
    */
   private def convert(l: List[VectorD]): List[List[Double]] = l.map(_.getConts)
-
 
   /**
    * This method maps all the results in the given list to a JSON object.
@@ -93,10 +85,10 @@ object Rungekuttatest {
    * @param results The list with result vectors.
    * @return A JSON object containing the results.
    */
-  protected def resultsToJson(t0: Double, tf: Double, dt: Double, results: List[(VectorD,VectorD)]): JsValue = Json.toJson(
+  protected def resultsToJson(t0: Double, tf: Double, dt: Double, results: List[VectorD]): JsValue = Json.toJson(
     Map("t" -> Json.toJson((t0 to tf by dt).toList),
-      "vectors" -> Json.toJson(convert(results.map(_._2))),
-      "names" -> Json.toJson((0 to results.head._1.length).toList)
+      "vectors" -> Json.toJson(convert(results)),
+      "names" -> Json.toJson((0 to results.head.length).toList)
     )
   )
 
@@ -109,7 +101,7 @@ object Rungekuttatest {
    * @param cVec The initial concentration vector.
    * @return A JSON object containing all the results.
    */
-  def solve(t0: Double, tf: Double, dt: Double, odes: Array [(DerivativeV,DerivativeV)], cVec: VectorD): JsValue = {
+  def solve(t0: Double, tf: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): JsValue = {
     val results = solveFolding(t0, tf, dt, odes, cVec)
     resultsToJson(t0, tf, dt, results)
   }
@@ -123,11 +115,10 @@ object Rungekuttatest {
    * @param dt The time increments.
    * @return The List[String] as the format is described.
    */
-  def printCVec(vecs: List[(VectorD,VectorD)], t0: Double, dt: Double): List[String] = {
+  def printCVec(vecs: List[VectorD], t0: Double, dt: Double): List[String] = {
     vecs match {
-      case h::t => "> at t = " + "%6.3f".format (t0) + " c = " + h._2.toStringBare :: printCVec(t, t0 + dt, dt)
-      case Nil => List()
-      case _ => throw new IllegalArgumentException
+      case h::t => "> at t = " + "%6.3f".format (t0) + " c = " + h.toStringBare :: printCVec(t, t0 + dt, dt)
+      case Nil => Nil
     }
   }
 
@@ -140,11 +131,10 @@ object Rungekuttatest {
    * @param cVec The initial concentrations
    * @return The list of concentration at each time increment 0.0+dt*i
    */
-  private def solveFolding(t0: Double, tf: Double, dt: Double, odes: Array [(DerivativeV,DerivativeV)], cVec: VectorD): List[(VectorD,VectorD)] = {
-    (t0 to tf by dt).toList.foldLeft(List[(VectorD,VectorD)]())((l: List[(VectorD,VectorD)], step: Double) => l match {
-      case h::t => (RungeKutta.integrateVV(odes.map(_._1), zeros(cVec), step, 0.0, dt),
-                    RungeKutta.integrateVV(odes.map(_._2), cVec.clone(), step, 0.0, dt)) :: h :: t
-      case Nil => (new VectorD(Array.fill(cVec.length)(0.0)),cVec) :: Nil
+  private def solveFolding(t0: Double, tf: Double, dt: Double, odes: Array [DerivativeV], cVec: VectorD): List[VectorD] = {
+    (t0 to tf by dt).toList.foldLeft(List[VectorD]())((l, step) => l match {
+      case h::t => RungeKutta.integrateVV(odes, cVec.clone(), step, 0.0, dt) :: h :: t
+      case Nil => cVec :: Nil
     }).reverse
   }
 
