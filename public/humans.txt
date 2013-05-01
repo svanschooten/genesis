@@ -1,0 +1,24 @@
+/* Team JAMES */
+
+Developer: Michael The
+Site: http://stackoverblog.wordpress.com
+Twitter: @ReturnFalse
+Location: The Netherlands, Rotterdam
+
+Developer: Stijn
+
+Developer: Edward
+
+Developer: Jeroen
+
+Developer: Anton
+
+/* Thanks */
+Delft University of Technology
+
+/* Site */
+Language: English
+Standards: HTML5, CSS3
+Languages: Scala, Javascript
+Components: Bootstrap, Play, Scalation
+Software: Eclipse, IntelliJ, vim

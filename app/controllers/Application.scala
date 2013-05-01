@@ -22,11 +22,22 @@ object Application extends Controller {
     })
   )
 
+  val database = Db.query[Protein].fetch()
+  //val database = Db.fetchWithSql[Protein]("SELECT id FROM protein")
   /**
    * Login page.
    */
   def login = Action { implicit request =>
     Ok(html.login(loginForm))
+  }
+  
+  /**
+   * Logout
+   */
+  def logout = Action {
+    Redirect(routes.Application.login).withNewSession.flashing(
+      "success" -> "You've been logged out"
+    )
   }
 
   /**
@@ -35,7 +46,8 @@ object Application extends Controller {
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => Redirect(routes.Projects.index).withSession("inlog" -> user._1))
+      user => Redirect(routes.Home.home).withSession("inlog" -> user._1)
+    )
   }
 
   def javascriptRoutes = Action { implicit request =>
@@ -66,9 +78,7 @@ trait Secured {
    */
   private def username(request: RequestHeader) = request.session.get("inlog")
 
-  /**
-   * Redirect to login if the user in not authorized.
-   */
+
   private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Application.login)
   
   /** 

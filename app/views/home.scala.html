@@ -1,0 +1,34 @@
+@(title: String, proteins : Stream[Protein])(content: Html)
+
+@* Change the "active" class highlighting the button in the navbar of the current page *@
+@active(t : String) = {
+  @if(title equals t){class=active"}
+}
+
+@main(title) {	
+
+ <body class="yui-skin-sam">
+    <div class="btn-group" data-toggle="buttons-checkbox">
+    	<button type="button" class="btn btn-primary" id="add-tab">New circuit</button>
+    	<button type="button" class="btn btn-primary">Save circuit (not implemented)</button>
+    	<button type="button" class="btn btn-primary">Open circuit (not implemented)</button>
+    </div>
+<div id="demo" class="yui-navset">
+<br>
+	<ul class = "yui-nav"></ul>
+    <div class="yui-content"></div>
+</div>
+<br>
+<div class="span3" style="text-align:right">
+    <div class="well sidebar-nav">
+         <ul class="nav nav-list">
+		 	<li class="nav-header">ProteinList</li>
+				@for(protein <- proteins) {
+					<li> </li>
+					<li class="btn small primary">Protein : @protein.getName, Valk : @protein.getValk</li>
+			} 
+          </ul>      
+    </div>
+</div>
+
+}
