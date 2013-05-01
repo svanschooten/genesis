@@ -46,6 +46,7 @@ object Projects extends Controller with Secured {
 	      //var result = Rungekuttatest.solve(t0, tf, dt, odes, cVec)
 	      var result = ODEFactory.solve(odes)
 	      var t = t0
+	      l::=result.length.toString()
 	      result.foreach(r => l::=r.toString)
           Ok(html.formResult(l))
         }   
