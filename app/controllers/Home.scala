@@ -11,12 +11,10 @@ object Home extends Controller with Secured{
   
   val homeText = "Some text that'll make you feel right at home"
    // val proteinAdd = Db.save(Protein("B",4.6122,0.0205,0.8627))
-    def home = {
-    IsAuthenticated { username => _ =>
-      User.findByInlog(username).map { user =>
-    	Ok(html.home("Home",Application.database)(Html.apply(homeText)))
+    def home = IsAuthenticated { email => _ =>
+    User.findByEmail(email).map { user =>
+    	Ok(html.home("Home")(Html.apply(homeText)))
     }.getOrElse(Forbidden)
-  }
   }
  
 }

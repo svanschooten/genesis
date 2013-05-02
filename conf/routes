@@ -3,11 +3,8 @@
 # ~~~~
 
 # The home page
-<<<<<<< HEAD
-GET     /                                   controllers.Projects.index
-GET     /jsontest                   		controllers.Application.jsontest
-=======
 GET		/									controllers.Home.home
+GET     /jsontest                   		controllers.Application.jsontest
 
 # The about page
 GET		/about								controllers.About.about
@@ -17,7 +14,6 @@ GET		/settings							controllers.Settings.settings
 
 # The help page
 GET		/help								controllers.Help.help
->>>>>>> e8dd8b2ec1b7e9b15cc301d53f5d9c55453b5a28
 
 # Authentication
 GET     /login                              controllers.Application.login

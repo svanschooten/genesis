@@ -6,21 +6,20 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
-case class User(inlog: String, name: String, password: String)
+case class User(id: Int = -1, email: String, password: String, fname: Option[String], lname: Option[String])
 
 object User {
   
   // -- Parsers
   
-  /**
-   * 
-   * Parse a User from a ResultSet
-   */
-  val simple = {
-    get[String]("user.inlog") ~
-    get[String]("user.name") ~
-    get[String]("user.password") map {
-      case inlog~name~password => User(inlog, name, password)
+    
+  val userParser = {
+    get[Long]("user.id") ~
+    get[String]("user.email") ~
+    get[String]("user.password") ~
+    get[Option[String]]("user.fname") ~
+    get[Option[String]]("user.lname") map {
+      case id~email~password~fname~lname => User(id.toInt, email, password, fname, lname)
     }
   }
   
@@ -29,30 +28,126 @@ object User {
   /**
    * Retrieve an User from inlog.
    */
-  def findByInlog(inlog: String): Option[User] = {
+  def findByEmail(email: String): Option[User] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from user where inlog = {inlog}").on(
-        'inlog -> inlog
-      ).as(User.simple.singleOpt)
+      SQL("select * from user where email = {email}")
+        .on('email -> email)
+        .as(User.userParser.singleOpt)
     }
   }
 
-  
-  /**
-   * Authenticate a User.
-   */
-  def authenticate(inlog: String, password: String): Option[User] = {
+
+  /** Authenticates a user given an email and password. */
+  def authenticate(email: String, password: String): Option[User] = {
     DB.withConnection { implicit connection =>
       SQL(
         """
-         select * from user where 
-         inlog = {inlog} and password = {password}
+         SELECT *
+         FROM User
+         WHERE email = {email} 
+          AND password = {password}
         """
       ).on(
-        'inlog -> inlog,
+        'email -> email,
         'password -> password
-      ).as(User.simple.singleOpt)
+      ).as(User.userParser.singleOpt)
     }
   }
   
+
+  /** Creates a new User */
+  def create(email: String, password: String, fname: Option[String], lname: Option[String]) = {
+    DB.withConnection{ implicit connection =>
+      SQL(
+        """
+        INSERT INTO User( email, password, fname, lname )
+        VALUES ({email}, {password}, {fname}, {lname})
+        """
+      ).on(
+        'email -> email,
+        'password -> password,
+        'fname -> fname,
+        'lname -> lname
+      ).executeUpdate
+    }
+  }
+  
+  /** Updates a user's email, provided the user's id */
+  def updateEmail(id: Int, email: String) = {
+    DB.withConnection{ implicit connection =>
+      SQL(
+        """
+        UPDATE User
+        SET email={email}
+        WHERE id = {id}
+        """
+      ).on(
+        'id -> id,
+        'email -> email
+      ).executeUpdate
+    }
+  }
+  
+  /** Update the password, given that the user can insert the old password. */
+  def updatePassword(id: Int, oldPass: String, newPass: String) = {
+    DB.withConnection{ implicit connection =>
+      SQL(
+       """
+       SELECT password
+       FROM User
+       WHERE id = {id} AND password = {oldPass}
+       """
+     ).on(
+       'id -> id,    
+       'password -> oldPass
+     ).as(scalar[String].singleOpt) 
+         
+      match {
+        case None => None
+        case Some(_) => 
+          SQL(
+            """
+            UPDATE User
+            SET password = {newPass}
+            WHERE id = {id}
+            """
+          ).on(
+            'newPass -> newPass,
+            'id -> id
+          ).executeUpdate
+      } 
+    }
+  }
+  
+  /** Updates a User's first name, provided the user's id */
+  def updateFirstName(id: Int, fname: String) = {
+    DB.withConnection{ implicit connection => 
+      SQL(
+        """
+          UPDATE User
+          SET fname={fname}
+          WHERE id = {id}
+        """
+      ).on(
+        'fname -> fname,
+        'id -> id
+      ).executeUpdate
+    }
+  }
+  
+  /** Updates a User's last name, provided the user's id */
+  def updateLastName(id: Int, lname: String) = {
+    DB.withConnection{ implicit connection => 
+      SQL(
+        """
+          UPDATE User
+          SET lname={lname}
+          WHERE id = {id}
+        """
+      ).on(
+        'lname -> lname,
+        'id -> id
+      ).executeUpdate
+    }
+  }
 }
