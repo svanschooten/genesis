@@ -5,17 +5,66 @@
 <html>
 <head>
     <title>@title</title>
+    <link href=@routes.Assets.at(
+    "stylesheets/rickshaw.min.css") rel='stylesheet' />
     <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
     <script src=@routes.Assets.at("javascripts/jquery-1.9.1.min.js") ></script>
     <script src=@routes.Assets.at("javascripts/hsi.min.js") ></script>
+    <script src=@routes.Assets.at("javascripts/d3.v3.min.js") ></script>
+    <script src=@routes.Assets.at("javascripts/rickshaw.min.js") ></script>
+    <style>
+        #chart_container {
+        display: inline-block;
+        font-family: Arial, Helvetica, sans-serif;
+        }
+        #chart {
+        float: left;
+        }
+        #legend {
+        float: left;
+        margin-left: 15px;
+        }
+        #offset_form {
+        float: left;
+        margin: 2em 0 0 15px;
+        font-size: 13px;
+        }
+        #y_axis {
+        float: left;
+        width: 40px;
+        }
+        .rickshaw_graph .detail .x_label { display: none }
+        .rickshaw_graph .detail .item { line-height: 1.4; padding: 0.5em }
+        .detail_swatch { float: right; display: inline-block; width: 10px; height: 10px; margin: 0 4px 0 0 }
+        .rickshaw_graph .detail .date { color: #a0a0a0 }
+
+    </style>
 </head>
 <body>
+<div id="chart_container">
+    <div id="y_axis"></div>
+    <div id="chart"></div>
+    <div id="legend"></div>
+    <form id="offset_form" class="toggler">
+        <input type="checkbox" name="offset" id="protein" value="protein" checked>
+        <label class="protein" for="protein">protein</label><br>
+        <input type="checkbox" name="offset" id="mrna" value="mrna">
+        <label class="mrna" for="mrna">mrna</label>
+    </form>
+</div>
+
+<!---
 <div id="canvasContainer">
-<canvas id="plotCanvas" width="1500" height="600" style="border: 1px solid black;" onmousemove="mouseOverCanvas(event)" onmouseout="clearMouseOverCanvas()"></canvas><div id="canvasMouse"></div> <br>
+<canvas id="plotCanvas" width="800" height="400" style="border: 1px solid black;" onmousemove="mouseOverCanvas(event)" onmouseout="clearMouseOverCanvas()"></canvas>
+    <button onclick="increaseScale()" > <i class="icon-plus"> + </i></button>
+    <button onclick="decreaseScale()" > <i class="icon-minus"> - </i></button>
+    <button onclick="resetScale()" > <i class="icon-refresh"> R </i></button>
+    <div id="canvasMouse"></div> <br>
 </div>
 @for(str <- rk.test()) {
     @str <br>
 }
+--->
 <script src=@routes.Assets.at("javascripts/script.js") ></script>
 <script src=@routes.Assets.at("javascripts/plotcanvas.js") ></script>
 </body>
