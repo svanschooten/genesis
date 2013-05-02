@@ -65,8 +65,8 @@ object Projects extends Controller with Secured {
     User.findByInlog(username).map { user =>
       Ok(
        //html.index("Welcome")
-       html.proteinform(ProteinForm)
-    	//html.rungekutte("Runge-Kutta test app", Rungekuttatest())
+       //html.proteinform(ProteinForm)
+    	html.rungekutte("Runge-Kutta test app", Rungekuttatest())
       )
     }.getOrElse(Forbidden)
   }
