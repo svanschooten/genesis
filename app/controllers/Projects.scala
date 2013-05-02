@@ -44,10 +44,11 @@ object Projects extends Controller with Secured {
 	      val n  = 200.0
 	      val dt = tf / n
 	      //var result = Rungekuttatest.solve(t0, tf, dt, odes, cVec)
+	      //step(List(pa,pb))
 	      var result = ODEFactory.solve(odes)
 	      var t = t0
-	      l::=result.length.toString()
-	      result.foreach(r => l::=r.toString)
+	      l::="result length:"+result.length.toString()
+	      result.foreach(r => l::="result:"+r.toString)
           Ok(html.formResult(l))
         }   
       }
@@ -66,7 +67,7 @@ object Projects extends Controller with Secured {
       Ok(
        //html.index("Welcome")
        //html.proteinform(ProteinForm)
-    	html.rungekutte("Runge-Kutta test app", Rungekuttatest())
+    	views.html.rungekutte.render("Runge-Kutta test app", Rungekuttatest())
       )
     }.getOrElse(Forbidden)
   }

@@ -21,4 +21,4 @@ GET		/formTest							controllers.Projects.formFunction
 GET     /assets/*file               		controllers.Assets.at(path="/public", file)
 
 # Javascript routing
-GET    /assets/javascripts/routes      		controllers.Application.javascriptRoutes()
+GET    /assets/javascripts/routes      		controllers.Application.javascriptRoutes
