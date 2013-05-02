@@ -99,8 +99,8 @@ object ODEFactory {
             case CodingSeq(_,_,_,link) => link match {
                 case None => false
                 case Some(NotGate(_,nextSeq,_,_,_)) => reachable(nextSeq)
-                case Some(AndGate((seq,_),_,_,_,_)) => false
-                case Some(AndGate((_,seq),_,_,_,_)) => false
+                case Some(AndGate((seq,seq1),_,_,_,_)) if seq != seq1 => false
+                case Some(AndGate((seq1,seq),_,_,_,_)) if seq != seq1 => false
                 case Some(AndGate((_,_),nextSeq,_,_,_)) => reachable(nextSeq)
                 case _ => false
             }

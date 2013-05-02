@@ -136,6 +136,9 @@ function mouseOverCanvas(event) {
     if((x > axisWidth && x < axisWidth+width) && (y < height)) {
         $("#canvasMouse")[0].innerHTML = "t:" + (((x - axisWidth) / width)* xrange).toFixed(5) + " c:" + (yrange - ((y / height) * yrange)).toFixed(5);
     }
+    else {
+        clearMouseOverCanvas();
+    }
 }
 
 /**
