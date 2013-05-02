@@ -1,5 +1,10 @@
 package models
 
+import play.api.db._
+import play.api.Play.current
+import anorm._
+import anorm.SqlParser._
+
 /**
  *  superclass for CSs and TFs (coding sequences and transcription factors)
  */ 
@@ -14,7 +19,23 @@ abstract class Gate extends Part
  * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class CodingSeq(k2:Double, d: (Double,Double), var concentration: (Double, Double), var linksTo: Option[Gate]) extends Part
+case class CodingSeq(var k2:Double, var d: (Double,Double), var concentration: (Double, Double), var linksTo: Option[Gate]) extends Part{
+    
+	  def setParams(name: String) =  {
+	    val params = DB.withConnection { implicit connection =>
+	      SQL(
+	        """
+	         select * from cds where 
+	         name = {name};
+	        """
+	      ).on(
+	        'name -> name
+	      ).apply().head
+	    }
+	    k2 = params[Double]("K2");
+	    d = (params[Double]("D1"),params[Double]("D2"))
+	  }
+}
 
 /**
  *  class for NOT gates

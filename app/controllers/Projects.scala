@@ -22,7 +22,9 @@ object Projects extends Controller with Secured {
         case (name1, name2) => {
           var l: List[String] = List()
           //CodingSeq(k2:Double, d: (Double,Double), var concentration: (Double, Double))
-          val pa = new CodingSeq(4.6337,(0.0240,0.8466),(1.0,2.0),None)
+          //val pa = new CodingSeq(4.6337,(0.0240,0.8466),(1.0,2.0),None)
+          val pa = new CodingSeq(4,(0.02,0.8),(1.0,2.0),None)
+          pa.setParams("A")
           val pb = new CodingSeq(4.6122,(0.0205,0.8627),(2.0,5.0),None)
           val pc = new CodingSeq(4.1585,(0.0235,0.8338),(0.0,2.0),None)
           //AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq, k1: Double, Km: Double, n: Int)
@@ -35,7 +37,8 @@ object Projects extends Controller with Secured {
           val parts = Part.parseProteinChain(chain)
           val odes = ODEFactory.mkODEs(parts).toArray*/
           
-          l::=odes.length.toString()
+          l::=pa.toString()
+          l::=pb.toString()
           //l::=("parts.length: "+parts.length.toString())
           odes.foreach(r => l = l:+r.toString)
           val cVec = new VectorD(Array(8.0,5.0,7.0))
@@ -66,8 +69,8 @@ object Projects extends Controller with Secured {
     User.findByInlog(username).map { user =>
       Ok(
        //html.index("Welcome")
-       //html.proteinform(ProteinForm)
-    	views.html.rungekutte.render("Runge-Kutta test app", Rungekuttatest())
+       html.proteinform(ProteinForm)
+    	//views.html.rungekutte.render("Runge-Kutta test app", Rungekuttatest())
       )
     }.getOrElse(Forbidden)
   }
