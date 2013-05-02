@@ -90,15 +90,28 @@ object ODEFactory {
      */
     def step(firstCSs: List[CodingSeq]) {
         // TODO the concentrations of the CodingSeqs at the beginning of the network may need to be updated separately; ask Alexey
-        // TODO whatever code loops to call step a number of times must reset the ready booleans on the CSs before each step
         // TODO also, when the simulation is started, the currentTime (and possibly step size) must be reset
         currentTime += stepSize
 
-        // function filter out the CodingSeqs we're going to mess with on some level
+        // function to verify that a given CS is not from a different level
+        // maybe adding pointers to the previous element in CSs leads to a more efficient design
+        def reachable(seq: CodingSeq): Boolean = firstCSs.foldLeft(false)((soFar: Boolean, cs: CodingSeq) => soFar || (seq == cs || (cs match {
+            case CodingSeq(_,_,_,link) => link match {
+                case None => false
+                case Some(NotGate(_,nextSeq,_,_,_)) => reachable(nextSeq)
+                case Some(AndGate((seq,_),_,_,_,_)) => false
+                case Some(AndGate((_,seq),_,_,_,_)) => false
+                case Some(AndGate((_,_),nextSeq,_,_,_)) => reachable(nextSeq)
+                case _ => false
+            }
+            case _ => false
+        })))
+
+        // function to filter out the CodingSeqs we're going to mess with on some level
         def partition(css: List[CodingSeq]): (List[CodingSeq],List[CodingSeq]) = css.partition( _ match {
             case CodingSeq(_,_,_,link) => link match {
                 case Some(cx: NotGate) => true
-                case Some(AndGate((seq1,seq2),_,_,_,_)) if firstCSs.contains(seq1) && firstCSs.contains(seq2) => true
+                case Some(AndGate((seq1,seq2),_,_,_,_)) if reachable(seq1) && reachable(seq2) => true
                 case _ => false
             }
             case _ => false
