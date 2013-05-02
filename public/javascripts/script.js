@@ -6,6 +6,7 @@ Authors:
 
 //Global variables.
 var data = null;
+var max_c_x = 0.0;
 
 
 /**
@@ -14,7 +15,6 @@ Containing all the setup methods and listener setups.
 */
 $(document).ready(function(){
     getPlotData();
-
 });
 
 /**
@@ -68,7 +68,11 @@ function parseJSONdata(response){
         var sData = [];
         //Fill the data object
         for (j=0;j<time.length-1;j++){
-            sData.push({x: time[j], y: vectors[j][i]});
+            var value = vectors[j][i];
+            sData.push({x: (time[j] * 1000), y: value});
+            if(max_c_x < value){
+                max_c_x = value
+            }
         }
         //Add data an color
         serie.data = sData;
@@ -85,11 +89,14 @@ Plots the received data in a interactive plot.
 */
 function drawGraph(series) {
 
+    var width = 800;
+    var height = 250;
+
     //Creating the graph to plot in
     var graph = new Rickshaw.Graph( {
             element: document.querySelector("#chart"),
-            width: 800,
-            height: 250,
+            width: width,
+            height: height,
             renderer: 'line',
             series: series,
     } );
@@ -98,7 +105,7 @@ function drawGraph(series) {
     var x_axis = new Rickshaw.Graph.Axis.X( {
         graph: graph,
         orientation: 'top',
-        tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+        //tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
     } );
 
     //Defining the y-axis
@@ -109,6 +116,9 @@ function drawGraph(series) {
             element: document.getElementById('y_axis'),
     } );
 
+    //Render the constructed graph
+    graph.render();
+
     //Building the legend
     var legend = new Rickshaw.Graph.Legend( {
             element: document.querySelector('#legend'),
@@ -117,26 +127,31 @@ function drawGraph(series) {
 
     //Setting up the hover detail
     var hoverDetail = new Rickshaw.Graph.HoverDetail( {
-    	graph: graph,
-    	formatter: function(series, x, y) {
-    		var swatch = '<span class="detail_swatch" style="background-color: ' + series.color + '"></span>';
-    		var content = swatch + series.name + '<br>' + "t: " + x + "<br> c: " + y;  //.toFixed(6) for rounding to decimals
-    		return content;
-    	}
+        graph: graph,
+        formatter: function(series, x, y) {
+            var swatch = '<span class="detail_swatch" style="background-color: ' + series.color + '"></span>';
+            var content = swatch + series.name + '<br>' + "t: " + (x / 1000) + "<br> c: " + y ;  //.toFixed(6) for rounding to decimals
+            return content;
+        }
     } );
 
     //Add toggle functionality
     var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
-    	graph: graph,
-    	legend: legend
+        graph: graph,
+        legend: legend
     } );
 
     //Add legend hover highlight
     var highlight = new Rickshaw.Graph.Behavior.Series.Highlight( {
-    	graph: graph,
-    	legend: legend
+        graph: graph,
+        legend: legend
     } );
 
-    //Render the constructed graph
-    graph.render();
+    //TODO werkt soort van, maar nog niet helemaal lekker, moest de timestamp *1000 doen.
+    //Add the range slider for zooming in
+    var slider = new Rickshaw.Graph.RangeSlider( {
+        graph: graph,
+        element: document.getElementById('slider')
+    } );
+
 }
