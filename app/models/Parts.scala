@@ -26,6 +26,9 @@ case class CodingSeq(val name:String, var concentration: (Double, Double)) exten
     val d2 = params[Double]("D2")
     var linksTo: Option[Gate] = None
     
+    /**
+     * Retrieve the k2, d1 and d2 parameters for this CS from the database
+     */
 	  def getParams = {
 	    DB.withConnection { implicit connection =>
 	      SQL("select * from cds where name = {name}"
@@ -50,6 +53,9 @@ case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
   val km = params[Double]("KM")
   val n = params[Int]("N")
     
+  /**
+   * Retrieve the k1, km and n parameters from the database
+   */
   def getParams = {
     DB.withConnection { implicit connection =>
       SQL("select * from notgates where input = {input}"
@@ -74,6 +80,9 @@ case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gat
   val km = params[Double]("KM")
   val n = params[Int]("N")
   
+  /**
+   * Retrieve the k1, km and n parameters from the database
+   */
   def getParams = {
 	    DB.withConnection { implicit connection =>
 	      SQL(

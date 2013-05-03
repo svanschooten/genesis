@@ -32,10 +32,10 @@ class Network(inputs: List[CodingSeq]) {
      */
     def simulate(finish: Double): List[List[(Double,Double)]] = {
         // function to get all the concentrations out of the network as a list of pairs
-        def getConcs(l: List[CodingSeq] = inputs): List[(Double,Double)] = l.flatMap(seq => seq match {
-            case CodingSeq(_,_,_,link) => seq.concentration :: (link match {
-                case Some(NotGate(_,next,_,_,_)) => getConcs(List(next))
-                case Some(AndGate(_,next,_,_,_)) => getConcs(List(next))
+    	def getConcs(l: List[CodingSeq] = inputs): List[(Double,Double)] = l.flatMap(seq => seq match {
+            case CodingSeq(_,_) => seq.concentration :: (seq.linksTo match {
+                case Some(NotGate(_,next)) => getConcs(List(next))
+                case Some(AndGate(_,next)) => getConcs(List(next))
                 case _ => Nil
             })
         })
@@ -44,7 +44,7 @@ class Network(inputs: List[CodingSeq]) {
         val times = currentTime to finish by stepSize
         // do the required steps and save the concentrations each round
         times.foldRight(List(getConcs()))((time,li)=>{
-            step() // this is very poor actually: functional method foldl has side effects now
+            step() // this is very poor actually: functional method fold has side effects now
             getConcs() :: li
         }).reverse
     }
@@ -64,22 +64,22 @@ class Network(inputs: List[CodingSeq]) {
         // function to verify that a given CS is not from a different level
         // maybe adding pointers to the previous element in CSs leads to a more efficient design
         def reachable(seq: CodingSeq): Boolean = inputs.foldLeft(false)((soFar: Boolean, cs: CodingSeq) => soFar || (seq == cs || (cs match {
-            case CodingSeq(_,_,_,link) => link match {
+            case CodingSeq(_,_) => cs.linksTo match {
                 case None => false
-                case Some(NotGate(_,nextSeq,_,_,_)) => reachable(nextSeq)
-                case Some(AndGate((seq,seq1),_,_,_,_)) if seq != seq1 => false
-                case Some(AndGate((seq1,seq),_,_,_,_)) if seq != seq1 => false
-                case Some(AndGate((_,_),nextSeq,_,_,_)) => reachable(nextSeq)
+                case Some(NotGate(_,nextSeq)) => reachable(nextSeq)
+                case Some(AndGate((seq,seq1),_)) if seq != seq1 => false
+                case Some(AndGate((seq1,seq),_)) if seq != seq1 => false
+                case Some(AndGate((_,_),nextSeq)) => reachable(nextSeq)
                 case _ => false
             }
             case _ => false
         })))
 
         // function to filter out the CodingSeqs we're going to mess with on some level
-        def partition(css: List[CodingSeq]): (List[CodingSeq],List[CodingSeq]) = css.partition( _ match {
-            case CodingSeq(_,_,_,link) => link match {
+        def partition(css: List[CodingSeq]): (List[CodingSeq],List[CodingSeq]) = css.partition(x => x match {
+            case CodingSeq(_,_) => x.linksTo match {
                 case Some(cx: NotGate) => true
-                case Some(AndGate((seq1,seq2),_,_,_,_)) if reachable(seq1) && reachable(seq2) => true
+                case Some(AndGate((seq1,seq2),_)) if reachable(seq1) && reachable(seq2) => true
                 case _ => false
             }
             case _ => false
@@ -101,7 +101,7 @@ class Network(inputs: List[CodingSeq]) {
             if(goodCSs.length == 0)
                 return
             // then generate the appropriate ODEPairs and update the concentrations
-            val parts = goodCSs.collect( { case CodingSeq(_,_,_,Some(link)) => link } )
+            val parts = goodCSs.collect( { case x:CodingSeq => x.linksTo } ).collect({case Some(x) => x})
             val odePairs = mkODEs(parts)
             val results = solve(odePairs)
             results.zip(parts).foreach({
@@ -111,8 +111,8 @@ class Network(inputs: List[CodingSeq]) {
             // finally, recursively update the rest of the network using the next
             // CSs after the gates we updated, passing along the ones we didn't touch yet
             do_the_math((parts.collect( {
-                case NotGate(_, out, _, _, _) => out
-                case AndGate(_, out, _, _, _) => out } ), badCSs))
+                case x:NotGate => x.output
+                case x:AndGate => x.output } ), badCSs))
         }
 
         // the function that calls the solver; the solver expects each element of the

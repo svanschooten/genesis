@@ -23,13 +23,13 @@ object Projects extends Controller with Secured {
           var l: List[String] = List()
           //CodingSeq(k2:Double, d: (Double,Double), var concentration: (Double, Double))
           //val pa = new CodingSeq(4.6337,(0.0240,0.8466),(1.0,2.0),None)
-          val pa = new CodingSeq("A",(1.0,2.0))
-          val pb = new CodingSeq("B",(2.0,5.0))
-          val pc = new CodingSeq("C",(0.0,2.0))
-          val pd = new CodingSeq("D",(1.0,3.0))
+          val pa = new CodingSeq("A",(0.1,0.1))
+          val pb = new CodingSeq("B",(0.2,0.3))
+          val pc = new CodingSeq("C",(0.3,0.2))
+          val pd = new CodingSeq("D",(0.4,0.3))
           val g1 = new AndGate((pa,pb),pc)
           val g2 = new NotGate(pc,pd)
-          //val network = new Network(List(pa,pb))
+          val network = new Network(List(pa,pb))
           
           l::="pa:"+pa.k2+" "+pa.d1+" "+pa.d2
           l::="pb:"+pb.k2+" "+pb.d1+" "+pb.d2
@@ -43,10 +43,12 @@ object Projects extends Controller with Secured {
 	      val dt = tf / n
 	      //var result = Rungekuttatest.solve(t0, tf, dt, odes, cVec)
 	      //step(List(pa,pb))
-	      //var result = network.simulate(tf)
+	      var result = network.simulate(0.1)
 	      var t = t0
 	      //l::="result length:"+result.length.toString()
 	      //result.foreach(r => l::="result:"+r.toString)
+	      l::=Network.simToJson(result).toString()
+	      l=l.reverse
           Ok(html.formResult(l))
         }   
       }
