@@ -19,38 +19,21 @@ abstract class Gate extends Part
  * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class CodingSeq(var k2:Double, var d: (Double,Double), var concentration: (Double, Double), var linksTo: Option[Gate]) extends Part{
+case class CodingSeq(val name:String, var concentration: (Double, Double)) extends Part{
+    private val params = getParams
+    val k2 = params[Double]("K2")
+    val d1 = params[Double]("D1")
+    val d2 = params[Double]("D2")
+    var linksTo: Option[Gate] = None
     
-	  def setParams(name: String) =  {
-	    val params = DB.withConnection { implicit connection =>
-	      SQL(
-	        """
-	         select * from cds where 
-	         name = {name};
-	        """
+	  def getParams = {
+	    DB.withConnection { implicit connection =>
+	      SQL("select * from cds where name = {name}"
 	      ).on(
 	        'name -> name
-	      ).as(getResult.singleOpt)
+	      ).apply().head
 	    }
-	    //k2 = params[Double]("K2");
-	    //d = (params[Double]("D1"),params[Double]("D2"))
-	    params match {
-	      case Some(x) => {
-	        k2 = x._1;
-	        d=(x._2._1,x._2._2);
-	      }
-	      case _ =>
-	    }
-	    
 	  }
-	  
-	  val getResult = {
-		    get[Double]("CDS.K2") ~
-		    get[Double]("CDS.D1") ~
-		    get[Double]("CDS.D2") map {
-		      case k2~d1~d2 => (k2,(d1,d2))
-	    }
-  }
 }
 
 /**
@@ -60,8 +43,21 @@ case class CodingSeq(var k2:Double, var d: (Double,Double), var concentration: (
  *  this TF
  *  the other parameters determine the transcription rate of the output
  */
-case class NotGate(input: CodingSeq, output: CodingSeq, k1: Double, Km: Double, n: Int) extends Gate{
+case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
   input.linksTo = Some(this)
+  private val params = getParams
+  val k1 = params[Double]("K1")
+  val km = params[Double]("KM")
+  val n = params[Int]("N")
+    
+  def getParams = {
+    DB.withConnection { implicit connection =>
+      SQL("select * from notgates where input = {input}"
+      ).on(
+        'input -> input.name
+      ).apply().head
+    }
+  }
 }
 
 /**
@@ -69,7 +65,28 @@ case class NotGate(input: CodingSeq, output: CodingSeq, k1: Double, Km: Double, 
  *  the difference with NOT gates is what kind of ODE function will be generated
  *  for this class and the number of inputs
  */
-case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq, k1: Double, Km: Double, n: Int) extends Gate{
+case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gate{
   input._1.linksTo = Some(this)
   input._2.linksTo = Some(this)
+  
+  private val params = getParams
+  val k1 = params[Double]("K1")
+  val km = params[Double]("KM")
+  val n = params[Int]("N")
+  
+  def getParams = {
+	    DB.withConnection { implicit connection =>
+	      SQL(
+	        """
+	         select * from andgates where 
+	         (input1 = {input1} AND input2 = {input2})
+	         OR (input2 = {input1} AND input1 = {input2})
+	        """
+	      ).on(
+	        'input1 -> input._1.name,
+	        'input2 -> input._2.name
+	      ).apply().head
+	    }
+	    
+	  }
 }
