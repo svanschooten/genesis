@@ -11,10 +11,10 @@ import views._
 object Application extends Controller {
   val loginForm = Form(
     tuple(
-      "inlog" -> text,
+      "email" -> text,
       "password" -> text
     ) verifying ("Wrong email or password", result => result match {
-      case (inlog, password) => User.authenticate(inlog, password).isDefined
+      case (email, password) => User.authenticate(email, password).isDefined
     })
   )
 
@@ -44,7 +44,6 @@ trait Secured {
   
   /** Retrieve the connected user. */
   private def username(request: RequestHeader) = request.session.get("inlog")
-
 
   private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Application.login)
   
