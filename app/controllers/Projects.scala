@@ -29,17 +29,12 @@ object Projects extends Controller with Secured {
           val pc = new CodingSeq(4.1585,(0.0235,0.8338),(0.0,2.0),None)
           //AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq, k1: Double, Km: Double, n: Int)
           val g1 = new AndGate((pa,pb),pc,4.5272,238.9569,3)
-          val odes = ODEFactory.mkODEs(List(g1))
-          /*val pa = new ProteinActivator("A",0,List(),List(1,2),List(3,4),5,6)
-          val pb = new ProteinActivator("B",0,List(),List(1,2),List(3,4),5,6)
-          val pc = new ProteinActivator("C",0,List(pa,pb),List(1,2),List(3,4),5,6)
-          val chain = new ProteinChain(List(pa,pb),List(List(1,2),List(3)))
-          val parts = Part.parseProteinChain(chain)
-          val odes = ODEFactory.mkODEs(parts).toArray*/
+          //val odes = ODEFactory.mkODEs(List(g1))
+          val network = new Network(List(pa,pb))
           
           l::=pa.k2+" "+pa.d
           //l::=("parts.length: "+parts.length.toString())
-          odes.foreach(r => l = l:+r.toString)
+          //odes.foreach(r => l = l:+r.toString)
           val cVec = new VectorD(Array(8.0,5.0,7.0))
           val t0 = 0.0
 	      val tf = 5.0
@@ -47,7 +42,7 @@ object Projects extends Controller with Secured {
 	      val dt = tf / n
 	      //var result = Rungekuttatest.solve(t0, tf, dt, odes, cVec)
 	      //step(List(pa,pb))
-	      var result = ODEFactory.solve(odes)
+	      var result = network.simulate(tf)
 	      var t = t0
 	      l::="result length:"+result.length.toString()
 	      result.foreach(r => l::="result:"+r.toString)
