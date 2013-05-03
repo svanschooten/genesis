@@ -13,7 +13,7 @@ abstract class Part
  * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class CodingSeq(k2:Double, d: (Double,Double), var concentration: (Double, Double), linksTo: Option[Part]) extends Part {
+case class CodingSeq(k2:Double, d: (Double,Double), var concentration: (Double, Double), var linksTo: Option[Part]) extends Part {
     // the next link cannot be a CS
     // unfortunately this check is impossible due to type erasure (any hints would be appreciated)
     //require(!linksTo.isInstanceOf[Option[CodingSeq]])
