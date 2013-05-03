@@ -86,33 +86,18 @@ object User {
   }
   
   /** Update the password, given that the user can insert the old password. */
-  def updatePassword(id: Int, oldPass: String, newPass: String) = {
+  def updatePassword(id: Int, password: String) = {
     DB.withConnection{ implicit connection =>
       SQL(
-       """
-       SELECT password
-       FROM User
-       WHERE id = {id} AND password = {oldPass}
-       """
-     ).on(
-       'id -> id,    
-       'password -> oldPass
-     ).as(scalar[String].singleOpt) 
-         
-      match {
-        case None => None
-        case Some(_) => 
-          SQL(
-            """
-            UPDATE User
-            SET password = {newPass}
-            WHERE id = {id}
-            """
-          ).on(
-            'newPass -> newPass,
-            'id -> id
-          ).executeUpdate
-      } 
+          """
+          UPDATE User
+          SET password = {password}
+          WHERE id = {id}
+          """
+      ).on(
+        'password -> password,
+        'id -> id
+      ).executeUpdate
     }
   }
   

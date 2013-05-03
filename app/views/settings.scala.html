@@ -3,6 +3,8 @@
 @main(title) {
 	
 	<div>
+		@content
+		
 		@helper.form(action = routes.Settings.saveSettings) {
 			@helper.inputText(form("Email"))
 			@helper.inputPassword(form("Password"))

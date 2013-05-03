@@ -8,7 +8,10 @@ import play.api.data.Forms._
 import models._
 import views._
 
+/** The Application object handles everything related to authentication. */
 object Application extends Controller {
+  
+  /** Form used for authenticating a user. */
   val loginForm = Form(
     tuple(
       "email" -> text,

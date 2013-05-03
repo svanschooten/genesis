@@ -12,7 +12,7 @@ import views._
 
 object Settings extends Controller with Secured{
 
-  val settingsText = "Some Form"
+  val settingsText = "Placeholder context"
 
   val form = Form(
     mapping(
