@@ -11,56 +11,44 @@ import views._
 object Application extends Controller {
   val loginForm = Form(
     tuple(
-      "email" -> text,
+      "inlog" -> text,
       "password" -> text
     ) verifying ("Wrong email or password", result => result match {
-      case (email, password) => User.authenticate(email, password).isDefined
+      case (inlog, password) => User.authenticate(inlog, password).isDefined
     })
   )
 
-  /**
-   * Login page.
-   */
+  /** Login page. */
   def login = Action { implicit request =>
     Ok(html.login(loginForm))
   }
   
-  /**
-   * Logout
-   */
+  /** Logout page */
   def logout = Action {
     Redirect(routes.Application.login).withNewSession.flashing(
       "success" -> "You've been logged out"
     )
   }
 
-  /**
-   * Handle login form submission.
-   */
+  /** Handle login form submission. */
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => Redirect(routes.Home.home).withSession("userid" -> user._1)
+      user => Redirect(routes.Home.home).withSession("inlog" -> user._1)
     )
   }
 }
 
-/**
- * Provide security features
- */
+/** Provide security features */
 trait Secured {
   
-  /**
-   * Retrieve the connected user inlog.
-   */
-  private def username(request: RequestHeader) = request.session.get("userid")
+  /** Retrieve the connected user. */
+  private def username(request: RequestHeader) = request.session.get("inlog")
 
 
   private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Application.login)
   
-  /** 
-   * Action for authenticated users.
-   */
+  /** Action for authenticated users. */
   def IsAuthenticated(f: => String => Request[AnyContent] => Result) = Security.Authenticated(username, onUnauthorized) { user =>
     Action(request => f(user)(request))
   }

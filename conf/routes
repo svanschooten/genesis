@@ -10,7 +10,6 @@ GET		/about								controllers.About.about
 
 # The settings page
 GET		/settings							controllers.Settings.settings
-POST	/settings							controllers.Settings.saveSettings
 
 # The help page
 GET		/help								controllers.Help.help

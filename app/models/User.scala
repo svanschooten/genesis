@@ -12,9 +12,7 @@ object User {
   
   // -- Parsers
   
-  /**
-   * Parse a User from a ResultSet
-   */
+  /** Parse a User from a ResultSet */
   val userParser = {
     get[Long]("user.id") ~
     get[String]("user.email") ~
@@ -27,9 +25,7 @@ object User {
   
   // -- Queries
   
-  /**
-   * Retrieve a User from the user database.
-   */
+  /** Retrieve an User from email. */
   def findByEmail(email: String): Option[User] = {
     DB.withConnection { implicit connection =>
       SQL("select * from user where email = {email}")

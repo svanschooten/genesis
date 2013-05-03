@@ -3,13 +3,12 @@ package controllers
 import play.api.mvc.Controller
 import play.api.mvc.Action
 import play.api.data.Forms._
-import play.api.mvc.Action
-import play.api.templates.Html
-import play.api.data.Form
+import play.api.data._
 import play.api.data.validation.Constraints._
-import play.api._
-import models.User
-import views.html
+import play.api.templates.Html
+
+import models._
+import views._
 
 object Settings extends Controller with Secured{
 
