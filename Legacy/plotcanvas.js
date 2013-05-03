@@ -11,6 +11,8 @@ var height;
 var axisWidth;
 var xrange;
 var yrange
+var data = null;
+var scale = 1.0;
 
 /**
 Makes a request for the JSON test method calculating a standard ODE and sending the results in JSON back.
@@ -29,8 +31,11 @@ function setupTestCanvas(){
 Method to plot the results of the JSON request on a canvas element using dynamic scaling.
 */
 function drawRK(jsvalue) {
+    if(data == null) {
+        data = $.parseJSON(jsvalue);
+        scale = 1;
+    }
     var canvas = $("#plotCanvas")[0];
-    var data = $.parseJSON(jsvalue);
     var time = data["t"];
     var vectors = data["vectors"];
     var names = data["names"];
@@ -45,13 +50,11 @@ function drawRK(jsvalue) {
     //Start drawing on the canvas.
     //First set all the correct elements for re-use
     //and compensate for axiswidth
-    width = canvas.width;
-    height = canvas.height;
+    axisWidth = 30;
+    width = canvas.width - 200 - axisWidth;
+    height = canvas.height - axisWidth;
     var heightParts = 4;
     var widthParts = 8;
-    axisWidth = 30;
-    canvas.width = width + 200 + axisWidth;
-    canvas.height = height + axisWidth;
     xrange=time[time.length-1]-time[0];
     yrange=max_conc-min_conc;
     c=canvas.getContext("2d");
@@ -89,7 +92,7 @@ Method to get a random RGB color according to the part in the HSV domain the cou
 The counter multiplied with a step size to get a different color for every iteration.
 */
 function randomRGB(i, stepSize) {
-    var color = toRGB(i * stepSize, 1 - (Math.random() * 0.2), 0.3 + ((Math.random() * 0.2) - (0.2 * 0.5)));
+    var color = toRGB(i * stepSize, 0.8, 0.3);
     return rgbToHex(color[0], color[1], color[2]);
 }
 
@@ -136,6 +139,9 @@ function mouseOverCanvas(event) {
     if((x > axisWidth && x < axisWidth+width) && (y < height)) {
         $("#canvasMouse")[0].innerHTML = "t:" + (((x - axisWidth) / width)* xrange).toFixed(5) + " c:" + (yrange - ((y / height) * yrange)).toFixed(5);
     }
+    else {
+        clearMouseOverCanvas();
+    }
 }
 
 /**
@@ -151,4 +157,43 @@ Method to write RGB to HEX color format
 */
 function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+/**
+Method to increase the zoom scale of the canvas.
+*/
+function increaseScale() {
+    if(data == null){
+        alert("No plot generated yet");
+    } else {
+        scale = scale + 0.1;
+        drawRK(null);
+    }
+    alert(scale)
+}
+
+/**
+Method to decrease the zoom scale of the canvas.
+*/
+function decreaseScale() {
+    if(data == null){
+        alert("No plot generated yet");
+    } else {
+        scale = scale - 0.1;
+        drawRK(null);
+    }
+    alert(scale)
+}
+
+/**
+Resets the scale to 1.0
+*/
+function resetScale() {
+    if(data == null){
+        alert("No plot generated yet");
+    } else {
+        scale = 1.0;
+        drawRK(null);
+    }
+    alert(scale)
 }
