@@ -43,11 +43,11 @@ object Projects extends Controller with Secured {
 	      val dt = tf / n
 	      //var result = Rungekuttatest.solve(t0, tf, dt, odes, cVec)
 	      //step(List(pa,pb))
-	      var result = network.simulate(0.1)
+	      //var result = network.simulate(0.1)
 	      var t = t0
 	      //l::="result length:"+result.length.toString()
 	      //result.foreach(r => l::="result:"+r.toString)
-	      l::=Network.simToJson(result).toString()
+	      //l::=Network.simToJson(result).toString()
 	      l=l.reverse
           Ok(html.formResult(l))
         }   

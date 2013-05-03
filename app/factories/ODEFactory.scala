@@ -44,7 +44,7 @@ object ODEFactory {
      */    
     def mkTuple(part: Part): Option[ODEPair] = part match {
         case cs:CodingSeq => Some(
-            ((time: Double, concs: VectorD) => new VectorD(Array( -cs.d1*concs(0), cs.k2*concs(0) - cs.d2*concs(1))),
+            ((time: Double, concs: VectorD) => new VectorD(Array( 1-cs.d1*concs(0), cs.k2*concs(0) - cs.d2*concs(1))),
             new VectorD(Array(cs.concentration._1, cs.concentration._2))))
         case ng:NotGate => { Some(
             //concs(0):[TF]; concs(1): [mRNA]; concs(2): [Protein]

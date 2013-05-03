@@ -47,12 +47,20 @@ object Application extends Controller {
     ).as("text/javascript")
   }
   
+  def rk = Action {
+    Ok(views.html.rungekutte("good ol' runge kutta test",rkt))
+  }
+
   def jsontest = Action {
     Ok(Rungekuttatest().genJson).as("text/plain")
   }
 
   def canvastest = Action {
     Ok(views.html.canvastest("just a quick test with a canvas"))
+  }
+
+  def morefun = Action {
+    Ok(views.html.mofu("another test with the lastest and greatest model"))
   }
 }
 
