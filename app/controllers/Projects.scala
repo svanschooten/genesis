@@ -37,8 +37,7 @@ object Projects extends Controller with Secured {
           val parts = Part.parseProteinChain(chain)
           val odes = ODEFactory.mkODEs(parts).toArray*/
           
-          l::=pa.toString()
-          l::=pb.toString()
+          l::=pa.k2+" "+pa.d
           //l::=("parts.length: "+parts.length.toString())
           odes.foreach(r => l = l:+r.toString)
           val cVec = new VectorD(Array(8.0,5.0,7.0))

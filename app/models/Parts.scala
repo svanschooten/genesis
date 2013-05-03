@@ -30,11 +30,27 @@ case class CodingSeq(var k2:Double, var d: (Double,Double), var concentration: (
 	        """
 	      ).on(
 	        'name -> name
-	      ).apply().head
+	      ).as(getResult.singleOpt)
 	    }
-	    k2 = params[Double]("K2");
-	    d = (params[Double]("D1"),params[Double]("D2"))
+	    //k2 = params[Double]("K2");
+	    //d = (params[Double]("D1"),params[Double]("D2"))
+	    params match {
+	      case Some(x) => {
+	        k2 = x._1;
+	        d=(x._2._1,x._2._2);
+	      }
+	      case _ =>
+	    }
+	    
 	  }
+	  
+	  val getResult = {
+		    get[Double]("CDS.K2") ~
+		    get[Double]("CDS.D1") ~
+		    get[Double]("CDS.D2") map {
+		      case k2~d1~d2 => (k2,(d1,d2))
+	    }
+  }
 }
 
 /**
