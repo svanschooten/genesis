@@ -83,6 +83,9 @@ class Network(inputs: List[CodingSeq]) {
             case _ => false
         })
 
+        inputs.foreach( _ match {
+            case x: CodingSeq => val newConcs = solve(mkODEs(List(x)))(0); x.concentration=(newConcs(0),newConcs(1))
+        })
         do_the_math((inputs,List[CodingSeq]()))
 
         // the function that will do the actual work

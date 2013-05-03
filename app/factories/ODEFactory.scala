@@ -43,6 +43,9 @@ object ODEFactory {
      *  If a CodingSeq is encountered, no ODE needs to be generated and None is returned
      */
     def mkTuple(part: Part): Option[ODEPair] = part match {
+        case CodingSeq(k2, (d1, d2), (mRNA, protein), _) => Some(
+            ((time: Double, concs: VectorD) => new VectorD(Array( -d1*concs(0), k2*concs(0) - d2*concs(1))),
+            new VectorD(Array(mRNA, protein))))
         case NotGate(CodingSeq(_, _, (_,c_in), _), CodingSeq(k2, (d1, d2), (c_out_r,c_out_p), _), k1, km, n) => Some(
             //concs(0):[TF]; concs(1): [mRNA]; concs(2): [Protein]
             (   (time: Double, concs: VectorD) => new VectorD(Array(
@@ -61,7 +64,7 @@ object ODEFactory {
                 new VectorD(Array(c_in_1, c_in_2, c_out_r, c_out_p))
             )
         )
-        case _: CodingSeq => None
+        case _ => None
     }
 
 }
