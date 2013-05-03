@@ -42,6 +42,7 @@ object Application extends Controller {
       formWithErrors => BadRequest(html.login(formWithErrors)),
       user => Redirect(routes.Home.home).withSession("inlog" -> user._1)
     )
+  }
 
   def javascriptRoutes = Action { implicit request =>
     import routes.javascript._

@@ -3,7 +3,6 @@
 # ~~~~
 
 # The home page
-<<<<<<< HEAD
 GET		/									controllers.Home.home
 
 # The about page
@@ -15,10 +14,6 @@ POST	/settings							controllers.Settings.saveSettings
 
 # The help page
 GET		/help								controllers.Help.help
-=======
-GET     /                                   controllers.Projects.index
-GET     /jsontest                   		controllers.Application.jsontest
->>>>>>> 37e18d72752cea850dd69e3050a571e321629758
 
 # Authentication
 GET     /login                              controllers.Application.login
@@ -28,6 +23,7 @@ GET     /logout                             controllers.Application.logout
 # test pages for the ODE solver
 GET     /canvastest                 		controllers.Application.canvastest
 GET     /jsontest                   		controllers.Application.jsontest
+GET     /index                              controllers.Projects.index
 
 #Forms
 GET		/formTest							controllers.Projects.formFunction

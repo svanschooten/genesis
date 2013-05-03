@@ -60,7 +60,7 @@ object Projects extends Controller with Secured {
   )
 
   def index = IsAuthenticated { username => _ =>
-    User.findByInlog(username).map { user =>
+    User.findByEmail(username).map { user =>
       Ok(
        //html.index("Welcome")
        html.proteinform(ProteinForm)
