@@ -95,6 +95,9 @@ class Network(inputs: List[CodingSeq]) {
             val oldPartition = partition(css._2)
             val goodCSs = newPartition._1 ::: oldPartition._1
             val badCSs = newPartition._2 ::: oldPartition._2
+            // if there's nothing left to do, quit
+            if(goodCSs.length == 0)
+                return
 
             // then generate the appropriate ODEPairs and update the concentrations
             val parts = goodCSs.collect( { case CodingSeq(_,_,_,Some(link)) => link } )
