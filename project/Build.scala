@@ -14,9 +14,8 @@ val appDependencies = Seq(
   "com.h2database" % "h2" % "1.3.168"
 )
 
-
   val main = play.Project(appName, appVersion, appDependencies).settings(
-    // Add your own project settings here      
+    // Add your own project settings here
   )
 
 }

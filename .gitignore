@@ -40,3 +40,6 @@ test-result
 server.pid
 *.iml
 *.eml
+
+# ignore scalation
+scalation*

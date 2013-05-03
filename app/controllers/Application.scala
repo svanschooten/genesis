@@ -4,13 +4,16 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import models.Rungekuttatest
 
 import models._
 import views._
 
 /** The Application object handles everything related to authentication. */
 object Application extends Controller {
-  
+
+  val rkt = Rungekuttatest()
+
   /** Form used for authenticating a user. */
   val loginForm = Form(
     tuple(
@@ -39,6 +42,22 @@ object Application extends Controller {
       formWithErrors => BadRequest(html.login(formWithErrors)),
       user => Redirect(routes.Home.home).withSession("inlog" -> user._1)
     )
+
+  def javascriptRoutes = Action { implicit request =>
+    import routes.javascript._
+    Ok(
+      Routes.javascriptRouter("jsRoutes")(
+        routes.javascript.Application.jsontest
+      )
+    ).as("text/javascript")
+  }
+  
+  def jsontest = Action {
+    Ok(Rungekuttatest().genJson).as("text/plain")
+  }
+
+  def canvastest = Action {
+    Ok(views.html.canvastest("just a quick test with a canvas"))
   }
 }
 
