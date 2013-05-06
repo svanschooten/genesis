@@ -12,12 +12,15 @@ val appDependencies = Seq(
   anorm,
   "com.github.nikita-volkov" % "sorm" % "0.3.7",
   "com.h2database" % "h2" % "1.3.168",
-  "postgresql" % "postgresql" % "9.1-901.jdbc4"
+  "postgresql" % "postgresql" % "9.1-901.jdbc4",
+  "com.github.t3hnar" % "scala-bcrypt_2.10" % "2.1"
 )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     // Add your own project settings here
-      scalacOptions += "-feature"
+    
+    //  Uncomment this to show certain warnings
+    //  scalacOptions += "-feature"
   )
 
 }
