@@ -6,6 +6,8 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
+import com.github.t3hnar.bcrypt._
+
 case class User(id: Int = -1, email: String, password: String, fname: Option[String], lname: Option[String])
 
 object User {
@@ -25,7 +27,7 @@ object User {
   
   // -- Queries
   
-  /** Retrieve an User from email. */
+  /** Retrieve a User from email. */
   def findByEmail(email: String): Option[User] = {
     DB.withConnection { implicit connection =>
       SQL("select * from \"User\" where email = {email}")
@@ -38,17 +40,12 @@ object User {
   /** Authenticates a user given an email and password. */
   def authenticate(email: String, password: String): Option[User] = {
     DB.withConnection { implicit connection =>
-      SQL(
-        """
-         SELECT *
-         FROM "User"
-         WHERE email = {email} 
-           AND password = {password}
-        """
-      ).on(
-        'email -> email,
-        'password -> password
-      ).as(User.userParser.singleOpt)
+      findByEmail(email) match {
+        case Some(u: User) => 
+          if(password.isBcrypted(u.password)) Some(u)
+          else None
+        case None => None  
+      }
     }
   }
   
@@ -62,7 +59,7 @@ object User {
         """
       ).on(
         'email -> email,
-        'password -> password,
+        'password -> password.bcrypt,
         'fname -> fname,
         'lname -> lname
       ).executeUpdate
