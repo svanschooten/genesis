@@ -16,7 +16,7 @@ class Network(inputs: List[CodingSeq]) {
      *  simulation will take (given a fixed ending time)
      *  Alexey (in meeting on 4/26): may need to decide this dynamically based on the end time
      */
-    private val stepSize = 0.01
+    private val stepSize = 0.0025
     /**
      *  The current time; needed by the RungeKutta integrator
      */
@@ -57,9 +57,9 @@ class Network(inputs: List[CodingSeq]) {
     def simJson(finish: Double) = Json.toJson(simulate(finish).transpose.flatMap( frame => {
         var x = 0.0-stepSize; var y = 0.0-stepSize
         List(Json.obj( "name" -> Json.toJson("mRNA_"+frame(frame.length-1)._1), "data" ->
-            frame.map(_._2).map(conc => {x+=stepSize; Json.obj("x" -> x*1000, "y" -> conc)})),
+            frame.map(_._2).map(conc => {x+=stepSize; Json.obj("x" -> x*10000, "y" -> conc)})),
             Json.obj("name" -> Json.toJson("protein_"+frame(frame.length-1)._1), "data" ->
-            frame.map(_._3).map(conc => {y+=stepSize; Json.obj("x" -> y*1000, "y" -> conc)}))
+            frame.map(_._3).map(conc => {y+=stepSize; Json.obj("x" -> y*10000, "y" -> conc)}))
             )}))
 
     /**
@@ -119,8 +119,8 @@ class Network(inputs: List[CodingSeq]) {
             val odePairs = mkODEs(parts)
             val results = solve(odePairs)
             results.zip(parts).foreach({
-                case (a,b:NotGate) => b.output.concentration=(a(0),a(1))
-                case (a,b:AndGate) => b.output.concentration=(a(0),a(1))
+                case (a,b:NotGate) => b.output.concentration=(a(1),a(2))
+                case (a,b:AndGate) => b.output.concentration=(a(2),a(3))
                 })
             // finally, recursively update the rest of the network using the next
             // CSs after the gates we updated, passing along the ones we didn't touch yet
@@ -134,8 +134,8 @@ class Network(inputs: List[CodingSeq]) {
         // the different cases are needed because the integrator expects that there are
         // as many functions as there are elements in the vector of initial concentrations
         def solve(odePairs: List[ODEPair]): List[VectorD] = {
-            odePairs.map( {case (ode, concs) if concs.length == 3 => RungeKutta.integrateVV(Array((d, v)=>ode(d, v)(0), (d, v)=>ode(d, v)(1), (d, v)=>0.0), concs, currentTime, 0.0, stepSize)
-                           case (ode, concs) if concs.length == 4 => RungeKutta.integrateVV(Array((d, v)=>ode(d, v)(0), (d, v)=>ode(d, v)(1), (d, v)=>0.0, (d, v) => 0.0), concs, currentTime, 0.0, stepSize)
+            odePairs.map( {case (ode, concs) if concs.length == 3 => RungeKutta.integrateVV(Array((d, v)=>0.0, (d, v)=>ode(d, v)(0), (d, v)=>ode(d, v)(1)), concs, currentTime, 0.0, stepSize)
+                           case (ode, concs) if concs.length == 4 => RungeKutta.integrateVV(Array((d, v)=>0.0, (d, v) => 0.0, (d, v)=>ode(d, v)(0), (d, v)=>ode(d, v)(1)), concs, currentTime, 0.0, stepSize)
                            case (ode, concs) => RungeKutta.integrateVV(Array((d, v)=>ode(d, v)(0), (d, v)=>ode(d, v)(1)), concs, currentTime, 0.0, stepSize)} )
         }
     }
