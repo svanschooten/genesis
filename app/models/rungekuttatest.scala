@@ -63,7 +63,19 @@ case class Rungekuttatest (){
   }
 
   def genJson = {
-    Rungekuttatest.resultsToJson(t0, tf, dt, testResults())
+    import models._
+    val A = CodingSeq("A",(1,1))
+    val B = CodingSeq("B",(1,1))
+    val C = CodingSeq("C",(1,1))
+    val D = CodingSeq("D",(1,1))
+    val E = CodingSeq("E",(1,1))
+    val F = CodingSeq("F",(1,1))
+    val notA = NotGate(A,C)
+    val notAandB = AndGate((C,B),D)
+    val notAandBandE = AndGate((D,E),F)
+    val net = new Network(List(A,B,E))
+    net.simJson(1.0)
+    //Rungekuttatest.resultsToJson(t0, tf, dt, testResults())
   }
 
 }

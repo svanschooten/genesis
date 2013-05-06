@@ -2,16 +2,25 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET     /                           controllers.Application.index
+# The home page
+GET     /                                   controllers.Projects.index
+GET     /jsontest                   		controllers.Application.jsontest
+
+# Authentication
+GET     /login                              controllers.Application.login
+POST    /login                              controllers.Application.authenticate
 
 # test pages for the ODE solver
 GET		/rk							controllers.Application.rk
 GET     /canvastest                 controllers.Application.canvastest
 GET     /jsontest                   controllers.Application.jsontest
+GET     /mofu                       controllers.Application.morefun
 
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+#Forms
+GET		/formTest							controllers.Projects.formFunction
 
 # Javascript routing
-GET    /javascriptRoutes            controllers.Application.javascriptRoutes
+GET    /assets/javascripts/routes      		controllers.Application.javascriptRoutes
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               		controllers.Assets.at(path="/public", file)
