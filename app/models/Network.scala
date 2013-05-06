@@ -31,22 +31,22 @@ class Network(inputs: List[CodingSeq]) {
      *  and these time steps form a list as well.
      *  @param finish The finish time; simulation will run from 0.0 to this time.
      */
-    def simulate(finish: Double): List[List[(Double,Double)]] = {
+    def simulate(finish: Double): List[List[(String,Double,Double)]] = {
         // function to get all the concentrations out of the network as a list of pairs
-    	def getConcs(l: List[CodingSeq] = inputs): List[(Double,Double)] = l.flatMap(seq => seq match {
-            case CodingSeq(_,_) => seq.concentration :: (seq.linksTo match {
+    	def getConcs(l: List[CodingSeq] = inputs): Set[(String,Double,Double)] = l.flatMap(seq => seq match {
+            case CodingSeq(name,_) => Set((name, seq.concentration._1, seq.concentration._2)) ++ (seq.linksTo match {
                 case Some(NotGate(_,next)) => getConcs(List(next))
                 case Some(AndGate(_,next)) => getConcs(List(next))
                 case _ => Nil
             })
-        })
+        }).toSet
 
         currentTime = 0.0
         val times = currentTime to finish by stepSize
         // do the required steps and save the concentrations each round
-        times.foldRight(List(getConcs()))((time,li)=>{
+        times.foldRight(List(getConcs().toList))((time,li)=>{
             step() // this is very poor actually: functional method fold has side effects now
-            getConcs() :: li
+            getConcs().toList :: li
         }).reverse
     }
 
@@ -56,10 +56,10 @@ class Network(inputs: List[CodingSeq]) {
      */
     def simJson(finish: Double) = Json.toJson(simulate(finish).transpose.flatMap( frame => {
         var x = 0.0-stepSize; var y = 0.0-stepSize
-        List(Json.obj( "name" -> frame(frame.length-1)._1, "data" ->
-            frame.map(_._1).map(conc => {x+=stepSize; Json.obj("x" -> x*1000, "y" -> conc)})),
-            Json.obj("name" -> frame(frame.length-1)._2, "data" ->
-            frame.map(_._2).map(conc => {y+=stepSize; Json.obj("x" -> y*1000, "y" -> conc)}))
+        List(Json.obj( "name" -> Json.toJson("mRNA_"+frame(frame.length-1)._1), "data" ->
+            frame.map(_._2).map(conc => {x+=stepSize; Json.obj("x" -> x*1000, "y" -> conc)})),
+            Json.obj("name" -> Json.toJson("protein_"+frame(frame.length-1)._1), "data" ->
+            frame.map(_._3).map(conc => {y+=stepSize; Json.obj("x" -> y*1000, "y" -> conc)}))
             )}))
 
     /**
