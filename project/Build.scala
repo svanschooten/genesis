@@ -18,6 +18,7 @@ val appDependencies = Seq(
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     // Add your own project settings here
+      scalacOptions += "-feature"
   )
 
 }
