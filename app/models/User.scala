@@ -28,7 +28,7 @@ object User {
   /** Retrieve an User from email. */
   def findByEmail(email: String): Option[User] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from user where email = {email}")
+      SQL("select * from \"User\" where email = {email}")
         .on('email -> email)
         .as(User.userParser.singleOpt)
     }
@@ -41,9 +41,9 @@ object User {
       SQL(
         """
          SELECT *
-         FROM User
+         FROM "User"
          WHERE email = {email} 
-          AND password = {password}
+           AND password = {password}
         """
       ).on(
         'email -> email,
