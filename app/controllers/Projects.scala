@@ -11,6 +11,7 @@ import scalation._
 import factories._
 
 object Projects extends Controller with Secured {
+  var curNetwork:Network = new Network(List(),"","")
   
   /**
    * Handles the form submission.
@@ -29,7 +30,8 @@ object Projects extends Controller with Secured {
           val pd = new CodingSeq("D",(0.4,0.3))
           val g1 = new AndGate((pa,pb),pc)
           val g2 = new NotGate(pc,pd)
-          val network = new Network(List(pa,pb))
+          curNetwork = new Network(List(pa,pb),"testuser","network1")
+          curNetwork.save
           
           l::="pa:"+pa.k2+" "+pa.d1+" "+pa.d2
           l::="pb:"+pb.k2+" "+pb.d1+" "+pb.d2
@@ -43,7 +45,7 @@ object Projects extends Controller with Secured {
 	      val dt = tf / n
 	      //var result = Rungekuttatest.solve(t0, tf, dt, odes, cVec)
 	      //step(List(pa,pb))
-	      var result = network.simulate(0.1)
+	      var result = curNetwork.simulate(0.1)
 	      var t = t0
 	      //l::="result length:"+result.length.toString()
 	      //result.foreach(r => l::="result:"+r.toString)
@@ -67,7 +69,7 @@ object Projects extends Controller with Secured {
       Ok(
        //html.index("Welcome")
        html.proteinform(ProteinForm)
-    	//views.html.rungekutte.render("Runge-Kutta test app", Rungekuttatest())
+    	//html.rungekutte.render("Runge-Kutta test app", Rungekuttatest())
       )
     }.getOrElse(Forbidden)
   }

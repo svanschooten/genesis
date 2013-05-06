@@ -31,7 +31,7 @@ case class CodingSeq(val name:String, var concentration: (Double, Double)) exten
      */
 	  def getParams = {
 	    DB.withConnection { implicit connection =>
-	      SQL("select * from cds where name = {name}"
+	      SQL("select * from cdsparams where name = {name}"
 	      ).on(
 	        'name -> name
 	      ).apply().head
@@ -58,10 +58,32 @@ case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
    */
   def getParams = {
     DB.withConnection { implicit connection =>
-      SQL("select * from notgates where input = {input}"
+      SQL("select * from notparams where input = {input}"
       ).on(
         'input -> input.name
       ).apply().head
+    }
+  }
+  
+  /**
+   * Recursive function that is used to save the network to the database.
+   */
+  def save(id: Long) {
+    DB.withConnection { implicit connection =>
+      SQL(
+    	"""
+          insert into notgates values({id},{input},{output});
+        """
+      ).on(
+        'id -> id,
+        'input -> input.name,
+        'output -> output.name
+      ).executeUpdate()
+    }
+    output.linksTo match{
+      case Some(x:AndGate) => x.save(id)
+      case Some(x:NotGate) => x.save(id)
+      case _ =>
     }
   }
 }
@@ -87,7 +109,7 @@ case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gat
 	    DB.withConnection { implicit connection =>
 	      SQL(
 	        """
-	         select * from andgates where 
+	         select * from andparams where 
 	         (input1 = {input1} AND input2 = {input2})
 	         OR (input2 = {input1} AND input1 = {input2})
 	        """
@@ -96,6 +118,27 @@ case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gat
 	        'input2 -> input._2.name
 	      ).apply().head
 	    }
-	    
-	  }
+  }
+  
+  /**
+   * Recursive function that is used to save the network to the database.
+   */
+  def save(id: Long) {
+    DB.withConnection { implicit connection =>
+      SQL("""
+          insert into andgates values({id},{input1},{input2},{output})
+          """
+      ).on(
+        'id -> id,
+        'input1 -> input._1.name,
+        'input2 -> input._2.name,
+        'output -> output.name
+      ).executeUpdate()
+    }
+    output.linksTo match{
+      case Some(x:AndGate) => x.save(id)
+      case Some(x:NotGate) => x.save(id)
+      case _ =>
+    }
+  }
 }

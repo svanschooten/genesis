@@ -1,6 +1,10 @@
 package models
 import scalation.{VectorD, RungeKutta}
 import factories.ODEFactory._
+import play.api.db.DB
+import play.api.Play.current
+import anorm._
+import anorm.SqlParser._
 
 /**
  *  Class to represent a network of coding sequences and transcription factors.
@@ -8,7 +12,7 @@ import factories.ODEFactory._
  *  the network change over time, and outputs the corresponding concentrations if
  *  desired.
  */
-class Network(inputs: List[CodingSeq]) {
+class Network(inputs: List[CodingSeq], user: String, networkname: String) {
 
     /**
      *  The amount of time between steps; this also determines how many steps the
@@ -126,6 +130,52 @@ class Network(inputs: List[CodingSeq]) {
         }
 
     }
+    
+    def save = {
+      val firstRow = DB.withConnection { implicit connection =>
+	      SQL("""
+	          select count(*) as c from ownedby
+	          where username={user} AND networkname={networkname}
+	          """
+	      ).on(
+	        'user -> user,
+	        'networkname -> networkname
+	      ).apply().head
+	    }
+      val numRows = firstRow[Long]("c")
+      //Should be caught and show a prompt to the user to ask him if he wants to overwrite
+      //if(numRows>0) throw new RuntimeException("Network already exists. Do you want to overwrite it?")
+      
+	    DB.withConnection { implicit connection =>
+	      SQL(
+	        """
+	         insert into ownedby(username,networkname) values({user},{networkname})
+	        """
+	      ).on(
+	        'user -> user,
+	        'networkname -> networkname
+	      ).executeUpdate()
+	      
+	      val idResult = SQL(
+	          """
+	          select id from ownedby
+	          where username={user} AND networkname={networkname}
+	          """
+	          ).on(
+		        'user -> user,
+		        'networkname -> networkname
+		      ).apply().head
+		  val id = idResult[Long]("id")
+		  for(cs:CodingSeq <- inputs) {
+		    cs.linksTo match{
+		      case Some(x:AndGate) => x.save(id)
+		      case Some(x:NotGate) => x.save(id)
+		      case _ =>
+		    }
+		  }
+	    }
+	    
+	  }
 
 }
 

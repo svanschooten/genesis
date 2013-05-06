@@ -4,6 +4,7 @@ import play.api.libs.json._
 
 import scalation.{VectorD, RungeKutta}
 import scalation.Derivatives.DerivativeV
+import controllers.Projects
 
 /**
  * ODE solving class containing some testing values but also contains an actual ODE solving method using the RungeKutta method.
@@ -64,6 +65,14 @@ case class Rungekuttatest (){
 
   def genJson = {
     Rungekuttatest.resultsToJson(t0, tf, dt, testResults())
+    /*val pa = new CodingSeq("A",(0.1,0.1))
+	  val pb = new CodingSeq("B",(0.2,0.3))
+	  val pc = new CodingSeq("C",(0.3,0.2))
+	  val pd = new CodingSeq("D",(0.4,0.3))
+	  val g1 = new AndGate((pa,pb),pc)
+	  val g2 = new NotGate(pc,pd)
+	  val curNetwork = new Network(List(pa,pb))
+    Network.simToJson(curNetwork.simulate(0.1))*/
   }
 
 }
@@ -90,7 +99,7 @@ object Rungekuttatest {
       "vectors" -> Json.toJson(convert(results)),
       "names" -> Json.toJson((0 to results.head.length).toList)
     )
-  )
+  )  
 
   /**
    * Generalised method for solving the ODE's given and returns a JSON value.
