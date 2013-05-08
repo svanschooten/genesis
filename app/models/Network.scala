@@ -16,7 +16,7 @@ class Network(inputs: List[CodingSeq]) {
      *  simulation will take (given a fixed ending time)
      *  Alexey (in meeting on 4/26): may need to decide this dynamically based on the end time
      */
-    private val stepSize = 0.0025
+    private val stepSize = 0.01
     /**
      *  The current time; needed by the RungeKutta integrator
      */
@@ -34,7 +34,7 @@ class Network(inputs: List[CodingSeq]) {
     def simulate(finish: Double): List[List[(String,Double,Double)]] = {
         // function to get all the concentrations out of the network as a list of pairs
     	def getConcs(l: List[CodingSeq] = inputs): Set[(String,Double,Double)] = l.flatMap(seq => seq match {
-            case CodingSeq(name,_) => Set((name, seq.concentration._1, seq.concentration._2)) ++ (seq.linksTo match {
+            case CodingSeq(name,_,_) => Set((name, seq.concentration._1, seq.concentration._2)) ++ (seq.linksTo match {
                 case Some(NotGate(_,next)) => getConcs(List(next))
                 case Some(AndGate(_,next)) => getConcs(List(next))
                 case _ => Nil
@@ -54,13 +54,21 @@ class Network(inputs: List[CodingSeq]) {
      *  Function that performs the simulation just like simulate(), except this returns
      *  a JSON value that can be used to plot a graph
      */
-    def simJson(finish: Double) = Json.toJson(simulate(finish).transpose.flatMap( frame => {
-        var x = 0.0-stepSize; var y = 0.0-stepSize
-        List(Json.obj( "name" -> Json.toJson("mRNA_"+frame(frame.length-1)._1), "data" ->
-            frame.map(_._2).map(conc => {x+=stepSize; Json.obj("x" -> x*10000, "y" -> conc)})),
-            Json.obj("name" -> Json.toJson("protein_"+frame(frame.length-1)._1), "data" ->
-            frame.map(_._3).map(conc => {y+=stepSize; Json.obj("x" -> y*10000, "y" -> conc)}))
-            )}))
+    def simJson(finish: Double) = {
+        val results = simulate(finish)
+        val flipped = new scala.collection.mutable.ListMap[String, scala.collection.mutable.ListBuffer[(String, Double, Double)]]()
+        results(0).foreach( triple => flipped += triple._1 -> new scala.collection.mutable.ListBuffer[(String,Double,Double)]())
+        results.foreach( li => {
+            li.foreach( triple => flipped(triple._1) += triple)
+        })
+        Json.toJson(flipped.values.flatMap( dataset => {
+            var x = 0.0-stepSize; var y = 0.0-stepSize
+            List(Json.obj( "name" -> Json.toJson("mRNA_"+dataset(0)._1), "data" ->
+                dataset.map(_._2).map(conc => {x+=stepSize; Json.obj("x" -> x*10000, "y" -> conc)})),
+                Json.obj("name" -> Json.toJson("protein_"+dataset(0)._1), "data" ->
+                dataset.map(_._3).map(conc => {y+=stepSize; Json.obj("x" -> y*10000, "y" -> conc)}))
+                )}))
+    }
 
     /**
      *  Do a step in the simulation. That is, calculate the new concentrations
@@ -73,60 +81,50 @@ class Network(inputs: List[CodingSeq]) {
      */
     def step() {
         currentTime += stepSize
+        //println("calculating step "+currentTime+"...")
 
-        // function to verify that a given CS is not from a different level
-        // maybe adding pointers to the previous element in CSs leads to a more efficient design
-        def reachable(level: List[CodingSeq], seq: CodingSeq): Boolean = level.foldLeft(false)((soFar: Boolean, cs: CodingSeq) => soFar || (seq == cs || (cs match {
-            case CodingSeq(_,_) => cs.linksTo match {
-                case None => false
-                case Some(NotGate(_,nextSeq)) => reachable(List(nextSeq),seq)
-                case Some(AndGate((seq,seq1),_)) if seq != seq1 => false
-                case Some(AndGate((seq1,seq),_)) if seq != seq1 => false
-                case Some(AndGate((_,_),nextSeq)) => reachable(List(nextSeq),seq)
-                case _ => false
+        // resets all the ready flags
+        def reset_readies(cs: CodingSeq) {
+            cs.ready=false
+            cs.linksTo match {
+                case Some(NotGate(_,y)) => reset_readies(y)
+                case Some(AndGate((_,_),y)) => reset_readies(y)
+                case _ => return
             }
-            case _ => false
-        })))
+        }
 
-        // function to filter out the CodingSeqs we're going to mess with on some level
-        def partition(css: List[CodingSeq]): (List[CodingSeq],List[CodingSeq]) = css.partition(x => x match {
-            case CodingSeq(_,_) => x.linksTo match {
-                case Some(cx: NotGate) => true
-                case Some(AndGate((seq1,seq2),_)) if reachable(inputs,seq1) && reachable(inputs,seq2) => true
-                case _ => false
-            }
-            case _ => false
+        // update the first CSs in the network because do_the_math won't touch them
+        inputs.foreach( x => {
+            reset_readies(x)
+            val newConcs = solve(mkODEs(List(x)))(0)
+            x.concentration=(newConcs(0),newConcs(1))
+            x.ready=true
         })
-
-        inputs.foreach( _ match {
-            case x: CodingSeq => val newConcs = solve(mkODEs(List(x)))(0); x.concentration=(newConcs(0),newConcs(1))
-        })
-        do_the_math((inputs,List[CodingSeq]()))
+        do_the_math(inputs)
 
         // the function that will do the actual work
-        def do_the_math(css: (List[CodingSeq],List[CodingSeq])) {
-            // first figure out which CSs can be updated on this level
-            val newPartition = partition(css._1)
-            val oldPartition = partition(css._2)
-            val goodCSs = newPartition._1 ::: oldPartition._1
-            val badCSs = newPartition._2 ::: oldPartition._2
-            // if there's nothing left to do, quit
-            if(goodCSs.length == 0)
+        def do_the_math(css: List[CodingSeq]) {
+            // generate the appropriate ODEPairs and update the concentrations
+            val parts = css.flatMap( x => x.linksTo match {
+                case Some(y) => y match {
+                    case NotGate(_,_) => List(y)
+                    case AndGate((in1,in2),_) if((in1.ready && in2==x) || (in1==x && in2.ready)) => List(y)
+                    case _ => Nil
+                }
+                case None => Nil
+            })
+            if(parts.length == 0)
                 return
-
-            // then generate the appropriate ODEPairs and update the concentrations
-            val parts = goodCSs.collect( { case x:CodingSeq => x.linksTo } ).collect({case Some(x) => x})
             val odePairs = mkODEs(parts)
             val results = solve(odePairs)
-            results.zip(parts).foreach({
-                case (a,b:NotGate) => b.output.concentration=(a(1),a(2))
-                case (a,b:AndGate) => b.output.concentration=(a(2),a(3))
+            results.zip(parts).foreach(_ match {
+                case (a,b:NotGate) => b.output.ready=true; b.output.concentration=(a(1),a(2))
+                case (a,b:AndGate) => b.output.ready=true; b.output.concentration=(a(2),a(3))
                 })
-            // finally, recursively update the rest of the network using the next
-            // CSs after the gates we updated, passing along the ones we didn't touch yet
-            do_the_math((parts.collect( {
+            // finally, recursively update the rest of the network
+            do_the_math(parts.collect( {
                 case x:NotGate => x.output
-                case x:AndGate => x.output } ), badCSs))
+                case x:AndGate => x.output }))
         }
 
         // the function that calls the solver; the solver expects each element of the

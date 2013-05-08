@@ -19,7 +19,7 @@ abstract class Gate extends Part
  * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class CodingSeq(val name:String, var concentration: (Double, Double)) extends Part{
+case class CodingSeq(val name:String, var concentration: (Double, Double), var ready: Boolean = false) extends Part{
     private val params = getParams
     val k2 = params[Double]("K2")
     val d1 = params[Double]("D1")
