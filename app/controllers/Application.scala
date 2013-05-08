@@ -60,6 +60,10 @@ object Application extends Controller {
   def canvastest = Action {
     Ok(views.html.canvastest("just a quick test with a canvas"))
   }
+
+  def plumbtest = Action {
+    Ok(views.html.plumbtest("Testing jsPlumb"))
+  }
 }
 
 /** Provide security features */

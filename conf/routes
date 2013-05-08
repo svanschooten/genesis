@@ -20,16 +20,20 @@ GET     /login                              controllers.Application.login
 POST    /login                              controllers.Application.authenticate
 GET     /logout                             controllers.Application.logout
 
-# test pages for the ODE solver
-GET     /canvastest                 		controllers.Application.canvastest
-GET     /jsontest                   		controllers.Application.jsontest
-GET     /index                              controllers.Projects.index
-
-#Forms
-GET		/formTest							controllers.Projects.formFunction
-
 # Javascript routing
 GET    /assets/javascripts/routes      		controllers.Application.javascriptRoutes
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               		controllers.Assets.at(path="/public", file)
+
+# Test pages
+# test pages for the ODE solver
+GET     /canvastest                 		controllers.Application.canvastest
+GET     /jsontest                   		controllers.Application.jsontest
+GET     /index                              controllers.Projects.index
+
+#tests for Forms
+GET		/formTest							controllers.Projects.formFunction
+
+#tests for the jsPlumb usage
+GET     /plumbtest                          controllers.Application.plumbtest

@@ -154,3 +154,6 @@ select * from cds where  	         name = ?; [42102-168]
 05-08 09:15:30 jdbc[6]: exception
 org.h2.jdbc.JdbcSQLException: Table "User" not found; SQL statement:
 SELECT *          FROM "User"          WHERE email = ?             AND password = ? [42102-168]
+05-08 10:23:02 jdbc[6]: exception
+org.h2.jdbc.JdbcSQLException: Table "User" not found; SQL statement:
+select * from "User" where email = ? [42102-168]
