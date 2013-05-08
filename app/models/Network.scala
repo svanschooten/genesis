@@ -5,6 +5,7 @@ import play.api.db.DB
 import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
+import scala.collection.mutable.Map
 
 /**
  *  Class to represent a network of coding sequences and transcription factors.
@@ -132,24 +133,10 @@ class Network(inputs: List[CodingSeq], user: String, networkname: String) {
     }
     
     def save = {
-      val firstRow = DB.withConnection { implicit connection =>
-	      SQL("""
-	          select count(*) as c from ownedby
-	          where username={user} AND networkname={networkname}
-	          """
-	      ).on(
-	        'user -> user,
-	        'networkname -> networkname
-	      ).apply().head
-	    }
-      val numRows = firstRow[Long]("c")
-      //Should be caught and show a prompt to the user to ask him if he wants to overwrite
-      //if(numRows>0) throw new RuntimeException("Network already exists. Do you want to overwrite it?")
-      
 	    DB.withConnection { implicit connection =>
 	      SQL(
 	        """
-	         insert into ownedby(username,networkname) values({user},{networkname})
+	         merge into ownedby(username,networkname) values({user},{networkname})
 	        """
 	      ).on(
 	        'user -> user,
@@ -165,13 +152,14 @@ class Network(inputs: List[CodingSeq], user: String, networkname: String) {
 		        'user -> user,
 		        'networkname -> networkname
 		      ).apply().head
-		  val id = idResult[Long]("id")
+		  val id = idResult[Int]("id")
 		  for(cs:CodingSeq <- inputs) {
-		    cs.linksTo match{
+		    /*cs.linksTo match{
 		      case Some(x:AndGate) => x.save(id)
 		      case Some(x:NotGate) => x.save(id)
 		      case _ =>
-		    }
+		    }*/
+		    cs.save(id,None)
 		  }
 	    }
 	    
@@ -195,4 +183,69 @@ object Network {
             frame.map(pair => Json.obj("x" -> pair._1, "y" -> pair._2))
         )
     )}))
+    
+    /**
+     * Return the Network object with name 'networkname' that belongs to 'user'
+     */
+    def getNetwork(user: String, networkname: String): Network = {
+      DB.withConnection{ implicit connection =>
+      	val idResult = SQL(
+	          """
+	          select id from ownedby
+	          where username={user} AND networkname={networkname}
+	          """
+	          ).on(
+		        'user -> user,
+		        'networkname -> networkname
+		      ).apply().head
+		  val id = idResult[Int]("id")
+		  /*val notGates = SQL(
+		      """
+		      select * from notgates
+		      where id={id}
+		      """
+		      ).on('id -> id).apply()
+		 val andGates = SQL(
+		      """
+		      select * from andgates
+		      where id={id}
+		      """
+		      ).on('id -> id).apply()*/	
+		  var inputs1:Map[String,String] = Map()
+	      var inputs2:Map[String,String] = Map()
+	      var seqs:Map[String,CodingSeq] = Map()
+	      val networkInputs = recursiveGet(inputs1, inputs2, seqs, "None", id)
+	      for(str: String <- inputs1.keys){
+	        if(inputs2 contains str){
+	        	val g = new AndGate((seqs(inputs1(str)),seqs(inputs2(str))),seqs(str))
+	        }
+	        else{
+	        	val g = new NotGate(seqs(inputs1(str)),seqs(str))
+	        }
+	      }
+      	new Network(networkInputs,user,networkname)
+      }
+    }
+    
+    def recursiveGet(in1: Map[String,String], in2: Map[String,String], seqs: Map[String, CodingSeq], prev: String, id: Int):List[CodingSeq] = {
+	      DB.withConnection{ implicit connection =>
+    		val startCDS = SQL(
+			      """
+			      select * from cds
+			      where id={id} AND prev={prev}
+			      """
+			      ).on('id -> id, 'prev -> prev)().collect[(String,CodingSeq)] {
+	      	  case Row(_,_,name: String, next: String,c1: Double,c2: Double) => (next,new CodingSeq(name,(c1,c2)))
+	      	}
+			for((next: String, cs: CodingSeq) <- startCDS){
+				if(next!="None"){
+					seqs += (cs.name -> cs)
+					if(in1 contains next) in2 += (next -> cs.name)
+					else in1 += (next -> cs.name)
+					recursiveGet(in1, in2, seqs, next, id)
+				}
+			}
+			startCDS.map(x => x._2)
+	    }
+    }
 }

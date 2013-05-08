@@ -19,7 +19,7 @@ abstract class Gate extends Part
  * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class CodingSeq(val name:String, var concentration: (Double, Double)) extends Part{
+case class CodingSeq(name:String, var concentration: (Double, Double)) extends Part{
     private val params = getParams
     val k2 = params[Double]("K2")
     val d1 = params[Double]("D1")
@@ -37,6 +37,40 @@ case class CodingSeq(val name:String, var concentration: (Double, Double)) exten
 	      ).apply().head
 	    }
 	  }
+    
+    /**
+     * Save this codingSequence to the database.
+     */
+    def save(id: Int, prevGate: Option[Gate]) {
+      val prevName = prevGate match{
+	        case Some(x: NotGate) => x.output.name
+	        case Some(x: AndGate) => x.output.name
+	        case _ => "NONE"}
+      val nextName = linksTo match{
+        	case Some(x: NotGate) => x.output.name
+	        case Some(x: AndGate) => x.output.name
+	        case _ => "NONE"}
+      DB.withConnection { implicit connection =>
+	      SQL(
+	    	"""
+	          merge into cds values({id},{prev},{name},{next},{conc1},{conc2});
+	        """
+	      ).on(
+	        'id -> id,
+	        'prev -> prevName,
+	        'name -> name,
+	        'next -> nextName,
+	        'conc1 -> concentration._1,
+	        'conc2 -> concentration._2
+	      ).executeUpdate()
+	      
+	      linksTo match{
+	        case Some(x: NotGate) => x.output.save(id, linksTo)
+	        case Some(x: AndGate) => x.output.save(id, linksTo)
+	        case _ =>
+	      }
+	    }
+    }
 }
 
 /**
@@ -72,7 +106,7 @@ case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
     DB.withConnection { implicit connection =>
       SQL(
     	"""
-          insert into notgates values({id},{input},{output});
+          merge into notgates values({id},{input},{output});
         """
       ).on(
         'id -> id,
@@ -126,7 +160,7 @@ case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gat
   def save(id: Long) {
     DB.withConnection { implicit connection =>
       SQL("""
-          insert into andgates values({id},{input1},{input2},{output})
+          merge into andgates values({id},{input1},{input2},{output})
           """
       ).on(
         'id -> id,
