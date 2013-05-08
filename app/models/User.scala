@@ -6,6 +6,8 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
+import com.github.t3hnar.bcrypt._
+
 case class User(id: Int = -1, email: String, password: String, fname: Option[String], lname: Option[String])
 
 object User {
@@ -20,6 +22,13 @@ object User {
     get[Option[String]]("user.fname") ~
     get[Option[String]]("user.lname") map {
       case id~email~password~fname~lname => User(id.toInt, email, password, fname, lname)
+    }
+  }
+
+  /** Parse a hashed password from a ResultSet */
+  val hashedPasswordParser = {
+    get[String]("user.password") map {
+      case password => password
     }
   }
   
@@ -37,24 +46,15 @@ object User {
   
   /** Authenticates a user given an email and password. */
   def authenticate(email: String, password: String): Option[User] = {
-    DB.withConnection { implicit connection =>
-      SQL(
-        """
-         SELECT *
-         FROM "User"
-         WHERE email = {email} 
-           AND password = {password}
-        """
-      ).on(
-        'email -> email,
-        'password -> password
-      ).as(User.userParser.singleOpt)
+    findByEmail(email) match {
+      case Some(User(id,email,hashedPw,fname,lname)) => if (password.isBcrypted(hashedPw)) Some(User(id, email, hashedPw, fname, lname)) else None
     }
   }
   
   /** Creates a new User */
   def create(email: String, password: String, fname: Option[String], lname: Option[String]) = {
-    DB.withConnection{ implicit connection =>
+    val hashedPassword = password.bcrypt(12)
+    DB.withConnection { implicit connection =>
       SQL(
         """
         INSERT INTO User( email, password, fname, lname )
@@ -62,7 +62,7 @@ object User {
         """
       ).on(
         'email -> email,
-        'password -> password,
+        'password -> hashedPassword,
         'fname -> fname,
         'lname -> lname
       ).executeUpdate
@@ -87,6 +87,7 @@ object User {
   
   /** Update the password, given that the user can insert the old password. */
   def updatePassword(id: Int, password: String) = {
+    val hashedPassword = password.bcrypt(12)
     DB.withConnection{ implicit connection =>
       SQL(
           """
@@ -95,7 +96,7 @@ object User {
           WHERE id = {id}
           """
       ).on(
-        'password -> password,
+        'password -> hashedPassword,
         'id -> id
       ).executeUpdate
     }
