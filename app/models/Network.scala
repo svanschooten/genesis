@@ -81,7 +81,6 @@ class Network(inputs: List[CodingSeq]) {
      */
     def step() {
         currentTime += stepSize
-        //println("calculating step "+currentTime+"...")
 
         // resets all the ready flags
         def reset_readies(cs: CodingSeq) {
@@ -107,7 +106,7 @@ class Network(inputs: List[CodingSeq]) {
             // generate the appropriate ODEPairs and update the concentrations
             val parts = css.flatMap( x => x.linksTo match {
                 case Some(y) => y match {
-                    case NotGate(_,_) => List(y)
+                    case NotGate(_,out) => List(y)
                     case AndGate((in1,in2),_) if((in1.ready && in2==x) || (in1==x && in2.ready)) => List(y)
                     case _ => Nil
                 }
