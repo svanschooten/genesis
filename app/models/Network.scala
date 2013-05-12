@@ -13,7 +13,7 @@ import scala.collection.mutable.Map
  *  the network change over time, and outputs the corresponding concentrations if
  *  desired.
  */
-class Network(inputs: List[CodingSeq], user: String, networkname: String) {
+class Network(val inputs: List[CodingSeq], val user: String, val networkname: String) {
 
     /**
      *  The amount of time between steps; this also determines how many steps the
@@ -136,7 +136,7 @@ class Network(inputs: List[CodingSeq], user: String, networkname: String) {
 	    DB.withConnection { implicit connection =>
 	      SQL(
 	        """
-	         merge into ownedby(username,networkname) values({user},{networkname})
+	         merge into ownedby(username,networkname) key(username,networkname) values({user},{networkname})
 	        """
 	      ).on(
 	        'user -> user,
@@ -152,13 +152,8 @@ class Network(inputs: List[CodingSeq], user: String, networkname: String) {
 		        'user -> user,
 		        'networkname -> networkname
 		      ).apply().head
-		  val id = idResult[Int]("id")
+		  val id = idResult[Long]("id")
 		  for(cs:CodingSeq <- inputs) {
-		    /*cs.linksTo match{
-		      case Some(x:AndGate) => x.save(id)
-		      case Some(x:NotGate) => x.save(id)
-		      case _ =>
-		    }*/
 		    cs.save(id,None)
 		  }
 	    }
@@ -187,7 +182,7 @@ object Network {
     /**
      * Return the Network object with name 'networkname' that belongs to 'user'
      */
-    def getNetwork(user: String, networkname: String): Network = {
+    def loadNetwork(user: String, networkname: String): Network = {
       DB.withConnection{ implicit connection =>
       	val idResult = SQL(
 	          """
@@ -198,23 +193,29 @@ object Network {
 		        'user -> user,
 		        'networkname -> networkname
 		      ).apply().head
-		  val id = idResult[Int]("id")
-		  /*val notGates = SQL(
-		      """
-		      select * from notgates
-		      where id={id}
-		      """
-		      ).on('id -> id).apply()
-		 val andGates = SQL(
-		      """
-		      select * from andgates
-		      where id={id}
-		      """
-		      ).on('id -> id).apply()*/	
+		  val id = idResult[Long]("id")
 		  var inputs1:Map[String,String] = Map()
 	      var inputs2:Map[String,String] = Map()
 	      var seqs:Map[String,CodingSeq] = Map()
-	      val networkInputs = recursiveGet(inputs1, inputs2, seqs, "None", id)
+	      var startCDS:List[CodingSeq] = List()
+	      val allCDS = SQL(
+			      """
+			      select * from cds
+	    		  where id = {id}
+			      """
+			      ).on('id -> id)
+			      .as {
+	      	  		get[String]("prev")~get[String]("name")~get[String]("next")~get[Double]("conc1")~get[Double]("conc2") map{
+	      	  		  case prev~name~next~c1~c2 => (prev,name,next,c1,c2)
+	      	  		} *
+	      	}
+      	  for(cs <- allCDS){
+      	    if(inputs1 contains cs._3) inputs2 += (cs._3 -> cs._2)
+      	    else if(cs._3!="NONE") inputs1 += (cs._3 -> cs._2)
+      	    seqs += (cs._2 -> new CodingSeq(cs._2,(cs._4,cs._5)))
+      	    if(cs._1=="NONE") startCDS ::= seqs(cs._2)
+      	  }
+	      
 	      for(str: String <- inputs1.keys){
 	        if(inputs2 contains str){
 	        	val g = new AndGate((seqs(inputs1(str)),seqs(inputs2(str))),seqs(str))
@@ -223,29 +224,7 @@ object Network {
 	        	val g = new NotGate(seqs(inputs1(str)),seqs(str))
 	        }
 	      }
-      	new Network(networkInputs,user,networkname)
+      	new Network(startCDS,user,networkname)
       }
-    }
-    
-    def recursiveGet(in1: Map[String,String], in2: Map[String,String], seqs: Map[String, CodingSeq], prev: String, id: Int):List[CodingSeq] = {
-	      DB.withConnection{ implicit connection =>
-    		val startCDS = SQL(
-			      """
-			      select * from cds
-			      where id={id} AND prev={prev}
-			      """
-			      ).on('id -> id, 'prev -> prev)().collect[(String,CodingSeq)] {
-	      	  case Row(_,_,name: String, next: String,c1: Double,c2: Double) => (next,new CodingSeq(name,(c1,c2)))
-	      	}
-			for((next: String, cs: CodingSeq) <- startCDS){
-				if(next!="None"){
-					seqs += (cs.name -> cs)
-					if(in1 contains next) in2 += (next -> cs.name)
-					else in1 += (next -> cs.name)
-					recursiveGet(in1, in2, seqs, next, id)
-				}
-			}
-			startCDS.map(x => x._2)
-	    }
     }
 }

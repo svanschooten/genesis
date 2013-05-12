@@ -31,13 +31,20 @@ object Projects extends Controller with Secured {
           val g1 = new AndGate((pa,pb),pc)
           val g2 = new NotGate(pc,pd)
           curNetwork = new Network(List(pa,pb),"testuser","network1")
-          curNetwork.save
+          //curNetwork.save
+          //curNetwork = Network.loadNetwork("testuser","network1")
+          l::="inputs:"
+          for(x:CodingSeq <- curNetwork.inputs){
+            l::=x.name
+            l::= (x.linksTo match{ case Some(x:AndGate) => x.output.name
+              case Some(x:NotGate) => x.output.name})
+          }
           
-          l::="pa:"+pa.k2+" "+pa.d1+" "+pa.d2
+          /*l::="pa:"+pa.k2+" "+pa.d1+" "+pa.d2
           l::="pb:"+pb.k2+" "+pb.d1+" "+pb.d2
           l::="pc:"+pc.k2+" "+pc.d1+" "+pc.d2
           l::="g1:"+g1.k1+" "+g1.km+" "+g1.n
-          l::="g2:"+g2.k1+" "+g2.km+" "+g2.n
+          l::="g2:"+g2.k1+" "+g2.km+" "+g2.n*/
           val cVec = new VectorD(Array(8.0,5.0,7.0))
           val t0 = 0.0
 	      val tf = 5.0

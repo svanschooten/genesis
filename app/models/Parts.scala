@@ -41,7 +41,7 @@ case class CodingSeq(name:String, var concentration: (Double, Double)) extends P
     /**
      * Save this codingSequence to the database.
      */
-    def save(id: Int, prevGate: Option[Gate]) {
+    def save(id: Long, prevGate: Option[Gate]) {
       val prevName = prevGate match{
 	        case Some(x: NotGate) => x.output.name
 	        case Some(x: AndGate) => x.output.name
@@ -53,7 +53,7 @@ case class CodingSeq(name:String, var concentration: (Double, Double)) extends P
       DB.withConnection { implicit connection =>
 	      SQL(
 	    	"""
-	          merge into cds values({id},{prev},{name},{next},{conc1},{conc2});
+	          merge into cds key(id,name) values({id},{prev},{name},{next},{conc1},{conc2});
 	        """
 	      ).on(
 	        'id -> id,
@@ -98,28 +98,6 @@ case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
       ).apply().head
     }
   }
-  
-  /**
-   * Recursive function that is used to save the network to the database.
-   */
-  def save(id: Long) {
-    DB.withConnection { implicit connection =>
-      SQL(
-    	"""
-          merge into notgates values({id},{input},{output});
-        """
-      ).on(
-        'id -> id,
-        'input -> input.name,
-        'output -> output.name
-      ).executeUpdate()
-    }
-    output.linksTo match{
-      case Some(x:AndGate) => x.save(id)
-      case Some(x:NotGate) => x.save(id)
-      case _ =>
-    }
-  }
 }
 
 /**
@@ -152,27 +130,5 @@ case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gat
 	        'input2 -> input._2.name
 	      ).apply().head
 	    }
-  }
-  
-  /**
-   * Recursive function that is used to save the network to the database.
-   */
-  def save(id: Long) {
-    DB.withConnection { implicit connection =>
-      SQL("""
-          merge into andgates values({id},{input1},{input2},{output})
-          """
-      ).on(
-        'id -> id,
-        'input1 -> input._1.name,
-        'input2 -> input._2.name,
-        'output -> output.name
-      ).executeUpdate()
-    }
-    output.linksTo match{
-      case Some(x:AndGate) => x.save(id)
-      case Some(x:NotGate) => x.save(id)
-      case _ =>
-    }
   }
 }
