@@ -41,7 +41,7 @@ case class CodingSeq(name:String, var concentration: List[(Double, Double)]) ext
     /**
      * Save this codingSequence to the database.
      */
-    def save(id: Long) {
+    def save(id: Int) {
       DB.withConnection { implicit connection =>
           for(l <- linksTo){
 		      SQL("merge into cds key(id,name,next) values({id},{name},{next});")

@@ -152,7 +152,7 @@ class Network(val inputs: List[CodingSeq], val user: String, val networkname: St
 		        'user -> user,
 		        'networkname -> networkname
 		      ).apply().head
-		  val id = idResult[Long]("id")
+		  val id = idResult[Int]("id")
 		  for(cs <- inputs){
 			  SQL(
 		        """
@@ -204,11 +204,36 @@ object Network {
 		        'user -> user,
 		        'networkname -> networkname
 		      ).apply().head
-		  val id = idResult[Long]("id")
+		  val id = idResult[Int]("id")
+      	  val tempconcs = SQL(
+			      """
+			      select * from concentrations
+	    		  where id = {id}
+			      """
+			      ).on('id -> id)
+			      .as {
+	      	  		get[String]("name")~get[Int]("time")~get[Double]("conc1")~get[Double]("conc2") map{
+	      	  		  case name~time~conc1~conc2 => (name,time,conc1,conc2)
+	      	  		} *
+	      	}
+      	  var tempconcs2:Map[String,List[(Double,Double,Double)]] = Map()
+      	  for(c <- tempconcs){
+      	    if(tempconcs2 contains c._1){
+      	      tempconcs2(c._1) ::= (c._2,c._3,c._4)
+      	    }
+      	    else{
+      	      tempconcs2 += (c._1 -> List((c._2,c._3,c._4)))
+      	    }
+      	  }
+      	  var concentrations:Map[String,List[(Double,Double)]] = Map()
+      	  for(c <- tempconcs2.keys){
+      	    val list = tempconcs2(c).sortBy(_._1).map(x => (x._2,x._3))
+      	    concentrations += c -> list
+      	  }      	  
+      	  
 		  var inputs1:Map[String,String] = Map()
 	      var inputs2:Map[String,String] = Map()
 	      var seqs:Map[String,CodingSeq] = Map()
-	      var startCDS:List[CodingSeq] = List()
 	      val allCDS = SQL(
 			      """
 			      select * from cds
@@ -216,16 +241,27 @@ object Network {
 			      """
 			      ).on('id -> id)
 			      .as {
-	      	  		get[String]("prev")~get[String]("name")~get[String]("next")~get[Double]("conc1")~get[Double]("conc2") map{
-	      	  		  case prev~name~next~c1~c2 => (prev,name,next,c1,c2)
+	      	  		get[String]("name")~get[String]("next") map{
+	      	  		  case name~next => (name,next)
 	      	  		} *
 	      	}
       	  for(cs <- allCDS){
-      	    if(inputs1 contains cs._3) inputs2 += (cs._3 -> cs._2)
-      	    else if(cs._3!="NONE") inputs1 += (cs._3 -> cs._2)
-      	    seqs += (cs._2 -> new CodingSeq(cs._2,(cs._4,cs._5)))
-      	    if(cs._1=="NONE") startCDS ::= seqs(cs._2)
+      	    if(inputs1 contains cs._2) inputs2 += (cs._2 -> cs._1)
+      	    else if(cs._2!="NONE") inputs1 += (cs._2 -> cs._1)
+      	    seqs += (cs._1 -> new CodingSeq(cs._1,concentrations(cs._1)))
       	  }
+      	  
+      	  val startCDS = SQL(
+			      """
+			      select * from start
+	    		  where id = {id}
+			      """
+			      ).on('id -> id)
+			      .as {
+	      	  		get[String]("name") map{
+	      	  		  case name => seqs(name)
+	      	  		} *
+	      	}
 	      
 	      for(str: String <- inputs1.keys){
 	        if(inputs2 contains str){
