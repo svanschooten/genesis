@@ -31,7 +31,86 @@ jsPlumb.ready(function(){
         });
         elms.push(tmpel);
     }
+
+    jsPlumb.bind("click", function(conn, originalEvent) {
+        console.log(objToString(conn));
+        console.log(objToString(conn.source));
+        console.log(objToString(conn.target));
+    });
 });
+
+function notify(message, type) {
+    alert(type + "! " + message);//TODO hier een mooi bootstrap element voor gebruiken.
+}
+
+function removeElem(array, elem) {
+    if(array.indexOf(elem) != -1)
+        array.splice(array.indexOf(elem), 1);
+}
+
+function Connection(source, targets, protein, data) {
+    this.source = source;
+    this.targets = targets;
+    this.protein = protein;
+    this.data = data;
+
+    function addTarget(target) {
+        this.targets.push(target);
+        target.connectIn(this);
+    }
+
+    function removeTarget(target) {
+        removeElem(this.targets, target);
+        target.removeIn(this);
+    }
+}
+
+function Gate(id, inputs, outputs, proteins, image, position, data) {
+    this.id = id;
+    this.inputs = inputs;
+    this.outputs = outputs;
+    this.proteins = proteins;
+    this.position = position;
+    this.image = image;
+    this.x = position.x;
+    this.y = position.y;
+    this.data = data;
+
+
+
+    function connectIn(source) {
+        for(i = 0; i < inputs.length; i++) {
+            if(inputs[i] == null) {
+                inputs[i] = source;
+                source.connectOut(this);
+                break;
+            }
+        }
+        notify("No more inputs available", "warning");
+    }
+
+    function removeIn(source) {
+        removeElem(this.inputs, source);
+    }
+
+    function connectOut(target, protein, data) {
+        for(i = 0; i < outputs.length; i++) {
+            if(outputs[i].protein == protein) {
+                outputs[i].addTarget(target);
+                break;
+            }
+        }
+        outputs.push(new Connection(this, target, protein, data));
+    }
+
+    function removeOut(target) {
+        for(i = 0; i < outputs.length; i++) {
+            if(outputs[i].targets.indexOf(target) != -1) {
+                removeElem(outputs[i].targets, target);
+            }
+        }
+    }
+}
 
 function andGate() {
     this.input1 = null;
@@ -74,7 +153,7 @@ function andGate() {
     });
     jsPlumb.addEndpoint(tmpId, { isTarget: true, anchor: "TopLeft" });
     jsPlumb.addEndpoint(tmpId, { isTarget: true, anchor: "BottomLeft" });
-    jsPlumb.addEndpoint(tmpId, { isSource: true, anchor: "Right" });
+    jsPlumb.addEndpoint(tmpId, { isSource: true, anchor: "Right", maxConnections:-1 });
     jsPlumb.draggable(jsPlumb.getSelector("#" + tmpId), {
         containment: "#plumbArea"
     });
@@ -122,3 +201,13 @@ function notGate() {
 
      notGates.push(this);
 };
+
+function objToString (obj) {
+    var str = '';
+    for (var p in obj) {
+        if (obj.hasOwnProperty(p)) {
+            str += p + '::' + obj[p] + '\n';
+        }
+    }
+    return str;
+}
