@@ -3,7 +3,12 @@ var notGates = new Array();
 var endpointOptions = { isTarget:true, isSource:true };
 
 jsPlumb.ready(function(){
+
     jsPlumb.Defaults.Container = "plumbArea";
+    jsPlumb.importDefaults({
+        DragOptions : { cursor: "pointer", zIndex:2000 },
+        HoverClass:"connector-hover"
+    });
     var jsp = jsPlumb.getInstance({
       PaintStyle:{
         lineWidth:6,
@@ -26,11 +31,6 @@ jsPlumb.ready(function(){
         });
         elms.push(tmpel);
     }
-    jsPlumb.connect({
-        source:"el0",
-        target:"el1",
-        endpoint:"Dot"
-    });
 });
 
 function andGate() {
@@ -61,7 +61,7 @@ function andGate() {
         this.input2 = source;
     }
 
-    andGates.push(this);
+
     var tmpId = "and" + andGates.length;
 
     $('<div/>', {
@@ -70,14 +70,20 @@ function andGate() {
     })
     .appendTo($('#plumbArea'))
     .draggable({ containment: "parent",
-        stop: jsPlumb.repaintEverything()
+        drag: jsPlumb.repaintEverything
     });
     jsPlumb.addEndpoint(tmpId, { isTarget: true, anchor: "TopLeft" });
     jsPlumb.addEndpoint(tmpId, { isTarget: true, anchor: "BottomLeft" });
     jsPlumb.addEndpoint(tmpId, { isSource: true, anchor: "Right" });
-    jsPlumb.draggable($("#" + tmpId), {
-        containment: "parent"
+    jsPlumb.draggable(jsPlumb.getSelector("#" + tmpId), {
+        containment: "#plumbArea"
     });
+    jsPlumb.bind("dblclick",
+        function(connection, originalEvent) {
+            alert(JSON.stringify(connection));
+        }
+    );
+    andGates.push(this);
 };
 
 function notGate() {
@@ -97,8 +103,8 @@ function notGate() {
         target.receive(this);
     }
 
-    notGates.push(this);
-    var tmpId = "not" + andGates.length;
+
+    var tmpId = "not" + notGates.length;
 
     $('<div/>', {
         id: tmpId,
@@ -106,11 +112,13 @@ function notGate() {
     })
     .appendTo($('#plumbArea'))
     .draggable({ containment: "parent",
-        stop: jsPlumb.repaintEverything()
+        drag: jsPlumb.repaintEverything
     });
     jsPlumb.addEndpoint(tmpId, { isTarget: true, anchor: "Left" });
     jsPlumb.addEndpoint(tmpId, { isSource: true, anchor: "Right" });
-    jsPlumb.draggable($("#" + tmpId), {
-        containment: "parent"
+    jsPlumb.draggable(jsPlumb.getSelector("#" + tmpId), {
+        containment: "#plumbArea"
     });
+
+     notGates.push(this);
 };
