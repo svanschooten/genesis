@@ -19,12 +19,12 @@ abstract class Gate extends Part
  * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class CodingSeq(name:String, var concentration: (Double, Double)) extends Part{
+case class CodingSeq(name:String, var concentration: List[(Double, Double)]) extends Part{
     private val params = getParams
     val k2 = params[Double]("K2")
     val d1 = params[Double]("D1")
     val d2 = params[Double]("D2")
-    var linksTo: Option[Gate] = None
+    var linksTo: List[Gate] = List()
     
     /**
      * Retrieve the k2, d1 and d2 parameters for this CS from the database
@@ -41,33 +41,38 @@ case class CodingSeq(name:String, var concentration: (Double, Double)) extends P
     /**
      * Save this codingSequence to the database.
      */
-    def save(id: Long, prevGate: Option[Gate]) {
-      val prevName = prevGate match{
-	        case Some(x: NotGate) => x.output.name
-	        case Some(x: AndGate) => x.output.name
-	        case _ => "NONE"}
-      val nextName = linksTo match{
-        	case Some(x: NotGate) => x.output.name
-	        case Some(x: AndGate) => x.output.name
-	        case _ => "NONE"}
+    def save(id: Long) {
       DB.withConnection { implicit connection =>
-	      SQL(
-	    	"""
-	          merge into cds key(id,name) values({id},{prev},{name},{next},{conc1},{conc2});
-	        """
-	      ).on(
-	        'id -> id,
-	        'prev -> prevName,
-	        'name -> name,
-	        'next -> nextName,
-	        'conc1 -> concentration._1,
-	        'conc2 -> concentration._2
-	      ).executeUpdate()
+          for(l <- linksTo){
+		      SQL("merge into cds key(id,name,next) values({id},{name},{next});")
+		      .on(
+		        'id -> id,
+		        'name -> name,
+		        'next -> (l match {
+		          case x: AndGate => x.output.name
+		          case x: NotGate => x.output.name
+		        })
+		      ).executeUpdate()
+          }
 	      
-	      linksTo match{
-	        case Some(x: NotGate) => x.output.save(id, linksTo)
-	        case Some(x: AndGate) => x.output.save(id, linksTo)
-	        case _ =>
+	      val concs = concentration.toArray
+	      for(i <- 1 to concs.length){
+		      SQL("merge into concentrations key(id,name,time) values({id},{name},{time},{c1},{c2});")
+		      .on(
+		        'id -> id,
+		        'name -> name,
+		        'time -> i,
+		        'c1 -> concs(i)._1,
+		        'c2 -> concs(i)._2
+		      ).executeUpdate()
+	      }
+	      
+	      for(l <- linksTo){
+		      l match{
+		        case x: NotGate => x.output.save(id)
+		        case x: AndGate => x.output.save(id)
+		        case _ =>
+		      }
 	      }
 	    }
     }
@@ -81,7 +86,7 @@ case class CodingSeq(name:String, var concentration: (Double, Double)) extends P
  *  the other parameters determine the transcription rate of the output
  */
 case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
-  input.linksTo = Some(this)
+  input.linksTo ::= this
   private val params = getParams
   val k1 = params[Double]("K1")
   val km = params[Double]("KM")
@@ -106,8 +111,8 @@ case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
  *  for this class and the number of inputs
  */
 case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gate{
-  input._1.linksTo = Some(this)
-  input._2.linksTo = Some(this)
+  input._1.linksTo ::= this
+  input._2.linksTo ::= this
   
   private val params = getParams
   val k1 = params[Double]("K1")

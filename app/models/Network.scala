@@ -153,8 +153,19 @@ class Network(val inputs: List[CodingSeq], val user: String, val networkname: St
 		        'networkname -> networkname
 		      ).apply().head
 		  val id = idResult[Long]("id")
+		  for(cs <- inputs){
+			  SQL(
+		        """
+		         merge into start(id,name) key(id,name) values({id},{name})
+		        """
+		      ).on(
+		        'id -> id,
+		        'name -> cs.name
+		      ).executeUpdate()
+		  }    
+	      
 		  for(cs:CodingSeq <- inputs) {
-		    cs.save(id,None)
+		    cs.save(id)
 		  }
 	    }
 	    
