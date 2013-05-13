@@ -1,13 +1,51 @@
-var andGates = new Array();
-var notGates = new Array();
+var andGates = 0;
+var notGates = 0;
+var circuit = new Array();
 var endpointOptions = { isTarget:true, isSource:true };
+
+var connectorPaintStyle = {
+    lineWidth:4,
+    strokeStyle:"#deea18",
+    joinstyle:"round",
+    outlineColor:"#EAEDEF",
+    outlineWidth:7
+};
+
+var connectorHoverStyle = {
+    lineWidth:4,
+    strokeStyle:"#2e2aF8"
+};
+
+var endpointHoverStyle = {fillStyle:"#2e2aF8"};
+
+var sourceEndpoint = {
+    endpoint:"Dot",
+    paintStyle:{ fillStyle:"#225588",radius:7 },
+    isSource:true,
+    connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5 } ],
+    connectorStyle: connectorPaintStyle,
+    hoverPaintStyle: endpointHoverStyle,
+    connectorHoverStyle: connectorHoverStyle,
+    dragOptions:{},
+};
+
+var targetEndpoint = {
+    endpoint:"Dot",
+    paintStyle:{ fillStyle:"#558822",radius:11 },
+    hoverPaintStyle: endpointHoverStyle,
+    maxConnections:-1,
+    dropOptions:{ hoverClass:"hover", activeClass:"active" },
+    isTarget:true,
+};
 
 jsPlumb.ready(function(){
 
     jsPlumb.Defaults.Container = "plumbArea";
     jsPlumb.importDefaults({
         DragOptions : { cursor: "pointer", zIndex:2000 },
-        HoverClass:"connector-hover"
+        HoverClass: connectorHoverStyle,
+        EndpointStyles : [{ fillStyle:'#225588' }, { fillStyle:'#558822' }],
+        Endpoints : [ [ "Dot", {radius:7} ], [ "Dot", { radius:11 } ]],
     });
     var jsp = jsPlumb.getInstance({
       PaintStyle:{
@@ -16,21 +54,11 @@ jsPlumb.ready(function(){
         outlineColor:"black",
         outlineWidth:1
       },
-      Connector:[ "Bezier", { curviness: 30 } ],
+      Connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5 } ],
       Endpoint:[ "Dot", { radius:5 } ],
       EndpointStyle : { fillStyle: "#567567"  },
-      Anchor : [ 0.5, 0.5, 1, 1 ]
     });
 
-    var elms = new Array();
-    for(i = 0; i < 3; i++){
-        var tmpel = jsPlumb.addEndpoint("el" + i, endpointOptions);
-        $("#el" + i).draggable({ containment: "parent" });
-        jsPlumb.draggable($("#el" + i), {
-            containment: "parent"
-        });
-        elms.push(tmpel);
-    }
 
     jsPlumb.bind("click", function(conn, originalEvent) {
         console.log(objToString(conn));
@@ -47,6 +75,17 @@ function removeElem(array, elem) {
     if(array.indexOf(elem) != -1)
         array.splice(array.indexOf(elem), 1);
 }
+
+function objToString (obj) {
+    var str = '';
+    for (var p in obj) {
+        if (obj.hasOwnProperty(p)) {
+            str += p + '::' + obj[p] + '\n';
+        }
+    }
+    return str;
+}
+
 
 function Connection(source, targets, protein, data) {
     this.source = source;
@@ -76,7 +115,27 @@ function Gate(id, inputs, outputs, proteins, image, position, data) {
     this.y = position.y;
     this.data = data;
 
+    $('<div/>', {
+        id: this.id,
+        style: 'height: 50px; width: 50px; border: 1px solid black;',
+        background: image
+    })
+    .appendTo($('#plumbArea'))
+    .draggable({ containment: "parent",
+        drag: jsPlumb.repaintEverything
+    });
+    for(i = 0; i < inputs.length; i++) {
+        jsPlumb.addEndpoint(this.id, sourceEndpoint, { isTarget: true, anchor: [0, (1 / (inputs.length+1)) * (i + 1), -1, 0] });
+    }
+    for(i = 0; i < outputs.length; i++) {
+        jsPlumb.addEndpoint(this.id, targetEndpoint, { isSource: true, anchor: [1, (1 / (outputs.length+1)) * (i + 1), 1, 0] });
+    }
+    jsPlumb.draggable(jsPlumb.getSelector("#" + this.id), {
+        containment: "#plumbArea",
+        grid: [20, 20]
+    });
 
+    circuit.push(this);
 
     function connectIn(source) {
         for(i = 0; i < inputs.length; i++) {
@@ -112,102 +171,30 @@ function Gate(id, inputs, outputs, proteins, image, position, data) {
     }
 }
 
+function Protein(id, data) {
+    this.id = id;
+    this.data = data;
+}
+
+function Position(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
 function andGate() {
-    this.input1 = null;
-    this.input2 = null;
-    this.output = null;
-
-    function receive(source) {
-        if(input1 == null) {
-            receive1(source);
-        } else if(input2 == null) {
-            receive2(source);
-        } else {
-            alert("No free connections.");
-        }
-    }
-
-    function connect(target) {
-        this.output = target;
-        target.receive(this);
-    }
-
-    function receive1(source) {
-        this.input1 = source;
-    }
-
-    function receive2(source) {
-        this.input2 = source;
-    }
-
-
-    var tmpId = "and" + andGates.length;
-
-    $('<div/>', {
-        id: tmpId,
-        style: 'height: 50px; width: 50px; border: 1px solid black;'
-    })
-    .appendTo($('#plumbArea'))
-    .draggable({ containment: "parent",
-        drag: jsPlumb.repaintEverything
-    });
-    jsPlumb.addEndpoint(tmpId, { isTarget: true, anchor: "TopLeft" });
-    jsPlumb.addEndpoint(tmpId, { isTarget: true, anchor: "BottomLeft" });
-    jsPlumb.addEndpoint(tmpId, { isSource: true, anchor: "Right", maxConnections:-1 });
-    jsPlumb.draggable(jsPlumb.getSelector("#" + tmpId), {
-        containment: "#plumbArea"
-    });
-    jsPlumb.bind("dblclick",
-        function(connection, originalEvent) {
-            alert(JSON.stringify(connection));
-        }
-    );
-    andGates.push(this);
+    var inputs = new Array();
+    var outputs = new Array();
+    inputs.length = 2;
+    outputs.length = 1;
+    var gate = new Gate("and" + andGates.length, inputs, outputs, new Protein("protein" + (Math.random() * 1000).toFixed(3)), "", new Position(0,0), {});
+    andGates = andGates + 1;
 };
 
 function notGate() {
-    this.input = null;
-    this.output = null;
-
-    function receive(source) {
-        if(input == null) {
-            this.input = source
-        } else {
-            alert("No free connections.");
-        }
-    }
-
-    function connect(target) {
-        this.output = target;
-        target.receive(this);
-    }
-
-
-    var tmpId = "not" + notGates.length;
-
-    $('<div/>', {
-        id: tmpId,
-        style: 'height: 50px; width: 50px; border: 1px solid black;'
-    })
-    .appendTo($('#plumbArea'))
-    .draggable({ containment: "parent",
-        drag: jsPlumb.repaintEverything
-    });
-    jsPlumb.addEndpoint(tmpId, { isTarget: true, anchor: "Left" });
-    jsPlumb.addEndpoint(tmpId, { isSource: true, anchor: "Right" });
-    jsPlumb.draggable(jsPlumb.getSelector("#" + tmpId), {
-        containment: "#plumbArea"
-    });
-
-     notGates.push(this);
+    var inputs = new Array();
+    var outputs = new Array();
+    inputs.length = 1;
+    outputs.length = 1;
+    var gate = new Gate("not" + notGates.length, inputs, outputs, new Protein("protein" + (Math.random() * 1000).toFixed(3)), "", new Position(0,0), {});
+    notGates = notGates + 1;
 };
-
-function objToString (obj) {
-    var str = '';
-    for (var p in obj) {
-        if (obj.hasOwnProperty(p)) {
-            str += p + '::' + obj[p] + '\n';
-        }
-    }
-    return str;
-}
