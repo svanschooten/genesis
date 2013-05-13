@@ -7,8 +7,6 @@ var connectorPaintStyle = {
     lineWidth:4,
     strokeStyle:"#deea18",
     joinstyle:"round",
-    outlineColor:"#EAEDEF",
-    outlineWidth:7
 };
 
 var connectorHoverStyle = {
@@ -18,45 +16,19 @@ var connectorHoverStyle = {
 
 var endpointHoverStyle = {fillStyle:"#2e2aF8"};
 
-var sourceEndpoint = {
-    endpoint:"Dot",
-    paintStyle:{ fillStyle:"#225588",radius:7 },
-    isSource:true,
-    connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5 } ],
-    connectorStyle: connectorPaintStyle,
-    hoverPaintStyle: endpointHoverStyle,
-    connectorHoverStyle: connectorHoverStyle,
-    dragOptions:{},
-};
-
-var targetEndpoint = {
-    endpoint:"Dot",
-    paintStyle:{ fillStyle:"#558822",radius:11 },
-    hoverPaintStyle: endpointHoverStyle,
-    maxConnections:-1,
-    dropOptions:{ hoverClass:"hover", activeClass:"active" },
-    isTarget:true,
-};
-
 jsPlumb.ready(function(){
 
     jsPlumb.Defaults.Container = "plumbArea";
     jsPlumb.importDefaults({
         DragOptions : { cursor: "pointer", zIndex:2000 },
         HoverClass: connectorHoverStyle,
-        EndpointStyles : [{ fillStyle:'#225588' }, { fillStyle:'#558822' }],
-        Endpoints : [ [ "Dot", {radius:7} ], [ "Dot", { radius:11 } ]],
+        ConnectionOverlays : [[ "Arrow", { location:0.9 } ]],
     });
     var jsp = jsPlumb.getInstance({
-      PaintStyle:{
-        lineWidth:6,
-        strokeStyle:"#567567",
-        outlineColor:"black",
-        outlineWidth:1
-      },
-      Connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5 } ],
-      Endpoint:[ "Dot", { radius:5 } ],
-      EndpointStyle : { fillStyle: "#567567"  },
+        connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5 } ],
+        endpoint:[ "Dot", { radius:5 } ],
+        endpointStyle : { fillStyle: "#567567"  },
+        hoverPaintStyle: endpointHoverStyle,
     });
 
 
@@ -115,21 +87,44 @@ function Gate(id, inputs, outputs, proteins, image, position, data) {
     this.y = position.y;
     this.data = data;
 
-    $('<div/>', {
+    var gate = $('<div/>', {
         id: this.id,
         style: 'height: 50px; width: 50px; border: 1px solid black;',
         background: image
     })
-    .appendTo($('#plumbArea'))
-    .draggable({ containment: "parent",
-        drag: jsPlumb.repaintEverything
-    });
+    .appendTo($('#plumbArea'));
+
     for(i = 0; i < inputs.length; i++) {
-        jsPlumb.addEndpoint(this.id, sourceEndpoint, { isTarget: true, anchor: [0, (1 / (inputs.length+1)) * (i + 1), -1, 0] });
+        jsPlumb.addEndpoint(
+            this.id,
+            {
+                endpoint:"Dot",
+                paintStyle:{ fillStyle:"#558822",radius:11 },
+                hoverPaintStyle: endpointHoverStyle,
+                isTarget:true,
+                anchor: [0, (1 / (inputs.length+1)) * (i + 1), -1, 0]
+            }
+        );
     }
     for(i = 0; i < outputs.length; i++) {
-        jsPlumb.addEndpoint(this.id, targetEndpoint, { isSource: true, anchor: [1, (1 / (outputs.length+1)) * (i + 1), 1, 0] });
+        jsPlumb.addEndpoint(
+            this.id,
+            {
+                endpoint:"Dot",
+                paintStyle:{ fillStyle:"#225588",radius:7 },
+                isSource: true,
+                connector:[ "Flowchart", { cornerRadius:5 } ],
+                connectorStyle: connectorPaintStyle,
+                hoverPaintStyle: endpointHoverStyle,
+                connectorHoverStyle: connectorHoverStyle,
+                maxConnections:-1,
+                anchor: [1, (1 / (outputs.length+1)) * (i + 1), 1, 0]
+            }
+        );
     }
+    gate.draggable({ containment: "parent",
+            drag: jsPlumb.repaintEverything
+        });
     jsPlumb.draggable(jsPlumb.getSelector("#" + this.id), {
         containment: "#plumbArea",
         grid: [20, 20]
@@ -186,7 +181,7 @@ function andGate() {
     var outputs = new Array();
     inputs.length = 2;
     outputs.length = 1;
-    var gate = new Gate("and" + andGates.length, inputs, outputs, new Protein("protein" + (Math.random() * 1000).toFixed(3)), "", new Position(0,0), {});
+    var gate = new Gate("and" + andGates, inputs, outputs, new Protein("protein" + (Math.random() * 1000).toFixed(3)), "", new Position(0,0), {});
     andGates = andGates + 1;
 };
 
@@ -195,6 +190,6 @@ function notGate() {
     var outputs = new Array();
     inputs.length = 1;
     outputs.length = 1;
-    var gate = new Gate("not" + notGates.length, inputs, outputs, new Protein("protein" + (Math.random() * 1000).toFixed(3)), "", new Position(0,0), {});
+    var gate = new Gate("not" + notGates, inputs, outputs, new Protein("protein" + (Math.random() * 1000).toFixed(3)), "", new Position(0,0), {});
     notGates = notGates + 1;
 };
