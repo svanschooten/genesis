@@ -4,18 +4,47 @@ Authors:
 -Stijn van Schooten
 */
 
-//Global variables.
-var data = null;
-var max_c_x = 0.0;
 
+//Load all the javascript libraries except for jQuery
+var libraries = [ 'bootstrap.min.js',
+                'd3.v3.min.js',
+                'element-min.js',
+                'jquery-ui-1.10.2.min.js',
+                'jquery.jsPlumb-1.4.0-all-min.js',
+                'jquery.ui.touch-punch.min.js',
+                'rickshaw.min.js' ];
+
+//Load all the standard scripts. If page specific, extend
+var scripts = [ 'home.js' ];
 
 /**
 Method that fires when the document is loaded.
 Containing all the setup methods and listener setups.
 */
 $(document).ready(function(){
-    getPlotData();
+
+    loadArrayScripts("", scripts,
+        loadArrayScripts("lib/", libraries,
+            loadPageScript()));
 });
+
+
+/**
+Load page specific scripts if needed.
+If needed on all pages: Put in scripts array.
+*/
+function loadPageScript() {
+    switch(document.URL.split("/").pop()) {
+        case "rk":
+            loadScript("rkPlot.js", getPlotData);
+            break;
+        case "plumbtest":
+            loadScript("scriptPlumb.js");
+            break;
+        default:
+            break;
+    }
+}
 
 /**
 Standard error message for AJAX requests and alerts.
@@ -38,120 +67,20 @@ function getPlotData(){
 }
 
 /**
-Parses the standard JSON ouput to a usable format for plotting.
+Loads an array of .js files with a prefix to simplify importing scripts and libraries.
 */
-function parseJSONdata(response){
-
-    //Check if data in memory is empty
-    if(data == null) {
-       data = $.parseJSON(response);
+function loadArrayScripts(prefix, files, callback) {
+    if(files.length != 0) {
+        loadScript(prefix + files.shift(), loadArrayScripts(prefix, files, callback));
+    } else {
+        callback;
     }
-
-    //Parse the different vectors from the JSON object
-    var time = data["t"];
-    var vectors = data["vectors"];
-    var names = data["names"];
-
-    //Instantiate a new color pallette
-    var palette = new Rickshaw.Color.Palette( { interpolatedStopsCount: vectors[0].length } );
-
-    //Make the data array, now still empty
-    var series = new Array();
-
-    //Fill the data array
-    for (var i=0;i<vectors[0].length;i++){
-        //Make new series object
-        var serie = new Object();
-        //Give it a name
-        serie.name = names[i];
-        //Instantiate the data object in memory
-        var sData = [];
-        //Fill the data object
-        for (j=0;j<time.length-1;j++){
-            var value = vectors[j][i];
-            sData.push({x: (time[j] * 1000), y: value});
-            if(max_c_x < value){
-                max_c_x = value
-            }
-        }
-        //Add data an color
-        serie.data = sData;
-        serie.color = palette.color();
-        //Push data into the data array
-        series.push(serie);
-    }
-
-    return series;
 }
 
 /**
-Plots the received data in a interactive plot.
+Loader wrapper for script loading
 */
-function drawGraph(series) {
-
-    var width = 800;
-    var height = 250;
-
-    //Creating the graph to plot in
-    var graph = new Rickshaw.Graph( {
-            element: document.querySelector("#chart"),
-            width: width,
-            height: height,
-            renderer: 'line',
-            series: series,
-    } );
-
-    //Defining the x-axis
-    var x_axis = new Rickshaw.Graph.Axis.X( {
-        graph: graph,
-        orientation: 'top',
-        //tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-    } );
-
-    //Defining the y-axis
-    var y_axis = new Rickshaw.Graph.Axis.Y( {
-            graph: graph,
-            orientation: 'left',
-            tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-            element: document.getElementById('y_axis'),
-    } );
-
-    //Render the constructed graph
-    graph.render();
-
-    //Building the legend
-    var legend = new Rickshaw.Graph.Legend( {
-            element: document.querySelector('#legend'),
-            graph: graph
-    } );
-
-    //Setting up the hover detail
-    var hoverDetail = new Rickshaw.Graph.HoverDetail( {
-        graph: graph,
-        formatter: function(series, x, y) {
-            var swatch = '<span class="detail_swatch" style="background-color: ' + series.color + '"></span>';
-            var content = swatch + series.name + '<br>' + "t: " + (x / 1000) + "<br> c: " + y ;  //.toFixed(6) for rounding to decimals
-            return content;
-        }
-    } );
-
-    //Add toggle functionality
-    var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
-        graph: graph,
-        legend: legend
-    } );
-
-    //Add legend hover highlight
-    var highlight = new Rickshaw.Graph.Behavior.Series.Highlight( {
-        graph: graph,
-        legend: legend
-    } );
-
-    //TODO werkt soort van, maar nog niet helemaal lekker, moest de timestamp *1000 doen.
-    //Add the range slider for zooming in
-    var slider = new Rickshaw.Graph.RangeSlider( {
-        graph: graph,
-        element: document.getElementById('slider')
-    } );
-
+function loadScript(script, callback) {
+    $.getScript("assets/javascripts/" + script, callback);
 }
+

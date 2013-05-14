@@ -30,6 +30,7 @@ GET     /assets/*file               		controllers.Assets.at(path="/public", file
 # test pages for the ODE solver
 GET     /canvastest                 		controllers.Application.canvastest
 GET     /jsontest                   		controllers.Application.jsontest
+GET     /rk                   		        controllers.Application.rungekutta
 GET     /index                              controllers.Projects.index
 
 #tests for Forms

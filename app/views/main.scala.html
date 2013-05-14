@@ -6,7 +6,8 @@
 }
 
 @head = {
-	<script src="@routes.Assets.at("javascripts/home.js")" type="text/javascript"></script>
+    <script src=@routes.Assets.at("javascripts/lib/jquery-1.9.1.min.js") ></script>
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
 }
 
 @base(title)(head) {	
@@ -52,4 +53,5 @@
 		</footer>
 		
 	</div>
+    <script src="@routes.Assets.at("javascripts/script.js")" type="text/javascript"></script>
 }

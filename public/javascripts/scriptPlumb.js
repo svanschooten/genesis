@@ -14,6 +14,26 @@ var connectorHoverStyle = {
     strokeStyle:"#2e2aF8"
 };
 
+var outputStyle =  {
+    endpoint:"Dot",
+    paintStyle:{ fillStyle:"#225588",radius:7 },
+    isSource: true,
+    connector:[ "Flowchart", { cornerRadius:5 } ],
+    connectorStyle: connectorPaintStyle,
+    hoverPaintStyle: endpointHoverStyle,
+    connectorHoverStyle: connectorHoverStyle,
+    maxConnections:-1,
+    anchor: [1, (1 / (outputs.length+1)) * (i + 1), 1, 0]
+};
+
+var inputStyle = {
+    endpoint:"Dot",
+    paintStyle:{ fillStyle:"#558822",radius:11 },
+    hoverPaintStyle: endpointHoverStyle,
+    isTarget:true,
+    anchor: [0, (1 / (inputs.length+1)) * (i + 1), -1, 0]
+}
+
 var endpointHoverStyle = {fillStyle:"#2e2aF8"};
 
 jsPlumb.ready(function(){
@@ -76,6 +96,12 @@ function Connection(source, targets, protein, data) {
     }
 }
 
+function addEndPoints(counter, element, style) {
+    for(i = 0; i < counter; i++) {
+        jsPlumb.addEndpoint( element.id, style );
+    }
+}
+
 function Gate(id, inputs, outputs, proteins, image, position, data) {
     this.id = id;
     this.inputs = inputs;
@@ -95,32 +121,10 @@ function Gate(id, inputs, outputs, proteins, image, position, data) {
     .appendTo($('#plumbArea'));
 
     for(i = 0; i < inputs.length; i++) {
-        jsPlumb.addEndpoint(
-            this.id,
-            {
-                endpoint:"Dot",
-                paintStyle:{ fillStyle:"#558822",radius:11 },
-                hoverPaintStyle: endpointHoverStyle,
-                isTarget:true,
-                anchor: [0, (1 / (inputs.length+1)) * (i + 1), -1, 0]
-            }
-        );
+        jsPlumb.addEndpoint( this.id, inputStyle );
     }
     for(i = 0; i < outputs.length; i++) {
-        jsPlumb.addEndpoint(
-            this.id,
-            {
-                endpoint:"Dot",
-                paintStyle:{ fillStyle:"#225588",radius:7 },
-                isSource: true,
-                connector:[ "Flowchart", { cornerRadius:5 } ],
-                connectorStyle: connectorPaintStyle,
-                hoverPaintStyle: endpointHoverStyle,
-                connectorHoverStyle: connectorHoverStyle,
-                maxConnections:-1,
-                anchor: [1, (1 / (outputs.length+1)) * (i + 1), 1, 0]
-            }
-        );
+        jsPlumb.addEndpoint( this.id, outputStyle );
     }
     gate.draggable({ containment: "parent",
             drag: jsPlumb.repaintEverything

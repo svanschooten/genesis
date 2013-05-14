@@ -64,6 +64,10 @@ object Application extends Controller {
   def plumbtest = Action {
     Ok(views.html.plumbtest("Testing jsPlumb"))
   }
+
+  def rungekutta = Action {
+    Ok(views.html.rungekutte("Testing the plot and rungeKutta", rkt))
+  }
 }
 
 /** Provide security features */
