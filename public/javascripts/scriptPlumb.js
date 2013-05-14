@@ -127,8 +127,7 @@ function Gate(id, inputs, outputs, proteins, image, position, data) {
     this.proteins = proteins;
     this.position = position;
     this.image = image;
-    this.x = position.x;
-    this.y = position.y;
+    this.position = position;
     this.data = data;
 
     var gate = $('<div/>', {
@@ -141,9 +140,12 @@ function Gate(id, inputs, outputs, proteins, image, position, data) {
     addEndPoints(inputs, outputs, this);
 
     gate.draggable({ containment: "parent",
-        drag: jsPlumb.repaintEverything
+        drag: jsPlumb.repaintEverything,
+        stop: function(){
+        position.x = $("#" + this.id).position().left;
+        position.y = $("#" + this.id).position().top; }
     });
-    jsPlumb.draggable(jsPlumb.getSelector("#" + this.id), {
+    jsPlumb.draggable($("#" + this.id), {
         containment: "#plumbArea",
         grid: [20, 20]
     });

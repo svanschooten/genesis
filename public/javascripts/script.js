@@ -100,6 +100,9 @@ Array.prototype.removeElem = function(elem)   {
         this.splice(idx, 1);
 }
 
+/**
+Generalised object toString method. JSON.stringify does not work with cyclomatic objects.
+*/
 function objToString (obj) {
     var str = '';
     for (var p in obj) {
@@ -109,5 +112,3 @@ function objToString (obj) {
     }
     return str;
 }
-
-
