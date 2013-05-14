@@ -1,19 +1,20 @@
-var andGates = 0;
-var notGates = 0;
+/**
+Authors:
+-Stijn van Schooten
+*/
+
+//Globals
 var circuit = new Array();
 var endpointOptions = { isTarget:true, isSource:true };
-
 var connectorPaintStyle = {
     lineWidth:4,
     strokeStyle:"#deea18",
     joinstyle:"round",
 };
-
 var connectorHoverStyle = {
     lineWidth:4,
     strokeStyle:"#2e2aF8"
 };
-
 var outputStyle =  {
     endpoint:"Dot",
     paintStyle:{ fillStyle:"#225588",radius:7 },
@@ -25,7 +26,6 @@ var outputStyle =  {
     maxConnections:-1,
     anchor: [1, (1 / (outputs.length+1)) * (i + 1), 1, 0]
 };
-
 var inputStyle = {
     endpoint:"Dot",
     paintStyle:{ fillStyle:"#558822",radius:11 },
@@ -33,9 +33,12 @@ var inputStyle = {
     isTarget:true,
     anchor: [0, (1 / (inputs.length+1)) * (i + 1), -1, 0]
 };
-
 var endpointHoverStyle = {fillStyle:"#2e2aF8"};
 
+
+/**
+Ready call for jsPlumb library
+*/
 jsPlumb.ready(function(){
 
     jsPlumb.Defaults.Container = "plumbArea";
@@ -59,26 +62,9 @@ jsPlumb.ready(function(){
     });
 });
 
-function notify(message, type) {
-    alert(type + "! " + message);//TODO hier een mooi bootstrap element voor gebruiken.
-}
-
-function removeElem(array, elem) {
-    if(array.indexOf(elem) != -1)
-        array.splice(array.indexOf(elem), 1);
-}
-
-function objToString (obj) {
-    var str = '';
-    for (var p in obj) {
-        if (obj.hasOwnProperty(p)) {
-            str += p + '::' + obj[p] + '\n';
-        }
-    }
-    return str;
-}
-
-
+/**
+Connection constructor
+*/
 function Connection(source, targets, protein, data) {
     this.source = source;
     this.targets = targets;
@@ -91,11 +77,14 @@ function Connection(source, targets, protein, data) {
     }
 
     function removeTarget(target) {
-        removeElem(this.targets, target);
+        this.targets.removeElem(target);
         target.removeIn(this);
     }
 }
 
+/**
+Wrapper for adding multiple endPoints
+*/
 function addEndPoints(inputs, outputs, element) {
     for(i = 0; i < inputs.length; i++) {
         jsPlumb.addEndpoint(
@@ -128,6 +117,9 @@ function addEndPoints(inputs, outputs, element) {
     }
 }
 
+/**
+Gate constructor
+*/
 function Gate(id, inputs, outputs, proteins, image, position, data) {
     this.id = id;
     this.inputs = inputs;
@@ -170,7 +162,7 @@ function Gate(id, inputs, outputs, proteins, image, position, data) {
     }
 
     function removeIn(source) {
-        removeElem(this.inputs, source);
+        this.inputs.removeElem(source);
     }
 
     function connectOut(target, protein, data) {
@@ -186,36 +178,46 @@ function Gate(id, inputs, outputs, proteins, image, position, data) {
     function removeOut(target) {
         for(i = 0; i < outputs.length; i++) {
             if(outputs[i].targets.indexOf(target) != -1) {
-                removeElem(outputs[i].targets, target);
+                outputs[i].targets.removeElem(target);
             }
         }
     }
 }
 
+/**
+Protein constructor
+*/
 function Protein(id, data) {
     this.id = id;
     this.data = data;
 }
 
+/**
+Position constructor
+*/
 function Position(x, y) {
     this.x = x;
     this.y = y;
 }
 
+/**
+Wrapper for simple creation of AND gates
+*/
 function andGate() {
     var inputs = new Array();
     var outputs = new Array();
     inputs.length = 2;
     outputs.length = 1;
-    var gate = new Gate("and" + andGates, inputs, outputs, new Protein("protein" + (Math.random() * 1000).toFixed(3)), "", new Position(0,0), {});
-    andGates = andGates + 1;
+    var gate = new Gate("and" + circuit.length, inputs, outputs, new Protein("protein" + (Math.random() * 1000).toFixed(3)), "", new Position(0,0), {});
 };
 
+/**
+Wrapper for simple creation of NOT gates
+*/
 function notGate() {
     var inputs = new Array();
     var outputs = new Array();
     inputs.length = 1;
     outputs.length = 1;
-    var gate = new Gate("not" + notGates, inputs, outputs, new Protein("protein" + (Math.random() * 1000).toFixed(3)), "", new Position(0,0), {});
-    notGates = notGates + 1;
+    var gate = new Gate("not" + circuit.length, inputs, outputs, new Protein("protein" + (Math.random() * 1000).toFixed(3)), "", new Position(0,0), {});
 };

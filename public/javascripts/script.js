@@ -84,3 +84,30 @@ function loadScript(script, callback) {
     $.getScript("assets/javascripts/" + script, callback);
 }
 
+/**
+Spliffy notifying method
+*/
+function notify(message, type) {
+    alert(type + "! " + message);//TODO hier een mooi bootstrap element voor gebruiken.
+}
+
+/**
+Enhancing the methods of an array
+*/
+Array.prototype.removeElem = function(elem)   {
+    var idx = this.indexOf(elem);
+    if(idx != -1)
+        this.splice(idx, 1);
+}
+
+function objToString (obj) {
+    var str = '';
+    for (var p in obj) {
+        if (obj.hasOwnProperty(p)) {
+            str += p + '::' + obj[p] + '\n';
+        }
+    }
+    return str;
+}
+
+
