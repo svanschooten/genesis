@@ -32,7 +32,7 @@ var inputStyle = {
     hoverPaintStyle: endpointHoverStyle,
     isTarget:true,
     anchor: [0, (1 / (inputs.length+1)) * (i + 1), -1, 0]
-}
+};
 
 var endpointHoverStyle = {fillStyle:"#2e2aF8"};
 
@@ -96,9 +96,35 @@ function Connection(source, targets, protein, data) {
     }
 }
 
-function addEndPoints(counter, element, style) {
-    for(i = 0; i < counter; i++) {
-        jsPlumb.addEndpoint( element.id, style );
+function addEndPoints(inputs, outputs, element) {
+    for(i = 0; i < inputs.length; i++) {
+        jsPlumb.addEndpoint(
+            element.id,
+            {
+                endpoint:"Dot",
+                paintStyle:{ fillStyle:"#558822",radius:11 },
+                hoverPaintStyle: endpointHoverStyle,
+                isTarget:true,
+                anchor: [0, (1 / (inputs.length+1)) * (i + 1), -1, 0]
+            }
+        );
+    }
+
+    for(i = 0; i < outputs.length; i++) {
+        jsPlumb.addEndpoint(
+            element.id,
+            {
+                endpoint:"Dot",
+                paintStyle:{ fillStyle:"#225588",radius:7 },
+                isSource: true,
+                connector:[ "Flowchart", { cornerRadius:5 } ],
+                connectorStyle: connectorPaintStyle,
+                hoverPaintStyle: endpointHoverStyle,
+                connectorHoverStyle: connectorHoverStyle,
+                maxConnections:-1,
+                anchor: [1, (1 / (outputs.length+1)) * (i + 1), 1, 0]
+            }
+        );
     }
 }
 
@@ -120,15 +146,11 @@ function Gate(id, inputs, outputs, proteins, image, position, data) {
     })
     .appendTo($('#plumbArea'));
 
-    for(i = 0; i < inputs.length; i++) {
-        jsPlumb.addEndpoint( this.id, inputStyle );
-    }
-    for(i = 0; i < outputs.length; i++) {
-        jsPlumb.addEndpoint( this.id, outputStyle );
-    }
+    addEndPoints(inputs, outputs, this);
+
     gate.draggable({ containment: "parent",
-            drag: jsPlumb.repaintEverything
-        });
+        drag: jsPlumb.repaintEverything
+    });
     jsPlumb.draggable(jsPlumb.getSelector("#" + this.id), {
         containment: "#plumbArea",
         grid: [20, 20]
