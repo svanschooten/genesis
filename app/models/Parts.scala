@@ -9,7 +9,9 @@ import anorm.SqlParser._
  *  superclass for CSs and TFs (coding sequences and transcription factors)
  */ 
 abstract class Part
-abstract class Gate extends Part
+abstract class Gate extends Part {
+    val output: CodingSeq
+}
 
 /**
  * class for coding sequences
@@ -19,12 +21,15 @@ abstract class Gate extends Part
  * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class CodingSeq(val name:String, var concentration: (Double, Double), var ready: Boolean = false) extends Part{
+case class CodingSeq(val name: String, var concentration: List[(Double, Double)], val isInput: Boolean) extends Part{
     private val params = getParams
     val k2 = params[Double]("K2")
     val d1 = params[Double]("D1")
     val d2 = params[Double]("D2")
-    var linksTo: Option[Gate] = None
+    var linkedBy: Option[Gate] = None
+    var linksTo: List[Gate] = Nil
+    var ready: Boolean = false
+    var currentStep: Int = 0
     
     /**
      * Retrieve the k2, d1 and d2 parameters for this CS from the database
@@ -47,7 +52,7 @@ case class CodingSeq(val name:String, var concentration: (Double, Double), var r
  *  the other parameters determine the transcription rate of the output
  */
 case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
-  input.linksTo = Some(this)
+  input.linksTo ::= this
   private val params = getParams
   val k1 = params[Double]("K1")
   val km = params[Double]("KM")
@@ -72,8 +77,8 @@ case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
  *  for this class and the number of inputs
  */
 case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gate{
-  input._1.linksTo = Some(this)
-  input._2.linksTo = Some(this)
+  input._1.linksTo ::= this
+  input._2.linksTo ::= this
   
   private val params = getParams
   val k1 = params[Double]("K1")
