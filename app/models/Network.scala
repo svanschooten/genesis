@@ -259,8 +259,9 @@ object Network {
       	  for(cs <- allCDS){
       	    if(inputs1 contains cs._2) inputs2 += (cs._2 -> cs._1)
       	    else if(cs._2!="NONE") inputs1 += (cs._2 -> cs._1)
-      	    seqs += (cs._1 -> new CodingSeq(cs._1,concentrations(cs._1),cs._3))
-      	    if(cs._3) startCDS ::= cs
+      	    val newCDS = new CodingSeq(cs._1,concentrations(cs._1),cs._3)
+      	    seqs += (cs._1 -> newCDS)
+      	    if(cs._3) startCDS ::= newCDS
       	  }
 	      
 	      for(str: String <- inputs1.keys){

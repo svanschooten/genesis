@@ -1,46 +1,41 @@
 @(form: Form[(String,String)])(implicit flash: Flash)
 
-@main("Welcome to GENESIS") {
-<html>
-    <head>
-        <title>Genesis</title>
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/genesis-logo64x64.png")">
-        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/login.css")">
-    </head>
-    <body>
-        <header>
-            <a href="@routes.Projects.index" id="logo"></a>
-        </header>	
-		<!-- werkt niet <img src="/public/images/genesis-logo64x64.png" alt="genesis.png"/> -->
-        @helper.form(routes.Application.authenticate) {
-            <div class="hero-unit">
-            <h1>Sign in</h1>
-            
-            @form.globalError.map { error =>
-                <p class="error">
-					@error.message
-                </p>
-            }
-            
-            @flash.get("success").map { message =>
-                <p class="success">
-					@message
-                </p>
-            }
-            
-            <p>
-                <input type="inlog" name="inlog" placeholder="Inlog" id="inlog">
-            </p>
-            <p>
-                <input type="password" name="password" placeholder="Password" id="password">
-            </p>
-            <p>
-                <button type="submit" id="loginbutton" class="btn btn-primary btn-large">Login</button>
-            </p>
-            </div>
-        }      
-    </body>
-</html>
+@head = {
+	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/login.css")">
 }
 
-
+@base("Welcome to GENESIS")(head) {	
+	<div class="container">
+	
+		<div class="row-fluid">
+			<div id="container-left" class="span6">
+				@helper.form(routes.Application.authenticate, 'class -> "form-signin") {
+					@form.globalError.map { error =>
+						<p class="error">@error.message</p>
+					} 
+					
+					@flash.get("success").map { message =>
+						<p class="success">@message</p>
+					}				
+					
+					<h2 class="form-signin-heading">Please sign in</h2>
+					<input class="input-block-level" type="text" name="email" placeholder="Username">
+					<input class="input-block-level" type="password" name="password" placeholder="Password">
+					<label class="checkbox"> 
+						<input type="checkbox" value="remember-me"> Remember me (doesn't work yet)
+					</label>
+					<button class="btn btn-large btn-primary" type="submit">Sign in</button>
+				}
+			</div>
+			
+			<div id="container-right" class="span6">
+				A little bit of lorem ipsum
+			</div>
+		</div>
+		
+		<footer>
+			<p>&copy; Team James</p>
+		</footer>   
+	</div>
+		
+}

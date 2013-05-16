@@ -3,17 +3,31 @@
 # ~~~~
 
 # The home page
-GET     /                                   controllers.Projects.index
+GET		/									controllers.Home.home
+
+# The about page
+GET		/about								controllers.About.about
+
+# The settings page
+GET		/settings							controllers.Settings.settings
+POST	/settings							controllers.Settings.saveSettings
+
+# The help page
+GET		/help								controllers.Help.help
 
 # Authentication
 GET     /login                              controllers.Application.login
 POST    /login                              controllers.Application.authenticate
+GET     /logout                             controllers.Application.logout
 
 # test pages for the ODE solver
 GET		/rk							controllers.Application.rk
 GET     /canvastest                 controllers.Application.canvastest
 GET     /jsontest                   controllers.Application.jsontest
 GET     /mofu                       controllers.Application.morefun
+GET     /canvastest                 		controllers.Application.canvastest
+GET     /jsontest                   		controllers.Application.jsontest
+GET     /index                              controllers.Projects.index
 
 #Forms
 GET		/formTest							controllers.Projects.formFunction

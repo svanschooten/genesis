@@ -64,31 +64,19 @@ case class Rungekuttatest (){
   }
 
   def genJson = {
-<<<<<<< HEAD
-    Rungekuttatest.resultsToJson(t0, tf, dt, testResults())
-    /*val pa = new CodingSeq("A",(0.1,0.1))
-	  val pb = new CodingSeq("B",(0.2,0.3))
-	  val pc = new CodingSeq("C",(0.3,0.2))
-	  val pd = new CodingSeq("D",(0.4,0.3))
-	  val g1 = new AndGate((pa,pb),pc)
-	  val g2 = new NotGate(pc,pd)
-	  val curNetwork = new Network(List(pa,pb))
-    Network.simToJson(curNetwork.simulate(0.1))*/
-=======
     import models._
-    val A = CodingSeq("A",(1,1))
-    val B = CodingSeq("B",(1,1))
-    val C = CodingSeq("C",(1,1))
-    val D = CodingSeq("D",(1,1))
-    val E = CodingSeq("E",(1,1))
-    val F = CodingSeq("F",(1,1))
+    val A = CodingSeq("A",List((1,1)),true)
+    val B = CodingSeq("B",List((1,1)),true)
+    val C = CodingSeq("C",List((1,1)),false)
+    val D = CodingSeq("D",List((1,1)),false)
+    val E = CodingSeq("E",List((1,1)),true)
+    val F = CodingSeq("F",List((1,1)),false)
     val notA = NotGate(A,C)
     val notAandB = AndGate((C,B),D)
     val notAandBandE = AndGate((D,E),F)
-    val net = new Network(List(A,B,E))
+    val net = new Network(List(A,B,E),"testUser1","testNetwork")
     net.simJson(5.0)
     //Rungekuttatest.resultsToJson(t0, tf, dt, testResults())
->>>>>>> 4dfe0c84951da757a2ec05ef8016fce97380bfca
   }
 
 }

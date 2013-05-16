@@ -1,4 +1,4 @@
-name := "scalation"
+name := "genesis"
 
 version := "0.9"
 
