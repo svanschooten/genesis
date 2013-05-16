@@ -23,12 +23,14 @@ class NetworkSpec extends Specification {
             val net = new Network(List(A,B,E))
             val results = net.simulate(5.0)
             // expected results generated using MATLAB R2012b
+            //._2 = mRna, ._3 = protein
             // B: 48.7804878048759	260.792124555058
             // D: 334.934010152227	1279.12460265271
             // F: 271.331210172459	941.508188692855
             // A: 41.6666666666666	228.054374360186
             // E: 61.3496932500570	148.920900749709
             // C: 99.7682070794492	497.584659558515
+            //println(results(results.length-1))
             results(results.length-1)(0)._2 must beCloseTo(48.780, 0.01)
             results(results.length-1)(0)._3 must beCloseTo(260.792, 0.01)
             results(results.length-1)(1)._2 must beCloseTo(334.934, 0.01)
@@ -41,17 +43,6 @@ class NetworkSpec extends Specification {
             results(results.length-1)(4)._3 must beCloseTo(148.920, 0.01)
             results(results.length-1)(5)._2 must beCloseTo(99.768, 0.01)
             results(results.length-1)(5)._3 must beCloseTo(497.584, 0.01)
-        }
-
-        "have idempotent simulate function" in new WithApplication {
-            val A = CodingSeq("A",List((0,0)),true)
-            val B = CodingSeq("B",List((0,0)),true)
-            val C = CodingSeq("C",List(),false)
-            val AandB = AndGate((A,B),C)
-            val net = new Network(List(A,B))
-            val results1 = net.simulate(0.5)
-            val results2 = net.simulate(0.5)
-            results1 must be equalTo(results2)
         }
     }
 }
