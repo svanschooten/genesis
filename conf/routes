@@ -4,7 +4,6 @@
 
 # The home page
 GET     /                                   controllers.Projects.index
-GET     /jsontest                   		controllers.Application.jsontest
 
 # Authentication
 GET     /login                              controllers.Application.login

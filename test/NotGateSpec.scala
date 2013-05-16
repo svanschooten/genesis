@@ -7,8 +7,8 @@ import models._
 class NotGateSpec extends Specification {
 		"Network" should {
         "return correct results" in new WithApplication {
-            val A = CodingSeq("A",(0,0))
-            val B = CodingSeq("B",(1,1))
+            val A = CodingSeq("A",List((0,0)),true)
+            val B = CodingSeq("B",List(),false)
             val AtoB = NotGate(A,B)
             val net = new Network(List(A))
             val results = net.simulate(5.0)

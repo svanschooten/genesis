@@ -7,9 +7,9 @@ import models._
 class AndGateSpec extends Specification {
 	    "Network" should {
         "return correct results" in new WithApplication {
-            val A = CodingSeq("A",(0,0))
-            val B = CodingSeq("B",(0,0))
-            val C = CodingSeq("C",(1,1))
+            val A = CodingSeq("A",List((0,0)),true)
+            val B = CodingSeq("B",List((0,0)),true)
+            val C = CodingSeq("C",List(),false)
             val ABtoC = AndGate((A,B),C)
             val net = new Network(List(A,B))
             val results = net.simulate(5.0)

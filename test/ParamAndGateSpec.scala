@@ -10,12 +10,12 @@ class ParamAndGateSpec extends Specification {
 	"Parameter" should {
 		"return correct results" in {
 			running(FakeApplication()) {
-				val A = CodingSeq("A",(0,0))
-				val B = CodingSeq("B",(0,0))
-				val C = CodingSeq("C",(0,0))
+				val A = CodingSeq("A",List((0,0)),true)
+				val B = CodingSeq("B",List((0,0)),true)
+				val C = CodingSeq("C",List(),false)
 				val ABtoC = AndGate((A,B),C)
-				ABtoC.input must equalTo((CodingSeq("A",(0,0)),CodingSeq("B",(0,0))))
-				ABtoC.output must equalTo(CodingSeq("C",(0,0)))
+				ABtoC.input must equalTo((CodingSeq("A",List((0,0)),true),CodingSeq("B",List((0,0)),true)))
+				ABtoC.output must equalTo(CodingSeq("C",List(),false))
 			}
 		}
 	}

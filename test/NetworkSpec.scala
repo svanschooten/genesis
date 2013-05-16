@@ -11,12 +11,12 @@ class NetworkSpec extends Specification {
 
     "Network" should {
         "return correct results" in new WithApplication {
-            val A = CodingSeq("A",(0,0))
-            val B = CodingSeq("B",(0,0))
-            val C = CodingSeq("C",(0,0))
-            val D = CodingSeq("D",(0,0))
-            val E = CodingSeq("E",(0,0))
-            val F = CodingSeq("F",(1,1))
+            val A = CodingSeq("A",List((0,0)),true)
+            val B = CodingSeq("B",List((0,0)),true)
+            val C = CodingSeq("C",List(),false)
+            val D = CodingSeq("D",List(),false)
+            val E = CodingSeq("E",List((0,0)),true)
+            val F = CodingSeq("F",List(),false)
             val notA = NotGate(A,C)
             val notAandB = AndGate((C,B),D)
             val notAandBandE = AndGate((D,E),F)
@@ -44,9 +44,9 @@ class NetworkSpec extends Specification {
         }
 
         "have idempotent simulate function" in new WithApplication {
-            val A = CodingSeq("A",(0,0))
-            val B = CodingSeq("B",(0,0))
-            val C = CodingSeq("C",(0,0))
+            val A = CodingSeq("A",List((0,0)),true)
+            val B = CodingSeq("B",List((0,0)),true)
+            val C = CodingSeq("C",List(),false)
             val AandB = AndGate((A,B),C)
             val net = new Network(List(A,B))
             val results1 = net.simulate(0.5)

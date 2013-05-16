@@ -3,6 +3,11 @@ import scalation.{VectorD, RungeKutta}
 import factories.ODEFactory._
 import play.api.libs.json._
 
+/*
+TODO list of inputs:
+    list using (Double, List[List[Double]]) as (stepSize assumed in List, list of concentrations for each input in alphabetical order)
+*/
+
 /**
  *  Class to represent a network of coding sequences and transcription factors.
  *  It has functionality to simulate how the concentrations of the components of
@@ -22,23 +27,39 @@ class Network(inputs: List[CodingSeq]) {
      */
     private var currentTime = 0.0
 
-    private var steps = 0
-
     /**
      *  Perform the simulation that will show how the concentrations of the checmicals
      *  in the system will evolve and return these concentrations as follows:
-     *  Each time step a list of pairs is generated, with mRNA and protein concentration,
+     *  Each time step a list of triplets is generated, with name, mRNA and protein concentration,
      *  and these time steps form a list as well.
+     *  This function first resets all the current concentrations to guarantee idempotence.
      *  @param finish The finish time; simulation will run from 0.0 to this time.
      */
     def simulate(finish: Double): List[List[(String,Double,Double)]] = {
+        // function to reset all concentrations in this network
+        def resetConcs(cs: CodingSeq) {
+            if(cs.ready)
+                return
+            if(!cs.isInput)
+                cs.concentration = Nil
+            cs.ready = true
+            cs.currentStep = 1
+            cs.linksTo.foreach(x => resetConcs(x.output))
+        }
+        inputs.foreach(resetConcs _)
         // function to get all the concentrations out of the network as a list of pairs
     	def getConcs(l: List[CodingSeq] = inputs): Set[(String,Double,Double)] = l.flatMap(seq => seq match {
-            case CodingSeq(name,_,_) => Set((name, seq.concentration._1, seq.concentration._2)) ++ (seq.linksTo match {
-                case Some(NotGate(_,next)) => getConcs(List(next))
-                case Some(AndGate(_,next)) => getConcs(List(next))
-                case _ => Nil
-            })
+            case CodingSeq(name,_,false) if(!seq.ready) => {seq.ready = true;
+              Set((name, seq.concentration.head._1, seq.concentration.head._2)) ++ (seq.linksTo.collect( {
+                case NotGate(_,next) => getConcs(List(next))
+                case AndGate(_,next) => getConcs(List(next))
+            })).flatten}
+            case CodingSeq(name,_,true) if(!seq.ready) => {seq.currentStep += 1; seq.ready = true;
+              Set((name, seq.concentration(seq.currentStep - 1)._1, seq.concentration(seq.currentStep - 1)._2)) ++ (seq.linksTo.collect( {
+                case NotGate(_,next) => getConcs(List(next))
+                case AndGate(_,next) => getConcs(List(next))
+            })).flatten}
+            case _ => Nil
         }).toSet
 
         currentTime = 0.0
@@ -85,45 +106,35 @@ class Network(inputs: List[CodingSeq]) {
         // resets all the ready flags
         def reset_readies(cs: CodingSeq) {
             cs.ready=false
-            cs.linksTo match {
-                case Some(NotGate(_,y)) => reset_readies(y)
-                case Some(AndGate((_,_),y)) => reset_readies(y)
+            cs.linksTo.foreach(_ match {
+                case NotGate(_,y) if(y.ready) => reset_readies(y)
+                case AndGate((_,_),y) if(y.ready) => reset_readies(y)
                 case _ => return
-            }
+            })
         }
 
-        // update the first CSs in the network because do_the_math won't touch them
-        inputs.foreach( x => {
-            reset_readies(x)
-            val newConcs = solve(mkODEs(List(x)))(0)
-            x.concentration=(newConcs(0),newConcs(1))
-            x.ready=true
-        })
-        do_the_math(inputs)
+        // reset the ready flags
+        inputs.foreach(reset_readies _)
+        // figure out the new concentrations
+        inputs.foreach(do_the_math _)
 
         // the function that will do the actual work
-        def do_the_math(css: List[CodingSeq]) {
+        def do_the_math(cs: CodingSeq) {
             // generate the appropriate ODEPairs and update the concentrations
-            val parts = css.flatMap( x => x.linksTo match {
-                case Some(y) => y match {
-                    case NotGate(_,out) => List(y)
-                    case AndGate((in1,in2),_) if((in1.ready && in2==x) || (in1==x && in2.ready)) => List(y)
-                    case _ => Nil
-                }
-                case None => Nil
+            val parts = cs.linksTo.collect( {
+                case y@NotGate(_,out) if(!out.ready) => y
+                case y@AndGate((in1,in2),out) if(((in1.ready && in2==cs) || (in1==cs && in2.ready)) && !out.ready) => y
             })
             if(parts.length == 0)
                 return
             val odePairs = mkODEs(parts)
             val results = solve(odePairs)
             results.zip(parts).foreach(_ match {
-                case (a,b:NotGate) => b.output.ready=true; b.output.concentration=(a(1),a(2))
-                case (a,b:AndGate) => b.output.ready=true; b.output.concentration=(a(2),a(3))
-                })
+                case (a,b:NotGate) => b.output.ready=true; b.output.concentration ::= (a(1),a(2))
+                case (a,b:AndGate) => b.output.ready=true; b.output.concentration ::= (a(2),a(3))
+            })
             // finally, recursively update the rest of the network
-            do_the_math(parts.collect( {
-                case x:NotGate => x.output
-                case x:AndGate => x.output }))
+            parts.foreach((x:Gate) => do_the_math(x.output))
         }
 
         // the function that calls the solver; the solver expects each element of the
