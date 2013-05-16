@@ -86,7 +86,7 @@ case class Rungekuttatest (){
     val notAandB = AndGate((C,B),D)
     val notAandBandE = AndGate((D,E),F)
     val net = new Network(List(A,B,E))
-    net.simJson(1.0)
+    net.simJson(5.0)
     //Rungekuttatest.resultsToJson(t0, tf, dt, testResults())
 >>>>>>> 4dfe0c84951da757a2ec05ef8016fce97380bfca
   }
