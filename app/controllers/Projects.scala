@@ -22,22 +22,20 @@ object Projects extends Controller with Secured {
       {
         case (name1, name2) => {
           var l: List[String] = List()
-          //CodingSeq(k2:Double, d: (Double,Double), var concentration: (Double, Double))
-          //val pa = new CodingSeq(4.6337,(0.0240,0.8466),(1.0,2.0),None)
-          val pa = new CodingSeq("A",(0.1,0.1))
-          val pb = new CodingSeq("B",(0.2,0.3))
-          val pc = new CodingSeq("C",(0.3,0.2))
-          val pd = new CodingSeq("D",(0.4,0.3))
+		  val pa = new CodingSeq("A",List((0.1,0.1)),true)
+		  val pb = new CodingSeq("B",List((0.2,0.3)),true)
+		  val pc = new CodingSeq("C",List((0.3,0.2)),false)
+		  val pd = new CodingSeq("D",List((0.4,0.3)),false)
           val g1 = new AndGate((pa,pb),pc)
           val g2 = new NotGate(pc,pd)
           curNetwork = new Network(List(pa,pb),"testuser","network1")
-          //curNetwork.save
-          //curNetwork = Network.loadNetwork("testuser","network1")
+          curNetwork.save
+          //curNetwork = Network.load("testuser","network1")
           l::="inputs:"
           for(x:CodingSeq <- curNetwork.inputs){
-            l::=x.name
-            l::= (x.linksTo match{ case Some(x:AndGate) => x.output.name
-              case Some(x:NotGate) => x.output.name})
+            for(y:Gate <- x.linksTo){
+              l::=x.name+"->"+y.output.name
+            }
           }
           
           /*l::="pa:"+pa.k2+" "+pa.d1+" "+pa.d2
@@ -56,7 +54,7 @@ object Projects extends Controller with Secured {
 	      var t = t0
 	      //l::="result length:"+result.length.toString()
 	      //result.foreach(r => l::="result:"+r.toString)
-	      l::=Network.simToJson(result).toString()
+	      //l::=Network.simToJson(result).toString()
 	      l=l.reverse
           Ok(html.formResult(l))
         }   
