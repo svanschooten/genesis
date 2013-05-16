@@ -27,7 +27,7 @@ target
 # Ignore Play! working directory #
 db
 eclipse
-lib
+./lib
 log
 logs
 modules
