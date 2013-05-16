@@ -25,6 +25,7 @@ var dropOptions = {
 function logCircuit() {
     for(i = 0; i < circuit.length; i++) {
         var elem = circuit[i];
+        console.log(elem.outputs.length);
         for(j = 0; j < elem.outputs.length; j++) {
             var out = elem.outputs[j];
             console.log(elem.id + " - " + out.protein.id);
@@ -96,7 +97,7 @@ function makeConnection(params) {
             notify("Invalid element: " + params.sourceId, "Warning");
         } else {
         //TODO hier misschien protein kiezen.
-            element.connectOut(params.targetId.replace("#",""), new Protein(Math.random().toFixed(2)*100,  {}), {})
+            element.connectOut(params.targetId.replace("#",""), new Protein(Math.random().toFixed(2)*100,  null), null)
         }
     }
     return confirmed;
@@ -235,7 +236,7 @@ function andGate() {
     var outputs = new Array();
     inputs.length = 2;
     outputs.length = 1;
-    var gate = new Gate("and" + circuit.length, inputs, outputs, "", new Position(0,0), {});
+    var gate = new Gate("and" + circuit.length, inputs, outputs, "", new Position(0,0), null);
 };
 
 /**
@@ -246,5 +247,5 @@ function notGate() {
     var outputs = new Array();
     inputs.length = 1;
     outputs.length = 1;
-    var gate = new Gate("not" + circuit.length, inputs, outputs, "", new Position(0,0), {});
+    var gate = new Gate("not" + circuit.length, inputs, outputs, "", new Position(0,0), null);
 };
