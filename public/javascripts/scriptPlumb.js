@@ -15,26 +15,26 @@ var connectorHoverStyle = {
     lineWidth:4,
     strokeStyle:"#2e2aF8"
 };
-var outputStyle =  {
-    endpoint:"Dot",
-    paintStyle:{ fillStyle:"#225588",radius:7 },
-    isSource: true,
-    connector:[ "Flowchart", { cornerRadius:5 } ],
-    connectorStyle: connectorPaintStyle,
-    hoverPaintStyle: endpointHoverStyle,
-    connectorHoverStyle: connectorHoverStyle,
-    maxConnections:-1,
-    anchor: [1, (1 / (outputs.length+1)) * (i + 1), 1, 0]
-};
-var inputStyle = {
-    endpoint:"Dot",
-    paintStyle:{ fillStyle:"#558822",radius:11 },
-    hoverPaintStyle: endpointHoverStyle,
-    isTarget:true,
-    anchor: [0, (1 / (inputs.length+1)) * (i + 1), -1, 0]
-};
 var endpointHoverStyle = {fillStyle:"#2e2aF8"};
+var dropOptions = {
+    tolerance:"touch",
+    hoverClass:"dropHover",
+    activeClass:"dragActive"
+};
 
+function logCircuit() {
+    for(i = 0; i < circuit.length; i++) {
+        var elem = circuit[i];
+        for(j = 0; j < elem.outputs.length; j++) {
+            var out = elem.outputs[j];
+            console.log(elem.id + " - " + out.protein.id);
+            console.log("x:" + elem.position.x + " y:" + elem.position.y);
+            for(k = 0; k < out.targets.length; k++) {
+                console.log("    -> " + out.targets[k].id);
+            }
+        }
+    }
+}
 
 /**
 Ready call for jsPlumb library
@@ -45,31 +45,27 @@ jsPlumb.ready(function(){
     jsPlumb.importDefaults({
         DragOptions : { cursor: "pointer", zIndex:2000 },
         HoverClass: connectorHoverStyle,
-        ConnectionOverlays : [[ "Arrow", { location:0.9 } ]],
+        ConnectionOverlays : [[ "Arrow", { location:-40 } ]],
     });
     var jsp = jsPlumb.getInstance({
         connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5 } ],
-        endpoint:[ "Dot", { radius:5 } ],
-        endpointStyle : { fillStyle: "#567567"  },
+        Endpoints : [ [ "Dot", {radius: 5} ], [ "Dot", { radius: 7 } ]],
+        EndpointStyles : [{ fillStyle:'#225588' }, { fillStyle:'#558822' }],
         hoverPaintStyle: endpointHoverStyle,
     });
 
-
-    jsPlumb.bind("click", function(conn, originalEvent) {
-        console.log(objToString(conn));
-        console.log(objToString(conn.source));
-        console.log(objToString(conn.target));
-    });
 });
 
 /**
 Connection constructor
 */
-function Connection(source, targets, protein, data) {
+function Connection(source, target, protein, data) {
     this.source = source;
-    this.targets = targets;
+    this.targets = [target];
     this.protein = protein;
     this.data = data;
+
+    target.connectIn(this);
 
     function addTarget(target) {
         this.targets.push(target);
@@ -82,6 +78,30 @@ function Connection(source, targets, protein, data) {
     }
 }
 
+function findElement(array, elementId) {
+    for(i = 0; i < array.length; i++) {
+        if(array[i].id == elementId) {
+            return array[i];
+        }
+    }
+    return null;
+}
+
+function makeConnection(params) {
+
+    var confirmed = confirm("Connect " + params.sourceId + " to " + params.targetId + "?");
+    if(confirmed) {
+        var element = findElement(circuit, params.sourceId.replace("#",""));
+        if(element == null) {
+            notify("Invalid element: " + params.sourceId, "Warning");
+        } else {
+        //TODO hier misschien protein kiezen.
+            element.connectOut(params.targetId.replace("#",""), new Protein(Math.random().toFixed(2)*100,  {}), {})
+        }
+    }
+    return confirmed;
+}
+
 /**
 Wrapper for adding multiple endPoints
 */
@@ -91,10 +111,12 @@ function addEndPoints(inputs, outputs, element) {
             element.id,
             {
                 endpoint:"Dot",
-                paintStyle:{ fillStyle:"#558822",radius:11 },
+                paintStyle:{ fillStyle:"#558822",radius:7 },
                 hoverPaintStyle: endpointHoverStyle,
                 isTarget:true,
-                anchor: [0, (1 / (inputs.length+1)) * (i + 1), -1, 0]
+                anchor: [0, (1 / (inputs.length+1)) * (i + 1), -1, 0],
+                beforeDrop: makeConnection,
+                dropOptions: dropOptions
             }
         );
     }
@@ -104,14 +126,15 @@ function addEndPoints(inputs, outputs, element) {
             element.id,
             {
                 endpoint:"Dot",
-                paintStyle:{ fillStyle:"#225588",radius:7 },
+                paintStyle:{ fillStyle:"#225588",radius:5 },
                 isSource: true,
                 connector:[ "Flowchart", { cornerRadius:5 } ],
                 connectorStyle: connectorPaintStyle,
                 hoverPaintStyle: endpointHoverStyle,
                 connectorHoverStyle: connectorHoverStyle,
                 maxConnections:-1,
-                anchor: [1, (1 / (outputs.length+1)) * (i + 1), 1, 0]
+                anchor: [1, (1 / (outputs.length+1)) * (i + 1), 1, 0],
+                ConnectionOverlays : [ "Arrow" ],
             }
         );
     }
@@ -120,11 +143,10 @@ function addEndPoints(inputs, outputs, element) {
 /**
 Gate constructor
 */
-function Gate(id, inputs, outputs, proteins, image, position, data) {
+function Gate(id, inputs, outputs, image, position, data) {
     this.id = id;
     this.inputs = inputs;
     this.outputs = outputs;
-    this.proteins = proteins;
     this.position = position;
     this.image = image;
     this.position = position;
@@ -140,12 +162,13 @@ function Gate(id, inputs, outputs, proteins, image, position, data) {
     addEndPoints(inputs, outputs, this);
 
     gate.draggable({ containment: "parent",
-        drag: jsPlumb.repaintEverything,
+        drag: function(){jsPlumb.selectEndpoints({element:this.id}).repaint()},
         stop: function(){
         position.x = $("#" + this.id).position().left;
-        position.y = $("#" + this.id).position().top; }
+        position.y = $("#" + this.id).position().top;
+        jsPlumb.selectEndpoints({element:this.id}).repaint();}
     });
-    jsPlumb.draggable($("#" + this.id), {
+    jsPlumb.draggable(gate, {
         containment: "#plumbArea",
         grid: [20, 20]
     });
@@ -156,11 +179,10 @@ function Gate(id, inputs, outputs, proteins, image, position, data) {
         for(i = 0; i < inputs.length; i++) {
             if(inputs[i] == null) {
                 inputs[i] = source;
-                source.connectOut(this);
                 break;
             }
         }
-        notify("No more inputs available", "warning");
+        notify("No more inputs available", "Warning");
     }
 
     function removeIn(source) {
@@ -172,15 +194,18 @@ function Gate(id, inputs, outputs, proteins, image, position, data) {
             if(outputs[i].protein == protein) {
                 outputs[i].addTarget(target);
                 break;
+            } else if(outputs[i] == null) {
+                outputs.push(new Connection(this, target, protein, data));
             }
         }
-        outputs.push(new Connection(this, target, protein, data));
+        notify("No more outgoing connections possible from " + this.id, "Warning");
     }
 
     function removeOut(target) {
         for(i = 0; i < outputs.length; i++) {
             if(outputs[i].targets.indexOf(target) != -1) {
                 outputs[i].targets.removeElem(target);
+                break;
             }
         }
     }
@@ -210,7 +235,7 @@ function andGate() {
     var outputs = new Array();
     inputs.length = 2;
     outputs.length = 1;
-    var gate = new Gate("and" + circuit.length, inputs, outputs, new Protein("protein" + (Math.random() * 1000).toFixed(3)), "", new Position(0,0), {});
+    var gate = new Gate("and" + circuit.length, inputs, outputs, "", new Position(0,0), {});
 };
 
 /**
@@ -221,5 +246,5 @@ function notGate() {
     var outputs = new Array();
     inputs.length = 1;
     outputs.length = 1;
-    var gate = new Gate("not" + circuit.length, inputs, outputs, new Protein("protein" + (Math.random() * 1000).toFixed(3)), "", new Position(0,0), {});
+    var gate = new Gate("not" + circuit.length, inputs, outputs, "", new Position(0,0), {});
 };
