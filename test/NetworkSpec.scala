@@ -11,12 +11,13 @@ class NetworkSpec extends Specification {
 
     "Network" should {
         "return correct results" in new WithApplication {
-            val A = CodingSeq("A",List((0,0)),true)
-            val B = CodingSeq("B",List((0,0)),true)
-            val C = CodingSeq("C",List(),false)
-            val D = CodingSeq("D",List(),false)
-            val E = CodingSeq("E",List((0,0)),true)
-            val F = CodingSeq("F",List(),false)
+            val concs = (0.0 to 1.0 by 0.002).toList
+            val A = CodingSeq("A",concs.zip(concs), true)
+            val B = CodingSeq("B",concs.zip(concs),isInput=true)
+            val C = CodingSeq("C",isInput=false)
+            val D = CodingSeq("D",isInput=false)
+            val E = CodingSeq("E",concs.zip(concs),isInput=true)
+            val F = CodingSeq("F",isInput=false)
             val notA = NotGate(A,C)
             val notAandB = AndGate((C,B),D)
             val notAandBandE = AndGate((D,E),F)

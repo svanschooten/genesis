@@ -64,17 +64,26 @@ case class Rungekuttatest (){
 
   def genJson = {
     import models._
-    val A = CodingSeq("A",(1,1))
-    val B = CodingSeq("B",(1,1))
-    val C = CodingSeq("C",(1,1))
-    val D = CodingSeq("D",(1,1))
-    val E = CodingSeq("E",(1,1))
-    val F = CodingSeq("F",(1,1))
+    val A = CodingSeq("A",List.fill(503)((1,1)),true)
+    val B = CodingSeq("B",List.fill(503)((1,1)),true)
+    val C = CodingSeq("C",List((0,0)),false)
+    val D = CodingSeq("D",List((0,0)),false)
+    val E = CodingSeq("E",List.fill(503)((1,1)),true)
+    val F = CodingSeq("F",List((0,0)),false)
+    val I = CodingSeq("I",List((0,0)),false)
+    //val AandB = AndGate((A,B),C)
+    //val CandD = AndGate((C,D),E)
     val notA = NotGate(A,C)
+    //val notB = NotGate(B,C)
+    //val notC = NotGate(C,A)
+    //val notE = NotGate(E,F)
+    //val notF = NotGate(F,I)
+    //val notI = NotGate(I,E)
     val notAandB = AndGate((C,B),D)
     val notAandBandE = AndGate((D,E),F)
     val net = new Network(List(A,B,E))
-    net.simJson(5.0)
+    net.simJson(5.0) // [test] stabilizes to :
+    // 41.6666666666666	228.054374360186	48.7804878048759	260.792124555058	99.7682070794492	497.584659558515	334.934010152227	1279.12460265271	61.3496932500570	148.920900749709	271.331210172459	941.508188692855
     //Rungekuttatest.resultsToJson(t0, tf, dt, testResults())
   }
 

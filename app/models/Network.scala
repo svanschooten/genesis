@@ -27,6 +27,16 @@ class Network(inputs: List[CodingSeq]) {
      */
     private var currentTime = 0.0
 
+    // resets all the ready flags
+    private def reset_readies(cs: CodingSeq) {
+        cs.ready=false
+        cs.linksTo.foreach(_ match {
+            case NotGate(_,y) if(y.ready) => reset_readies(y)
+            case AndGate((_,_),y) if(y.ready) => reset_readies(y)
+            case _ => return
+        })
+    }
+
     /**
      *  Perform the simulation that will show how the concentrations of the checmicals
      *  in the system will evolve and return these concentrations as follows:
@@ -41,12 +51,13 @@ class Network(inputs: List[CodingSeq]) {
             if(cs.ready)
                 return
             if(!cs.isInput)
-                cs.concentration = Nil
+                cs.concentration = List((0,0))
             cs.ready = true
             cs.currentStep = 1
             cs.linksTo.foreach(x => resetConcs(x.output))
         }
         inputs.foreach(resetConcs _)
+
         // function to get all the concentrations out of the network as a list of pairs
     	def getConcs(l: List[CodingSeq] = inputs): Set[(String,Double,Double)] = l.flatMap(seq => seq match {
             case CodingSeq(name,_,false) if(!seq.ready) => {seq.ready = true;
@@ -64,9 +75,11 @@ class Network(inputs: List[CodingSeq]) {
 
         currentTime = 0.0
         val times = currentTime to finish by stepSize
+        inputs.foreach(reset_readies _)
         // do the required steps and save the concentrations each round
         times.foldRight(List(getConcs().toList))((time,li)=>{
             step() // this is very poor actually: functional method fold has side effects now
+            inputs.foreach(reset_readies _)
             getConcs().toList :: li
         }).reverse
     }
@@ -77,6 +90,7 @@ class Network(inputs: List[CodingSeq]) {
      */
     def simJson(finish: Double) = {
         val results = simulate(finish)
+        println(results(1))
         val flipped = new scala.collection.mutable.ListMap[String, scala.collection.mutable.ListBuffer[(String, Double, Double)]]()
         results(0).foreach( triple => flipped += triple._1 -> new scala.collection.mutable.ListBuffer[(String,Double,Double)]())
         results.foreach( li => {
@@ -102,16 +116,6 @@ class Network(inputs: List[CodingSeq]) {
      */
     def step() {
         currentTime += stepSize
-
-        // resets all the ready flags
-        def reset_readies(cs: CodingSeq) {
-            cs.ready=false
-            cs.linksTo.foreach(_ match {
-                case NotGate(_,y) if(y.ready) => reset_readies(y)
-                case AndGate((_,_),y) if(y.ready) => reset_readies(y)
-                case _ => return
-            })
-        }
 
         // reset the ready flags
         inputs.foreach(reset_readies _)

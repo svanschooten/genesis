@@ -21,7 +21,7 @@ abstract class Gate extends Part {
  * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class CodingSeq(val name: String, var concentration: List[(Double, Double)], val isInput: Boolean) extends Part{
+case class CodingSeq(val name: String, var concentration: List[(Double, Double)] = List((0,0)), var isInput: Boolean) extends Part{
     private val params = getParams
     val k2 = params[Double]("K2")
     val d1 = params[Double]("D1")
@@ -30,13 +30,20 @@ case class CodingSeq(val name: String, var concentration: List[(Double, Double)]
     var linksTo: List[Gate] = Nil
     var ready: Boolean = false
     var currentStep: Int = 0
+
+    def curConc: (Double,Double) = {
+        if(isInput)
+            concentration(currentStep-1)
+        else
+            concentration.head
+    }
     
     /**
      * Retrieve the k2, d1 and d2 parameters for this CS from the database
      */
 	def getParams = {
         DB.withConnection { implicit connection =>
-          SQL("select * from cds where name = {name}"
+          SQL("select * from cdsparams where name = {name}"
           ).on(
             'name -> name
           ).apply().head
@@ -63,7 +70,7 @@ case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
    */
   def getParams = {
     DB.withConnection { implicit connection =>
-      SQL("select * from notgates where input = {input}"
+      SQL("select * from notparams where input = {input}"
       ).on(
         'input -> input.name
       ).apply().head
@@ -92,7 +99,7 @@ case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gat
 	    DB.withConnection { implicit connection =>
 	      SQL(
 	        """
-	         select * from andgates where 
+	         select * from andparams where
 	         (input1 = {input1} AND input2 = {input2})
 	         OR (input2 = {input1} AND input1 = {input2})
 	        """

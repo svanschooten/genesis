@@ -32,7 +32,7 @@ object ODEFactory {
      *  and a vector for the initial concentrations of the input protein and mRNA
      *  The functions will differ in the number of elements they expect their vector to have.
      */
-    def mkODEs(parts: List[Part]): List[ODEPair] = parts.map(mkTuple).flatMap(item => item match { case Some(x) => List(x); case None => Nil})
+    def mkODEs(parts: List[Part]): List[ODEPair] = parts.map(mkTuple)
 
     /**
      *  This function builds an ODEPair from given parts.
@@ -42,37 +42,29 @@ object ODEFactory {
      *  NotGates take one TF (input) concentration and AndGates take two TF (input) concentrations
      *  If a CodingSeq is encountered, no ODE needs to be generated and None is returned
      */    
-    def mkTuple(part: Part): Option[ODEPair] = part match {
-        case cs@CodingSeq(_,_,true) => Some(
-            ((time: Double, concs: VectorD) => new VectorD(Array( concs(0), concs(1))),
-            new VectorD(Array(cs.concentration(cs.currentStep-1)._1, cs.concentration(cs.currentStep-1)._2))))
-        case cs@CodingSeq(_,_,false) => Some(
-            ((time: Double, concs: VectorD) => new VectorD(Array( concs(0), concs(1))),
-            new VectorD(Array(cs.concentration.head._1, cs.concentration.head._2))))
-        case ng:NotGate => { Some(
+    def mkTuple(part: Part): ODEPair = part match {
+        case cs@CodingSeq(_,_,true) => (
+            (time: Double, concs: VectorD) => new VectorD(Array( concs(0), concs(1))),
+            new VectorD(Array(cs.curConc._1, cs.curConc._2)))
+        case cs@CodingSeq(_,_,false) => (
+            (time: Double, concs: VectorD) => new VectorD(Array( concs(0), concs(1))),
+            new VectorD(Array(cs.concentration.head._1, cs.concentration.head._2)))
+        case ng:NotGate => (
             //concs(0):[TF]; concs(1): [mRNA]; concs(2): [Protein]
-            (   (time: Double, concs: VectorD) => new VectorD(Array(
+                (time: Double, concs: VectorD) => new VectorD(Array(
                     (ng.k1 *  ng.km ~^ ng.n) / (ng.km ~^ ng.n + concs(0) ~^ ng.n) - ng.output.d1 * concs(1),
                     ng.output.k2 * concs(1) - ng.output.d2 * concs(2)
                 )),
-                new VectorD(Array(if(ng.input.isInput) ng.input.concentration(ng.input.currentStep-1)._2 else ng.input.concentration.head._2,
-                                  if(ng.output.isInput) ng.output.concentration(ng.output.currentStep-1)._1 else ng.output.concentration.head._1,
-                                  if(ng.output.isInput) ng.output.concentration(ng.output.currentStep-1)._1 else ng.output.concentration.head._2)
-            )
-        ))}
-        case ag:AndGate => Some(
-            // concs(0): [TF1]; concs(1): [TF2]; concs(2): [mRNA]; concs(3): [Protein]
-            (   (time: Double, concs: VectorD) => new VectorD(Array(
-                    (ag.k1 * (concs(0) * concs(1)) ~^ ag.n) / (ag.km ~^ ag.n + (concs(0) * concs(1)) ~^ ag.n) - ag.output.d1 * concs(2),
-                    ag.output.k2 * concs(2) - ag.output.d2 * concs(3)
-                )),
-                new VectorD(Array(if(ag.input._1.isInput) ag.input._1.concentration(ag.input._1.currentStep-1)._2 else ag.input._1.concentration.head._1,
-                                  if(ag.input._1.isInput) ag.input._2.concentration(ag.input._2.currentStep-2)._2 else ag.input._2.concentration.head._1,
-                                  if(ag.output.isInput) ag.output.concentration(ag.output.currentStep-1)._1 else ag.output.concentration.head._1,
-                                  if(ag.output.isInput) ag.output.concentration(ag.output.currentStep-1)._2 else ag.output.concentration.head._2))
-            )
+                new VectorD(Array(ng.input.curConc._2, ng.output.curConc._1, ng.output.curConc._1))
         )
-        case _ => None
+        case ag:AndGate => (
+            // concs(0): [TF1]; concs(1): [TF2]; concs(2): [mRNA]; concs(3): [Protein]
+            (time: Double, concs: VectorD) => new VectorD(Array(
+                (ag.k1 * (concs(0) * concs(1)) ~^ ag.n) / (ag.km ~^ ag.n + (concs(0) * concs(1)) ~^ ag.n) - ag.output.d1 * concs(2),
+                ag.output.k2 * concs(2) - ag.output.d2 * concs(3)
+            )),
+            new VectorD(Array(ag.input._1.curConc._2, ag.input._2.curConc._2, ag.output.curConc._1, ag.output.curConc._2))
+        )
     }
 
 }
