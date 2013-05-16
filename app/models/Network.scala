@@ -173,20 +173,10 @@ class Network(val inputs: List[CodingSeq], val user: String, val networkname: St
 		        'user -> user,
 		        'networkname -> networkname
 		      ).apply().head
-		  val id = idResult[Int]("id")
-		  for(cs <- inputs){
-			  SQL(
-		        """
-		         merge into start(id,name) key(id,name) values({id},{name})
-		        """
-		      ).on(
-		        'id -> id,
-		        'name -> cs.name
-		      ).executeUpdate()
-		  }    
+		  val id = idResult[Int]("id") 
 	      
 		  for(cs:CodingSeq <- inputs) {
-		    cs.save(id)
+		    cs.save(id,true,true)
 		  }
 	    }
 	    
@@ -261,27 +251,17 @@ object Network {
 			      """
 			      ).on('id -> id)
 			      .as {
-	      	  		get[String]("name")~get[String]("next") map{
-	      	  		  case name~next => (name,next)
+	      	  		get[String]("name")~get[String]("next")~get[Boolean]("isInput") map{
+	      	  		  case name~next~isInput => (name,next,isInput)
 	      	  		} *
 	      	}
+		  var startCDS: List[CodingSeq] = Nil
       	  for(cs <- allCDS){
       	    if(inputs1 contains cs._2) inputs2 += (cs._2 -> cs._1)
       	    else if(cs._2!="NONE") inputs1 += (cs._2 -> cs._1)
-      	    seqs += (cs._1 -> new CodingSeq(cs._1,concentrations(cs._1)))
+      	    seqs += (cs._1 -> new CodingSeq(cs._1,concentrations(cs._1),cs._3))
+      	    if(cs._3) startCDS ::= cs
       	  }
-      	  
-      	  val startCDS = SQL(
-			      """
-			      select * from start
-	    		  where id = {id}
-			      """
-			      ).on('id -> id)
-			      .as {
-	      	  		get[String]("name") map{
-	      	  		  case name => seqs(name)
-	      	  		} *
-	      	}
 	      
 	      for(str: String <- inputs1.keys){
 	        if(inputs2 contains str){

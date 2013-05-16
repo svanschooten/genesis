@@ -21,7 +21,7 @@ abstract class Gate extends Part {
  * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class CodingSeq(val name: String, var concentration: List[(Double, Double)], val isInput: Boolean) extends Part{
+case class CodingSeq(val name: String, var concentration: List[(Double, Double)], var isInput: Boolean) extends Part{
     private val params = getParams
     val k2 = params[Double]("K2")
     val d1 = params[Double]("D1")
@@ -46,7 +46,9 @@ case class CodingSeq(val name: String, var concentration: List[(Double, Double)]
     /**
      * Save this codingSequence to the database.
      */
-    def save(id: Int) {
+    def save(id: Int, isInput: Boolean, canBeInput: Boolean) {
+      //To prevent infinite loops when a cycle is present
+      if(isInput && !canBeInput) return
       DB.withConnection { implicit connection =>
           for(l <- linksTo){
 		      SQL("merge into cds key(id,name,next) values({id},{name},{next});")
@@ -74,8 +76,7 @@ case class CodingSeq(val name: String, var concentration: List[(Double, Double)]
 	      
 	      for(l <- linksTo){
 		      l match{
-		        case x: NotGate => x.output.save(id)
-		        case x: AndGate => x.output.save(id)
+		        case x: Gate => x.output.save(id,x.output.isInput,false)
 		        case _ =>
 		      }
 	      }
