@@ -11,7 +11,7 @@ import scalation._
 import factories._
 
 object Projects extends Controller with Secured {
-  var curNetwork:Network = new Network(List(),"","")
+  var curNetwork:Network = new Network(List(),-1,"")
   
   /**
    * Handles the form submission.
@@ -28,7 +28,7 @@ object Projects extends Controller with Secured {
 		  val pd = new CodingSeq("D",List((0.4,0.3)),false)
           val g1 = new AndGate((pa,pb),pc)
           val g2 = new NotGate(pc,pd)
-          curNetwork = new Network(List(pa,pb),"testuser","network1")
+          curNetwork = new Network(List(pa,pb),-1,"network1")
           curNetwork.save
           //curNetwork = Network.load("testuser","network1")
           l::="inputs:"
@@ -50,7 +50,7 @@ object Projects extends Controller with Secured {
 	      val dt = tf / n
 	      //var result = Rungekuttatest.solve(t0, tf, dt, odes, cVec)
 	      //step(List(pa,pb))
-	      var result = curNetwork.simulate(0.1)
+	      //var result = curNetwork.simulate(0.1)
 	      var t = t0
 	      //l::="result length:"+result.length.toString()
 	      //result.foreach(r => l::="result:"+r.toString)

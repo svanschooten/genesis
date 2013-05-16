@@ -20,7 +20,7 @@ class NetworkSpec extends Specification {
             val notA = NotGate(A,C)
             val notAandB = AndGate((C,B),D)
             val notAandBandE = AndGate((D,E),F)
-            val net = new Network(List(A,B,E))
+            val net = new Network(List(A,B,E),-1,"")
             val results = net.simulate(5.0)
             // expected results generated using MATLAB R2012b
             //._2 = mRna, ._3 = protein

@@ -10,7 +10,7 @@ class NotGateSpec extends Specification {
             val A = CodingSeq("A",List((0,0)),true)
             val B = CodingSeq("B",List(),false)
             val AtoB = NotGate(A,B)
-            val net = new Network(List(A))
+            val net = new Network(List(A),-1,"")
             val results = net.simulate(5.0)
             // expected results (still have to be checked)
             // A: 41.666666		228.054374

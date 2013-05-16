@@ -11,7 +11,7 @@ class AndGateSpec extends Specification {
             val B = CodingSeq("B",List((0,0)),true)
             val C = CodingSeq("C",List(),false)
             val ABtoC = AndGate((A,B),C)
-            val net = new Network(List(A,B))
+            val net = new Network(List(A,B),-1,"")
             val results = net.simulate(5.0)
             // expected results (still have to be checked)
             // A: 41.666666		228.054374

@@ -19,7 +19,7 @@ TODO list of inputs:
  *  the network change over time, and outputs the corresponding concentrations if
  *  desired.
  */
-class Network(val inputs: List[CodingSeq], val user: String, val networkname: String) {
+class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String) {
 
     /**
      *  The amount of time between steps; this also determines how many steps the
@@ -154,26 +154,18 @@ class Network(val inputs: List[CodingSeq], val user: String, val networkname: St
     }
     
     def save = {
+    	Network.delete(userid,networkname)
 	    DB.withConnection { implicit connection =>
 	      SQL(
 	        """
-	         merge into ownedby(userid,networkname) key(userid,networkname) values({user},{networkname})
+	         insert into ownedby(userid,networkname) values({user},{networkname})
 	        """
 	      ).on(
-	        'user -> user,
+	        'user -> userid,
 	        'networkname -> networkname
 	      ).executeUpdate()
 	      
-	      val idResult = SQL(
-	          """
-	          select id from ownedby
-	          where username={user} AND networkname={networkname}
-	          """
-	          ).on(
-		        'user -> user,
-		        'networkname -> networkname
-		      ).apply().head
-		  val id = idResult[Int]("id") 
+	      val id = getID
 	      
 		  for(cs:CodingSeq <- inputs) {
 		    cs.save(id,true,true)
@@ -181,6 +173,20 @@ class Network(val inputs: List[CodingSeq], val user: String, val networkname: St
 	    }
 	    
 	  }
+    
+    /**
+     * Delete this network from the database.
+     */
+    def delete {
+      Network.delete(userid,networkname)
+    }
+    
+    /**
+     * Return the networkID that belongs to this network in the database.
+     */
+    def getID: Int = {
+      Network.getID(userid,networkname)
+    }
 }
 
 object Network {
@@ -203,22 +209,22 @@ object Network {
     /**
      * Return the Network object with name 'networkname' that belongs to 'user'
      */
-    def load(user: String, networkname: String): Network = {
+    def load(userid: Int, networkname: String): Network = {
       DB.withConnection{ implicit connection =>
       	val idResult = SQL(
 	          """
-	          select id from ownedby
-	          where userid={user} AND networkname={networkname}
+	          select networkid from ownedby
+	          where userid={userid} AND networkname={networkname}
 	          """
 	          ).on(
-		        'user -> user,
+		        'userid -> userid,
 		        'networkname -> networkname
 		      ).apply().head
-		  val id = idResult[Int]("id")
+		  val id = idResult[Int]("networkid")
       	  val tempconcs = SQL(
 			      """
 			      select * from concentrations
-	    		  where id = {id}
+	    		  where networkid = {id}
 			      """
 			      ).on('id -> id)
 			      .as {
@@ -247,7 +253,7 @@ object Network {
 	      val allCDS = SQL(
 			      """
 			      select * from cds
-	    		  where id = {id}
+	    		  where networkid = {id}
 			      """
 			      ).on('id -> id)
 			      .as {
@@ -272,7 +278,54 @@ object Network {
 	        	val g = new NotGate(seqs(inputs1(str)),seqs(str))
 	        }
 	      }
-      	new Network(startCDS,user,networkname)
+      	new Network(startCDS,userid,networkname)
       }
+    }
+    
+    /**
+     * Delete the network that corresponds with userid and networkname from the database
+     */
+    def delete(userid: Int, networkname: String){
+      DB.withConnection { implicit connection =>
+        val idResults = SQL(
+	          """
+	          select networkid from ownedby
+	          where userid={userid} AND networkname={networkname}
+	          """
+	          ).on(
+		        'userid -> userid,
+		        'networkname -> networkname
+		      ).apply()
+		  if(idResults.isEmpty) return
+		  val idRes = idResults.head
+		  val id = idRes[Int]("networkid")
+	      SQL(
+	        """
+	         DELETE FROM ownedby WHERE networkid={id};
+	         DELETE FROM concentrations WHERE networkid={id};
+	         DELETE FROM cds WHERE networkid={id};
+	        """
+	      ).on(
+	        'id -> id
+	      ).executeUpdate()
+      	}
+    }
+    
+    /**
+     * Return the networkID that belongs to the corresponding network in the database.
+     */
+    def getID(userid: Int, networkname: String): Int = {
+      DB.withConnection { implicit connection =>
+      	  val idResult = SQL(
+	          """
+	          select networkid from ownedby
+	          where userid={userid} AND networkname={networkname}
+	          """
+	          ).on(
+		        'userid -> userid,
+		        'networkname -> networkname
+		      ).apply()
+		  idResult.head[Int]("networkid") 
+	    }
     }
 }

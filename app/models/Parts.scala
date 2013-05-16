@@ -49,22 +49,31 @@ case class CodingSeq(val name: String, var concentration: List[(Double, Double)]
     def save(id: Int, isInput: Boolean, canBeInput: Boolean) {
       //To prevent infinite loops when a cycle is present
       if(isInput && !canBeInput) return
-      DB.withConnection { implicit connection =>
+      DB.withConnection { implicit connection =>   
           for(l <- linksTo){
-		      SQL("merge into cds key(id,name,next) values({id},{name},{next});")
+        	  val exists = SQL(
+		            """
+		            select * from cds
+		            where networkid={id} and name={name} and next={next}
+		            """
+		            ).on(
+		            	'id -> id,
+		            	'name -> name,
+		            	'next -> l.output.name
+		            ).apply.size > 0
+		      if(exists) return
+		      SQL("insert into cds values({id},{name},{next},{isInput});")
 		      .on(
 		        'id -> id,
 		        'name -> name,
-		        'next -> (l match {
-		          case x: AndGate => x.output.name
-		          case x: NotGate => x.output.name
-		        })
+		        'next -> l.output.name,
+		        'isInput -> isInput
 		      ).executeUpdate()
           }
 	      
 	      val concs = concentration.toArray
-	      for(i <- 1 to concs.length){
-		      SQL("merge into concentrations key(id,name,time) values({id},{name},{time},{c1},{c2});")
+	      for(i <- 0 to concs.length-1){
+		      SQL("insert into concentrations values({id},{name},{time},{c1},{c2});")
 		      .on(
 		        'id -> id,
 		        'name -> name,
