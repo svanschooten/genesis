@@ -10,6 +10,8 @@ import play.api.templates.Html
 import models._
 import views._
 
+import com.github.t3hnar.bcrypt._
+
 object Settings extends Controller with Secured{
 
   val settingsText = "Placeholder context"
@@ -20,7 +22,7 @@ object Settings extends Controller with Secured{
       "Password" -> text,
       "First name" -> optional(text),
       "Last name" -> optional(text)
-    )((_email, _password, _fname, _lname) => User(email=_email, password=_password, fname=_fname, lname=_lname))
+    )((_email, _password, _fname, _lname) => User(email=_email, password=_password.bcrypt, fname=_fname, lname=_lname))
      ((user: User) => Some(user.email, user.password, user.fname, user.lname))
   )
   
