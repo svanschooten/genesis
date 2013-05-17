@@ -11,7 +11,7 @@ class NetworkSpec extends Specification {
 
     "Network" should {
         "return correct results" in new WithApplication {
-            val concs = (0.0 to 1.0 by 0.002).toList
+            val concs = (0.0 to 1.0 by 0.001).toList
             val A = CodingSeq("A",concs.zip(concs), true)
             val B = CodingSeq("B",concs.zip(concs),isInput=true)
             val C = CodingSeq("C",isInput=false)
@@ -32,18 +32,18 @@ class NetworkSpec extends Specification {
             // E: 61.3496932500570	148.920900749709
             // C: 99.7682070794492	497.584659558515
             //println(results(results.length-1))
-            results(results.length-1)(0)._2 must beCloseTo(48.780, 0.01)
-            results(results.length-1)(0)._3 must beCloseTo(260.792, 0.01)
-            results(results.length-1)(1)._2 must beCloseTo(334.934, 0.01)
-            results(results.length-1)(1)._3 must beCloseTo(1279.124, 0.01)
-            results(results.length-1)(2)._2 must beCloseTo(271.331, 0.01)
-            results(results.length-1)(2)._3 must beCloseTo(941.508, 1) // oscillates slightly, don't get too close
-            results(results.length-1)(3)._2 must beCloseTo(41.666, 0.01)
-            results(results.length-1)(3)._3 must beCloseTo(228.054, 0.01)
-            results(results.length-1)(4)._2 must beCloseTo(61.349, 0.01)
-            results(results.length-1)(4)._3 must beCloseTo(148.920, 0.01)
-            results(results.length-1)(5)._2 must beCloseTo(99.768, 0.01)
-            results(results.length-1)(5)._3 must beCloseTo(497.584, 0.01)
+            results(results.length-1)(0)._2 must beCloseTo(0.0, 0.01)
+            results(results.length-1)(0)._3 must beCloseTo(0.0, 0.01)
+            results(results.length-1)(1)._2 must beCloseTo(0.0, 0.01)
+            results(results.length-1)(1)._3 must beCloseTo(0.0, 0.01)
+            results(results.length-1)(2)._2 must beCloseTo(0.0, 0.01)
+            results(results.length-1)(2)._3 must beCloseTo(0.0, 0.01)
+            results(results.length-1)(3)._2 must beCloseTo(201.331, 0.01)
+            results(results.length-1)(3)._3 must beCloseTo(991.809, 0.01)
+            results(results.length-1)(4)._2 must beCloseTo(0.0, 0.01)
+            results(results.length-1)(4)._3 must beCloseTo(0.0, 0.01)
+            results(results.length-1)(5)._2 must beCloseTo(0.0, 0.01)
+            results(results.length-1)(5)._3 must beCloseTo(0.0, 0.01)
         }
     }
 }
