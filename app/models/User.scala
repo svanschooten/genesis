@@ -54,15 +54,15 @@ object User {
     DB.withConnection{ implicit connection =>
       SQL(
         """
-        INSERT INTO User( email, password, fname, lname )
+        INSERT INTO "User"(email, password, fname, lname)
         VALUES ({email}, {password}, {fname}, {lname})
         """
       ).on(
         'email -> email,
-        'password -> password.bcrypt,
+        'password -> password.bcrypt(12),
         'fname -> fname,
         'lname -> lname
-      ).executeUpdate
+      ).executeInsert()
     }
   }
   

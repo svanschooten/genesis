@@ -20,6 +20,10 @@ GET     /login                              controllers.Application.login
 POST    /login                              controllers.Application.authenticate
 GET     /logout                             controllers.Application.logout
 
+# Admination
+GET		/newuser							controllers.Admin.createUser
+POST	/newuser							controllers.Admin.saveUser
+
 # test pages for the ODE solver
 GET     /canvastest                 		controllers.Application.canvastest
 GET     /jsontest                   		controllers.Application.jsontest
