@@ -5,6 +5,7 @@ import play.api.test._
 import models._
 
 class AndGateSpec extends Specification {
+  /*
 	    "Network" should {
         "return correct results" in new WithApplication {
             val A = CodingSeq("A",List((0,0)),true)
@@ -25,4 +26,6 @@ class AndGateSpec extends Specification {
             results(results.length-1)(2)._3 must beCloseTo(260.792, 1) 
         }
     }
+    * 
+    */
 }

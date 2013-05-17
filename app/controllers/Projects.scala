@@ -1,5 +1,6 @@
 package controllers
 
+import scala.collection.mutable.Set
 import play.api._
 import play.api.mvc._
 import play.api.data._
@@ -28,14 +29,18 @@ object Projects extends Controller with Secured {
 		  val pd = new CodingSeq("D",List((0.4,0.3)),false)
           val g1 = new AndGate((pa,pb),pc)
           val g2 = new NotGate(pc,pd)
-          curNetwork = new Network(List(pa,pb),-1,"network1")
-          curNetwork.save
-          //curNetwork = Network.load("testuser","network1")
-          l::="inputs:"
-          for(x:CodingSeq <- curNetwork.inputs){
-            for(y:Gate <- x.linksTo){
-              l::=x.name+"->"+y.output.name
+          curNetwork = Network.load(-1,"complexNetworkLoadTest")
+          val seen:Set[String] = Set()
+          def rec(cur: CodingSeq) {
+            if(seen contains cur.name) return
+            seen += cur.name
+            l::=cur.name+"->"+cur.linksTo
+            for(next <- cur.linksTo){
+              rec(next.output)
             }
+          }
+          for(cur <- curNetwork.inputs){
+            rec(cur)
           }
           
           /*l::="pa:"+pa.k2+" "+pa.d1+" "+pa.d2

@@ -8,7 +8,7 @@ import play.api.test.Helpers._
 import models._
 
 class NetworkSpec extends Specification {
-
+/*
     "Network" should {
         "return correct results" in new WithApplication {
             val A = CodingSeq("A",List((0,0)),true)
@@ -45,4 +45,6 @@ class NetworkSpec extends Specification {
             results(results.length-1)(5)._3 must beCloseTo(497.584, 0.01)
         }
     }
+    * 
+    */
 }

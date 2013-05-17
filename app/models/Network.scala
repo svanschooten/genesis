@@ -211,16 +211,7 @@ object Network {
      */
     def load(userid: Int, networkname: String): Network = {
       DB.withConnection{ implicit connection =>
-      	val idResult = SQL(
-	          """
-	          select networkid from ownedby
-	          where userid={userid} AND networkname={networkname}
-	          """
-	          ).on(
-		        'userid -> userid,
-		        'networkname -> networkname
-		      ).apply().head
-		  val id = idResult[Int]("networkid")
+      	  val id = getID(userid, networkname)
       	  val tempconcs = SQL(
 			      """
 			      select * from concentrations
@@ -262,12 +253,15 @@ object Network {
 	      	  		} *
 	      	}
 		  var startCDS: List[CodingSeq] = Nil
+		  for(cs <- allCDS){
+		    val newCDS = new CodingSeq(cs._1,concentrations(cs._2),cs._3)
+		    seqs += (cs._1 -> newCDS)
+		    if(cs._3) startCDS ::= newCDS
+		  }
       	  for(cs <- allCDS){
+      	    if(!(seqs contains cs._2)) seqs += (cs._2 -> new CodingSeq(cs._2,concentrations(cs._2),false))
       	    if(inputs1 contains cs._2) inputs2 += (cs._2 -> cs._1)
-      	    else if(cs._2!="NONE") inputs1 += (cs._2 -> cs._1)
-      	    val newCDS = new CodingSeq(cs._1,concentrations(cs._1),cs._3)
-      	    seqs += (cs._1 -> newCDS)
-      	    if(cs._3) startCDS ::= newCDS
+      	    else inputs1 += (cs._2 -> cs._1)
       	  }
 	      
 	      for(str: String <- inputs1.keys){
@@ -297,8 +291,7 @@ object Network {
 		        'networkname -> networkname
 		      ).apply()
 		  if(idResults.isEmpty) return
-		  val idRes = idResults.head
-		  val id = idRes[Int]("networkid")
+		  val id = idResults.head[Int]("networkid")
 	      SQL(
 	        """
 	         DELETE FROM ownedby WHERE networkid={id};

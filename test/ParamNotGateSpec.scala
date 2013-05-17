@@ -7,6 +7,7 @@ import models._
 
 //geen idee of dit nuttig is
 class ParamNotGateSpec extends Specification {
+  /*
 	"Parameter" should {
 
 		"return correct results" in {
@@ -19,4 +20,6 @@ class ParamNotGateSpec extends Specification {
 			}
 		}
 	}
+	* 
+	*/
 }
