@@ -22,6 +22,8 @@ var dropOptions = {
     activeClass:"dragActive"
 };
 
+var jsp;
+
 function logCircuit() {
     for(i = 0; i < circuit.length; i++) {
         var elem = circuit[i];
@@ -41,20 +43,18 @@ function logCircuit() {
 Ready call for jsPlumb library
 */
 jsPlumb.ready(function(){
-
-    jsPlumb.Defaults.Container = "plumbArea";
-    jsPlumb.importDefaults({
-        DragOptions : { cursor: "pointer", zIndex:2000 },
-        HoverClass: connectorHoverStyle,
-        ConnectionOverlays : [[ "Arrow", { location:-40 } ]],
-    });
-    var jsp = jsPlumb.getInstance({
+    jsp = jsPlumb.getInstance({
         connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5 } ],
         Endpoints : [ [ "Dot", {radius: 5} ], [ "Dot", { radius: 7 } ]],
         EndpointStyles : [{ fillStyle:'#225588' }, { fillStyle:'#558822' }],
         hoverPaintStyle: endpointHoverStyle,
     });
-
+    jsp.Defaults.Container = "plumbArea";
+    jsp.importDefaults({
+        DragOptions : { cursor: "pointer", zIndex:2000 },
+        HoverClass: connectorHoverStyle,
+        ConnectionOverlays : [[ "Arrow", { location:-40 } ]],
+    });
 });
 
 /**
@@ -88,6 +88,13 @@ function findElement(array, elementId) {
     return null;
 }
 
+function setProtein(connection) {
+    var protein = prompt("What protein do you want to bind?");
+    connection.protein = protein;
+    connection.removeOverlay("label");
+    connection.addOverlay([ "Label", {label:protein, location: 0.25, cssClass: "aLabel", id:"label"}]);
+}
+
 function makeConnection(params) {
 
     var confirmed = confirm("Connect " + params.sourceId + " to " + params.targetId + "?");
@@ -96,8 +103,8 @@ function makeConnection(params) {
         if(element == null) {
             notify("Invalid element: " + params.sourceId, "Warning");
         } else {
-        //TODO hier misschien protein kiezen.
-            element.connectOut(params.targetId.replace("#",""), new Protein(Math.random().toFixed(2)*100,  null), null)
+            params.connection.addOverlay([ "Arrow", { width:15, location: 0.5,height:10, id:"arrow" }]);
+            params.connection.bind("click", function(connection){ setProtein(connection) });
         }
     }
     return confirmed;
@@ -108,11 +115,11 @@ Wrapper for adding multiple endPoints
 */
 function addEndPoints(inputs, outputs, element) {
     for(i = 0; i < inputs.length; i++) {
-        jsPlumb.addEndpoint(
+        var e = jsPlumb.addEndpoint(
             element.id,
             {
                 endpoint:"Dot",
-                paintStyle:{ fillStyle:"#558822",radius:7 },
+                paintStyle:{ fillStyle:"#558822",radius:9 },
                 hoverPaintStyle: endpointHoverStyle,
                 isTarget:true,
                 anchor: [0, (1 / (inputs.length+1)) * (i + 1), -1, 0],
@@ -120,6 +127,7 @@ function addEndPoints(inputs, outputs, element) {
                 dropOptions: dropOptions
             }
         );
+        e.bind("mouseup", function(endpoint) { });
     }
 
     for(i = 0; i < outputs.length; i++) {
@@ -127,7 +135,7 @@ function addEndPoints(inputs, outputs, element) {
             element.id,
             {
                 endpoint:"Dot",
-                paintStyle:{ fillStyle:"#225588",radius:5 },
+                paintStyle:{ fillStyle:"#225588",radius:7 },
                 isSource: true,
                 connector:[ "Flowchart", { cornerRadius:5 } ],
                 connectorStyle: connectorPaintStyle,
@@ -135,45 +143,55 @@ function addEndPoints(inputs, outputs, element) {
                 connectorHoverStyle: connectorHoverStyle,
                 maxConnections:-1,
                 anchor: [1, (1 / (outputs.length+1)) * (i + 1), 1, 0],
-                ConnectionOverlays : [ "Arrow" ],
+                ConnectionOverlays : [ [ "Label", {label:"", location: 0.25, cssClass: "aLabel", id:"label"}]],
             }
         );
     }
+}
+function repaintElement(elementId) {
+    jsPlumb.selectEndpoints({element:elementId}).repaint();
+    jsPlumb.selectEndpoints({element:elementId}).each(function(endpoint){
+        var conns = endpoint.getAttachedElements();
+        for(i = 0; i < conns.length; i++) {
+            conns[i].repaint();
+        }
+    });
+}
+
+function makeDraggable(div, gate) {
+    div.draggable({ containment: "parent",
+        drag: function(){repaintElement(gate.id)},
+        stop: function(){
+            gate.x = div.position().left;
+            gate.y = div.position().top;
+            repaintElement(gate.id)
+        }
+    });
+    jsPlumb.draggable(div, {
+        containment: "#plumbArea",
+        grid: [20, 20]
+    });
 }
 
 /**
 Gate constructor
 */
-function Gate(id, inputs, outputs, image, position, data) {
+function Gate(id, inputs, outputs, image, data) {
     this.id = id;
-    this.inputs = inputs;
-    this.outputs = outputs;
-    this.position = position;
     this.image = image;
-    this.position = position;
-    this.data = data;
 
     var gate = $('<div/>', {
         id: this.id,
-        style: 'height: 50px; width: 50px; border: 1px solid black;',
+        style: 'height: 80px; width: 80px; border: 1px solid black;',
         background: image
     })
     .appendTo($('#plumbArea'));
 
+    this.x = gate.position().left;
+    this.y = gate.position().top;
+
     addEndPoints(inputs, outputs, this);
-
-    gate.draggable({ containment: "parent",
-        drag: function(){jsPlumb.selectEndpoints({element:this.id}).repaint()},
-        stop: function(){
-        position.x = $("#" + this.id).position().left;
-        position.y = $("#" + this.id).position().top;
-        jsPlumb.selectEndpoints({element:this.id}).repaint();}
-    });
-    jsPlumb.draggable(gate, {
-        containment: "#plumbArea",
-        grid: [20, 20]
-    });
-
+    makeDraggable(gate, this);
     circuit.push(this);
 
     function connectIn(source) {
@@ -236,7 +254,7 @@ function andGate() {
     var outputs = new Array();
     inputs.length = 2;
     outputs.length = 1;
-    var gate = new Gate("and" + circuit.length, inputs, outputs, "", new Position(0,0), null);
+    var gate = new Gate("and" + circuit.length, inputs, outputs, "", null);
 };
 
 /**
@@ -247,5 +265,5 @@ function notGate() {
     var outputs = new Array();
     inputs.length = 1;
     outputs.length = 1;
-    var gate = new Gate("not" + circuit.length, inputs, outputs, "", new Position(0,0), null);
+    var gate = new Gate("not" + circuit.length, inputs, outputs, "", null);
 };
