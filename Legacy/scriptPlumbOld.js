@@ -25,13 +25,17 @@ var dropOptions = {
 var jsp;
 
 function logCircuit() {
-    var div = $("#circuitDiv");
-    div.html("");
-    var network = jsPlumb.getConnections();
-    for(i = 0; i < network.length; i++) {
-        var elem = network[i];
-        div.html(div.html() + "</br> " + elem.source.selector + " - " + elem.protein + " -> " + elem.target.selector)
-        console.log(elem.source.selector + " - " + elem.protein + " -> " + elem.target.selector);
+    for(i = 0; i < circuit.length; i++) {
+        var elem = circuit[i];
+        console.log(elem.outputs.length);
+        for(j = 0; j < elem.outputs.length; j++) {
+            var out = elem.outputs[j];
+            console.log(elem.id + " - " + out.protein.id);
+            console.log("x:" + elem.position.x + " y:" + elem.position.y);
+            for(k = 0; k < out.targets.length; k++) {
+                console.log("    -> " + out.targets[k].id);
+            }
+        }
     }
 }
 
@@ -52,6 +56,28 @@ jsPlumb.ready(function(){
         ConnectionOverlays : [[ "Arrow", { location:-40 } ]],
     });
 });
+
+/**
+Connection constructor
+*/
+function Connection(source, target, protein, data) {
+    this.source = source;
+    this.targets = [target];
+    this.protein = protein;
+    this.data = data;
+
+    target.connectIn(this);
+
+    function addTarget(target) {
+        this.targets.push(target);
+        target.connectIn(this);
+    }
+
+    function removeTarget(target) {
+        this.targets.removeElem(target);
+        target.removeIn(this);
+    }
+}
 
 function findElement(array, elementId) {
     for(i = 0; i < array.length; i++) {
@@ -90,7 +116,7 @@ Wrapper for adding multiple endPoints
 */
 function addEndPoints(inputs, outputs, element) {
     for(i = 0; i < inputs; i++) {
-        jsPlumb.addEndpoint(
+        var e = jsPlumb.addEndpoint(
             element.id,
             {
                 endpoint:"Dot",
@@ -102,6 +128,7 @@ function addEndPoints(inputs, outputs, element) {
                 dropOptions: dropOptions
             }
         );
+        e.bind("mouseup", function(endpoint) { });
     }
 
     for(i = 0; i < outputs; i++) {
@@ -156,17 +183,10 @@ function Gate(name, inputs, outputs, image) {
 
     var gate = $('<div/>', {
         id: this.id,
-        style: 'height: 80px; width: 80px;',
+        style: 'height: 80px; width: 80px; border: 1px solid black;',
         background: image
     })
     .appendTo($('#plumbArea'));
-    if(image == null) {
-        var text = $("<p>").appendTo(gate);
-        text.css("padding", "15px 30px");
-        gate.css("border", "1px solid black");
-        text.text(this.id);
-    }
-
 
     this.x = gate.position().left;
     this.y = gate.position().top;
@@ -174,6 +194,43 @@ function Gate(name, inputs, outputs, image) {
     addEndPoints(inputs, outputs, this);
     makeDraggable(gate, this);
     circuit.push(this);
+
+/*
+    function connectIn(source) {
+        for(i = 0; i < inputs.length; i++) {
+            if(inputs[i] == null) {
+                inputs[i] = source;
+                break;
+            }
+        }
+        notify("No more inputs available", "Warning");
+    }
+
+    function removeIn(source) {
+        this.inputs.removeElem(source);
+    }
+
+    function connectOut(target, protein, data) {
+        for(i = 0; i < outputs.length; i++) {
+            if(outputs[i].protein == protein) {
+                outputs[i].addTarget(target);
+                break;
+            } else if(outputs[i] == null) {
+                outputs.push(new Connection(this, target, protein, data));
+            }
+        }
+        notify("No more outgoing connections possible from " + this.id, "Warning");
+    }
+
+    function removeOut(target) {
+        for(i = 0; i < outputs.length; i++) {
+            if(outputs[i].targets.indexOf(target) != -1) {
+                outputs[i].targets.removeElem(target);
+                break;
+            }
+        }
+    }
+    */
 }
 
 /**
@@ -185,15 +242,23 @@ function Protein(id, data) {
 }
 
 /**
+Position constructor
+
+function Position(x, y) {
+    this.x = x;
+    this.y = y;
+}*/
+
+/**
 Wrapper for simple creation of AND gates
 */
 function andGate() {
-    var gate = new Gate("and", 2, 1, null);
+    var gate = new Gate("and", 2, 1, "");
 };
 
 /**
 Wrapper for simple creation of NOT gates
 */
 function notGate() {
-    var gate = new Gate("not", 1, 1, null);
+    var gate = new Gate("not", 2, 1, "");
 };
