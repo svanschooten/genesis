@@ -2,6 +2,10 @@
 var data = null;
 var max_c_x = 0.0;
 
+$(document).ready(function(){
+    getPlotData();
+});
+
 /**
 Makes a request for the JSON test method calculating a standard ODE and sending the results in JSON back.
 When received, the results are plotted on the canvas.
@@ -45,13 +49,15 @@ function drawGraph(series) {
     var width = 800;
     var height = 250;
 
+    console.log(JSON.stringify(series));
+
     //Creating the graph to plot in
     var graph = new Rickshaw.Graph( {
             element: document.querySelector("#chart"),
             width: width,
             height: height,
             renderer: 'line',
-            series: series,
+            series: series.vectors,
     } );
 
     //Defining the x-axis
