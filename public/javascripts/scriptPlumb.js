@@ -122,6 +122,7 @@ function addEndPoints(inputs, outputs, element) {
         );
     }
 }
+
 function repaintElement(elementId) {
     jsPlumb.selectEndpoints({element:elementId}).repaint();
     jsPlumb.selectEndpoints({element:elementId}).each(function(endpoint){
@@ -130,6 +131,22 @@ function repaintElement(elementId) {
             conns[i].repaint();
         }
     });
+}
+
+function parseJsPlumb() {
+    var network = new Object();
+    var plumb = jsPlumb.getConnections();
+    network.vertices = new Array();
+    network.edges = new Array();
+    for(i = 0; i < circuit.length; i++) {
+        network.vertices.push({ id: circuit[i].id, x: circuit[i].x, y: circuit[i].y});
+    }
+    for(i = 0; i < plumb.length; i++) {
+        network.edges.push({source: plumb[i].source.selector.replace("#",""),
+            target: plumb[i].target.selector.replace("#",""),
+            protein: plumb[i].protein
+        });
+    }
 }
 
 function makeDraggable(div, gate) {
