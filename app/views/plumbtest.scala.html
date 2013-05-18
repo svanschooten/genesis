@@ -18,7 +18,12 @@
 
 <div id="plumbArea" style="width: 1000px; height: 800px; border: 1px solid black; overflow: scroll; position: relative;">
 </div>
-<span><button onclick="andGate()">Add And gate</button><button onclick="notGate()">Add Not gate</button><button onclick="logCircuit()">Print circuit to log</button></span>
+<span>
+    <button onclick="andGate()">Add And gate</button>
+    <button onclick="notGate()">Add Not gate</button>
+    <button onclick="logCircuit()">Print circuit to log</button>
+    <button onclick="parseJsPlumbTest()">Test JSON</button>
+</span>
 <div id="circuitDiv"></div>
 <script src=@routes.Assets.at("javascripts/script.js") ></script>
 </body>

@@ -133,6 +133,10 @@ function repaintElement(elementId) {
     });
 }
 
+function parseJsPlumbTest() {
+    console.log(JSON.stringify(parseJsPlumb()));
+}
+
 function parseJsPlumb() {
     var network = new Object();
     var plumb = jsPlumb.getConnections();
@@ -142,11 +146,13 @@ function parseJsPlumb() {
         network.vertices.push({ id: circuit[i].id, x: circuit[i].x, y: circuit[i].y});
     }
     for(i = 0; i < plumb.length; i++) {
-        network.edges.push({source: plumb[i].source.selector.replace("#",""),
+        network.edges.push({
+            source: plumb[i].source.selector.replace("#",""),
             target: plumb[i].target.selector.replace("#",""),
             protein: plumb[i].protein
         });
     }
+    return network;
 }
 
 function makeDraggable(div, gate) {
