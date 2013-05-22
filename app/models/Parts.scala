@@ -29,11 +29,11 @@ case class CodingSeq(val name: String, var concentration: List[(Double, Double)]
     var linkedBy: Option[Gate] = None
     var linksTo: List[Gate] = Nil
     var ready: Boolean = false
-    var currentStep: Int = 0
+    var currentStep: Int = 1
 
     def curConc: (Double,Double) = {
-        if(isInput)
-            concentration(currentStep-1)
+        if(isInput){
+            concentration(currentStep-1)}
         else
             concentration.head
     }
@@ -60,6 +60,7 @@ case class CodingSeq(val name: String, var concentration: List[(Double, Double)]
  */
 case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
   input.linksTo ::= this
+  output.linkedBy = Some(this)
   private val params = getParams
   val k1 = params[Double]("K1")
   val km = params[Double]("KM")
@@ -86,6 +87,7 @@ case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
 case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gate{
   input._1.linksTo ::= this
   input._2.linksTo ::= this
+  output.linkedBy = Some(this)
   
   private val params = getParams
   val k1 = params[Double]("K1")

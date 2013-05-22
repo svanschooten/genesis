@@ -43,19 +43,16 @@ object ODEFactory {
      *  If a CodingSeq is encountered, no ODE needs to be generated and None is returned
      */    
     def mkTuple(part: Part): ODEPair = part match {
-        case cs@CodingSeq(_,_,true) => (
+        case cs:CodingSeq => (
             (time: Double, concs: VectorD) => new VectorD(Array( concs(0), concs(1))),
             new VectorD(Array(cs.curConc._1, cs.curConc._2)))
-        case cs@CodingSeq(_,_,false) => (
-            (time: Double, concs: VectorD) => new VectorD(Array( concs(0), concs(1))),
-            new VectorD(Array(cs.concentration.head._1, cs.concentration.head._2)))
-        case ng:NotGate => (
+        case ng:NotGate => /*println("not: "+(ng.k1*ng.km~^ng.n)+"/("+(ng.km~^ng.n)+" + y(0)^"+ng.n+") - "+ng.output.d1+"*y(1)\n"+ng.output.k2+" * y(1) - "+ng.output.d2+" * y(2)");*/ (
             //concs(0):[TF]; concs(1): [mRNA]; concs(2): [Protein]
                 (time: Double, concs: VectorD) => new VectorD(Array(
                     (ng.k1 *  ng.km ~^ ng.n) / (ng.km ~^ ng.n + concs(0) ~^ ng.n) - ng.output.d1 * concs(1),
                     ng.output.k2 * concs(1) - ng.output.d2 * concs(2)
                 )),
-                new VectorD(Array(ng.input.curConc._2, ng.output.curConc._1, ng.output.curConc._1))
+                new VectorD(Array(ng.input.curConc._2, ng.output.curConc._1, ng.output.curConc._2))
         )
         case ag:AndGate => (
             // concs(0): [TF1]; concs(1): [TF2]; concs(2): [mRNA]; concs(3): [Protein]

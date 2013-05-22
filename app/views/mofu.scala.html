@@ -30,6 +30,15 @@ function drawGraph(series) {
     var palette = new Rickshaw.Color.Palette( { interpolatedStopsCount: series.length } );
     series.forEach(function(obj) {
         obj["color"] = palette.color();
+        var meh=false;
+        obj.data.forEach(function(ob) {
+            if(ob["y"]<0) {
+                if(!meh)
+                    alert("Warning: negative value(s) in data!");
+                meh=true;
+                ob["y"]=-ob["y"];
+            }
+        });
     });
 
     var width = 800;
