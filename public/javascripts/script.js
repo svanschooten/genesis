@@ -35,7 +35,9 @@ If needed on all pages: Put in scripts array.
 */
 function loadPageScript() {
     switch(document.URL.split("/").pop()) {
-
+        case "rk":
+            loadScript("rkPlot.js");
+            break;
         case "plumbtest":
             loadScript("scriptPlumb.js");
             break;
