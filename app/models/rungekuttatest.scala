@@ -65,17 +65,38 @@ case class Rungekuttatest (){
 
   def genJson = {
     import models._
-    val A = CodingSeq("A",List((1,1)),true)
-    val B = CodingSeq("B",List((1,1)),true)
-    val C = CodingSeq("C",List((1,1)),false)
-    val D = CodingSeq("D",List((1,1)),false)
-    val E = CodingSeq("E",List((1,1)),true)
-    val F = CodingSeq("F",List((1,1)),false)
-    val notA = NotGate(A,C)
-    val notAandB = AndGate((C,B),D)
-    val notAandBandE = AndGate((D,E),F)
-    val net = new Network(List(A,B,E),-1,"testNetwork")
-    net.simJson(5.0)
+    import math._
+    val plain = List.fill(1503)(1.0)
+    val domain = (0.019 to 25.0 by 0.019).toList //(-0.5*Pi to 0.5*Pi by Pi/500-0.001).toList
+    val osc1 = domain map(cos(_) + 1)
+    val osc2 = domain map(sin(_) + 1)
+    val osc3 = domain map((x:Double) => abs(log(x)))
+    val inp1 = osc1.zip(osc1)
+    val inp2 = osc2.zip(osc2)
+    val inp3 = osc3.zip(osc3)
+    val inpp = plain.zip(plain)
+    val A = CodingSeq("A",inpp,true)
+    val B = CodingSeq("B",inpp,true)
+    val C = CodingSeq("C",List((0,0)),false)
+    val D = CodingSeq("D",List((0,0)),false)
+    val E = CodingSeq("E",inpp,true)
+    val F = CodingSeq("F",List((0,0)),false)
+    val I = CodingSeq("I",List((0,0)),false)
+    //val AandB = AndGate((A,B),C)
+    //val CandD = AndGate((C,D),E)
+    val notA = NotGate(A,B)
+    val notB = NotGate(B,C)
+    val notC = NotGate(C,D)
+    val notD = NotGate(D,E)
+    val notE = NotGate(E,F)
+    val notF = NotGate(F,I)
+    val loop = NotGate(I,A)
+    //val notI = NotGate(I,E)
+    //val notAandB = AndGate((C,B),D)
+    //val notAandBandE = AndGate((D,E),F)
+    val net = new Network(List(A),-1,"")
+    net.simJson(1500.0) // [test] stabilizes to :
+    // 41.6666666666666	228.054374360186	48.7804878048759	260.792124555058	99.7682070794492	497.584659558515	334.934010152227	1279.12460265271	61.3496932500570	148.920900749709	271.331210172459	941.508188692855
     //Rungekuttatest.resultsToJson(t0, tf, dt, testResults())
   }
 

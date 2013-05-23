@@ -23,10 +23,12 @@ object Projects extends Controller with Secured {
       {
         case (name1, name2) => {
           var l: List[String] = List()
-		  val pa = new CodingSeq("A",List((0.1,0.1)),true)
-		  val pb = new CodingSeq("B",List((0.2,0.3)),true)
-		  val pc = new CodingSeq("C",List((0.3,0.2)),false)
-		  val pd = new CodingSeq("D",List((0.4,0.3)),false)
+          //CodingSeq(k2:Double, d: (Double,Double), var concentration: (Double, Double))
+          //val pa = new CodingSeq(4.6337,(0.0240,0.8466),(1.0,2.0),None)
+          val pa = new CodingSeq("A",List((0.1,0.1)),true)
+          val pb = new CodingSeq("B",List((0.2,0.3)),true)
+          val pc = new CodingSeq("C",List((0.3,0.2)),false)
+          val pd = new CodingSeq("D",List((0.4,0.3)),false)
           val g1 = new AndGate((pa,pb),pc)
           val g2 = new NotGate(pc,pd)
           curNetwork = Network.load(-1,"complexNetworkLoadTest")

@@ -21,7 +21,7 @@ abstract class Gate extends Part {
  * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class CodingSeq(val name: String, var concentration: List[(Double, Double)], var isInput: Boolean) extends Part{
+case class CodingSeq(val name: String, var concentration: List[(Double, Double)] = List((0,0)), var isInput: Boolean) extends Part{
     private val params = getParams
     val k2 = params[Double]("K2")
     val d1 = params[Double]("D1")
@@ -29,7 +29,14 @@ case class CodingSeq(val name: String, var concentration: List[(Double, Double)]
     var linkedBy: Option[Gate] = None
     var linksTo: List[Gate] = Nil
     var ready: Boolean = false
-    var currentStep: Int = 0
+    var currentStep: Int = 1
+
+    def curConc: (Double,Double) = {
+        if(isInput){
+            concentration(currentStep-1)}
+        else
+            concentration.head
+    }
     
     /**
      * Retrieve the k2, d1 and d2 parameters for this CS from the database
@@ -102,6 +109,7 @@ case class CodingSeq(val name: String, var concentration: List[(Double, Double)]
  */
 case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
   input.linksTo ::= this
+  output.linkedBy = Some(this)
   private val params = getParams
   val k1 = params[Double]("K1")
   val km = params[Double]("KM")
@@ -128,6 +136,7 @@ case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
 case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gate{
   input._1.linksTo ::= this
   input._2.linksTo ::= this
+  output.linkedBy = Some(this)
   
   private val params = getParams
   val k1 = params[Double]("K1")
@@ -141,7 +150,7 @@ case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gat
 	    DB.withConnection { implicit connection =>
 	      SQL(
 	        """
-	         select * from andparams where 
+	         select * from andparams where
 	         (input1 = {input1} AND input2 = {input2})
 	         OR (input2 = {input1} AND input1 = {input2})
 	        """

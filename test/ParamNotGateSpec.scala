@@ -12,11 +12,11 @@ class ParamNotGateSpec extends Specification {
 
 		"return correct results" in {
 			running(FakeApplication()) {
-				val A = CodingSeq("A",List((0,0)),true)
-				val B = CodingSeq("B",List((0,0)),false)
+				val A = CodingSeq("A",isInput=true)
+				val B = CodingSeq("B",isInput=false)
 				val AtoB = NotGate(A,B)
-				AtoB.input must equalTo(CodingSeq("A",List((0,0)),true))
-				AtoB.output must equalTo(CodingSeq("B",List(),false))
+				AtoB.input must equalTo(CodingSeq("A",isInput=true))
+				AtoB.output must equalTo(CodingSeq("B",isInput=false))
 			}
 		}
 	}
