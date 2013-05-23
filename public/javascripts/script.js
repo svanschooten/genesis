@@ -68,7 +68,9 @@ function loadArrayScripts(prefix, files, callback) {
 Loader wrapper for script loading
 */
 function loadScript(script, callback, failFun) {
-    $.getScript("assets/javascripts/" + script).done(callback).fail(failFun);
+    $.getScript("assets/javascripts/" + script)
+    .done(function(script, textStatus){callback})
+    .fail(function(jqxhr, settings, exception){failFun});
 }
 
 /**

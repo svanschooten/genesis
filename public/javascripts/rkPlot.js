@@ -3,7 +3,7 @@ var data = null;
 var max_c_x = 0.0;
 
 $(document).ready(function(){
-    $('body').load(getPlotData());
+    getPlotData();
 });
 
 /**
