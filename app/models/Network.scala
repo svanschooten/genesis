@@ -57,7 +57,7 @@ class Network(inputs: List[CodingSeq]) {
             cs.linksTo.foreach(x => resetConcs(x.output))
         }
         // ready inputs if necessary and reset all concentrations
-        inputs.foreach(x=> {if(x.linkedBy.isEmpty) x.ready=true; resetConcs(x)})
+        inputs.foreach(x=> {reset_readies(x); resetConcs(x)})
 
         // function to get all the concentrations out of the network as a list of pairs
     	def getConcs(l: List[CodingSeq] = inputs): Set[(String,Double,Double)] = l.flatMap(seq => seq match {
