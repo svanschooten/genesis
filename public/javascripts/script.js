@@ -7,12 +7,12 @@ Authors:
 
 //Load all the javascript libraries except for jQuery
 var libraries = [ 'bootstrap.min.js',
+                'rickshaw.min.js',
                 'd3.v3.min.js',
                 'element-min.js',
                 'jquery-ui-1.10.2.min.js',
                 'jquery.jsPlumb-1.4.0-all-min.js',
-                'jquery.ui.touch-punch.min.js',
-                'rickshaw.min.js' ];
+                'jquery.ui.touch-punch.min.js'];
 
 //Load all the standard scripts. If page specific, extend
 var scripts = [ 'home.js' ];
@@ -35,9 +35,7 @@ If needed on all pages: Put in scripts array.
 */
 function loadPageScript() {
     switch(document.URL.split("/").pop()) {
-        case "rk":
-            loadScript("rkPlot.js");
-            break;
+
         case "plumbtest":
             loadScript("scriptPlumb.js");
             break;
@@ -67,8 +65,8 @@ function loadArrayScripts(prefix, files, callback) {
 /**
 Loader wrapper for script loading
 */
-function loadScript(script, callback) {
-    $.getScript("assets/javascripts/" + script, callback);
+function loadScript(script, callback, failFun) {
+    $.getScript("assets/javascripts/" + script).done(callback).fail(failFun);
 }
 
 /**

@@ -78,6 +78,7 @@ function makeConnection(params) {
         if(element == null) {
             notify("Invalid element: " + params.sourceId, "Warning");
         } else {
+            params.connection.protein = "";
             params.connection.addOverlay([ "Arrow", { width:15, location: 0.5,height:10, id:"arrow" }]);
             params.connection.bind("click", function(connection){ setProtein(connection) });
         }
@@ -143,7 +144,12 @@ function parseJsPlumb() {
     network.vertices = new Array();
     network.edges = new Array();
     for(i = 0; i < circuit.length; i++) {
-        network.vertices.push({ id: circuit[i].id, x: circuit[i].x, y: circuit[i].y});
+        network.vertices.push({
+            id: circuit[i].id,
+            type: circuit[i].type,
+            x: circuit[i].x,
+            y: circuit[i].y
+        });
     }
     for(i = 0; i < plumb.length; i++) {
         network.edges.push({
@@ -156,17 +162,13 @@ function parseJsPlumb() {
 }
 
 function makeDraggable(div, gate) {
-    div.draggable({ containment: "parent",
-        drag: function(){repaintElement(gate.id)},
-        stop: function(){
+    jsPlumb.draggable(div, {
+        containment: "parent",
+        grid: [20, 20],
+        stop: function() {
             gate.x = div.position().left;
             gate.y = div.position().top;
-            repaintElement(gate.id)
         }
-    });
-    jsPlumb.draggable(div, {
-        containment: "#plumbArea",
-        grid: [20, 20]
     });
 }
 
@@ -175,12 +177,11 @@ Gate constructor
 */
 function Gate(name, inputs, outputs, image) {
     this.id = name + circuit.length;
-    this.image = image;
+    this.type = name;
 
     var gate = $('<div/>', {
         id: this.id,
-        style: 'height: 80px; width: 80px;',
-        background: image
+        class: "gateElement"
     })
     .appendTo($('#plumbArea'));
     if(image == null) {
@@ -188,6 +189,8 @@ function Gate(name, inputs, outputs, image) {
         text.css("padding", "15px 30px");
         gate.css("border", "1px solid black");
         text.text(this.id);
+    } else {
+        gate.css("background-image", image);
     }
 
 

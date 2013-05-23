@@ -49,3 +49,10 @@
 	opacity:0.8;
 	filter:alpha(opacity=80);
 }
+
+.gateElement {
+    height: 80px;
+    width: 80px;
+    position: absolute;
+
+}

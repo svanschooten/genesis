@@ -3,7 +3,7 @@ var data = null;
 var max_c_x = 0.0;
 
 $(document).ready(function(){
-    getPlotData();
+    $('body').load(getPlotData());
 });
 
 /**
@@ -95,16 +95,15 @@ function drawGraph(series) {
 
     var width = 800;
     var height = 250;
-
-    console.log(JSON.stringify(series));
+    var test = [{name:"henk", data:[{x:1, y:50},{x:2, y:60},{x:3, y: 20},{x:4, y:30}]}];
 
     //Creating the graph to plot in
     var graph = new Rickshaw.Graph( {
-            element: document.querySelector("#plotDiv"),
+            element: $('#plotDiv'),
             width: width,
             height: height,
             renderer: 'line',
-            series: series,
+            series: test,
     } );
 
     //Defining the x-axis
