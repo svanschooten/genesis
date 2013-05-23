@@ -1,23 +1,10 @@
 @(title: String)(content: Html)
 
-@* Change the "active" class highlighting the button in the navbar of the current page *@
-@active(t : String) = {
-  @if(title equals t){class=active"}
-}
-
 @head = {
 	<script src="@routes.Assets.at("stylesheets/javascripts/home.js")" type="text/javascript"></script>
 }
 
 @main(title) {	
 		<div>
-			<ul class="nav nav-tabs" id="myTab">
-				<li id="add-tab-button">
-						<button class="btn btn-link" onclick="addTab()">+</button>
-				</li>
-			</ul>
-			
-			<div class="tab-content">
-			</div>
 		</div>
 }
