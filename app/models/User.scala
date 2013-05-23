@@ -41,16 +41,17 @@ object User {
   def authenticate(email: String, password: String): Option[User] = {
     DB.withConnection { implicit connection =>
       findByEmail(email) match {
-        case Some(u: User) => 
+        case Some(u: User) =>
           if(password.isBcrypted(u.password)) Some(u)
           else None
-        case None => None  
+        case None => None
       }
     }
   }
   
   /** Creates a new User */
   def create(email: String, password: String, fname: Option[String], lname: Option[String]) = {
+    val hap = password.bcrypt(12)
     DB.withConnection{ implicit connection =>
       SQL(
         """
@@ -59,7 +60,7 @@ object User {
         """
       ).on(
         'email -> email,
-        'password -> password.bcrypt(12),
+        'password -> hap,
         'fname -> fname,
         'lname -> lname
       ).executeInsert()
