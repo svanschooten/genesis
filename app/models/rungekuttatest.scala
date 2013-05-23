@@ -63,7 +63,7 @@ case class Rungekuttatest (){
   }
 
   def genJson = {
-    import models._
+    //import models._
     import math._
     val plain = List.fill(1503)(1.0)
     val domain = (0.019 to 25.0 by 0.019).toList //(-0.5*Pi to 0.5*Pi by Pi/500-0.001).toList
@@ -94,9 +94,8 @@ case class Rungekuttatest (){
     //val notAandB = AndGate((C,B),D)
     //val notAandBandE = AndGate((D,E),F)
     val net = new Network(List(A))
-    net.simJson(1500.0) // [test] stabilizes to :
-    // 41.6666666666666	228.054374360186	48.7804878048759	260.792124555058	99.7682070794492	497.584659558515	334.934010152227	1279.12460265271	61.3496932500570	148.920900749709	271.331210172459	941.508188692855
-    //Rungekuttatest.resultsToJson(t0, tf, dt, testResults())
+    //net.simJson(1500.0)
+    Rungekuttatest.resultsToJson(t0, tf, dt, testResults())
   }
 
 }
