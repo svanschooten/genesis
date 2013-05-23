@@ -31,9 +31,23 @@ object Projects extends Controller with Secured {
           val pd = new CodingSeq("D",List((0.4,0.3)),false)
           val g1 = new AndGate((pa,pb),pc)
           val g2 = new NotGate(pc,pd)
-          curNetwork = Network.load(-1,"complexNetworkLoadTest")
+          val concInput = Array("t,A,B","0,0,0","70,1,0","100,0,1","140,1,1")
+          curNetwork = new Network(List(pa,pb),-1,"")
+          l::="Concentrations:"
+          val setConcs = curNetwork.setStartParameters(concInput, 200, 1, 150)
+          for(str <- setConcs){
+            if(str==null) l::="null"
+            else l::=str.toString
+          }
+          for(cs:CodingSeq <- curNetwork.inputs){
+            var t = 0
+            for(conc:(Double,Double) <- cs.concentration){
+              l::=cs.name+" t="+t+": "+conc
+              t += 1
+            }
+          }
           val seen:Set[String] = Set()
-          def rec(cur: CodingSeq) {
+          /*def rec(cur: CodingSeq) {
             if(seen contains cur.name) return
             seen += cur.name
             l::=cur.name+"->"+cur.linksTo
@@ -43,7 +57,7 @@ object Projects extends Controller with Secured {
           }
           for(cur <- curNetwork.inputs){
             rec(cur)
-          }
+          }*/
           
           /*l::="pa:"+pa.k2+" "+pa.d1+" "+pa.d2
           l::="pb:"+pb.k2+" "+pb.d1+" "+pb.d2

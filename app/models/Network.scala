@@ -178,9 +178,43 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
 	    
 	  }
     
-    def setStartParameters(input: Array[String], startConc: Int) {
+    def setStartParameters(input: Array[String], startProteinConc: Double, startMRNAConc: Double, limit: Double){
+      val results:Map[String,List[(Double,Double)]] = Map()
       val firstLine = input(0).split(",")
-      
+      val TFInd = new Array[String](firstLine.length+1)
+      val curConcs = new Array[(Double,Double)](firstLine.length+1)
+      for(i <- 1 to firstLine.length-1){
+        TFInd(i) = firstLine(i)
+        results += (TFInd(i)->List())
+      }
+      val secLine = input(1).split(",")
+      for(j <- 1 to secLine.length-1){
+	      if(secLine(j).toInt==1) curConcs(j) = (startMRNAConc,startProteinConc)
+	      else curConcs(j) = (0.0,0.0)
+	    }
+      var t = 0
+      for(i <- 2 to input.length-1){
+        val curLine = input(i).split(",")
+        while(t<curLine(0).toDouble){
+          for(j <- 1 to curLine.length-1){
+            results(TFInd(j)) ::= (curConcs(j)._1,curConcs(j)._2)
+          }
+          t += stepSize
+        }
+        for(j <- 1 to curLine.length-1){
+	      if(curLine(j).toInt==1) curConcs(j) = (startMRNAConc,startProteinConc)
+	      else curConcs(j) = (0.0,0.0)
+	    }
+      }
+      while(t<=limit){
+        for(i <- 1 to firstLine.length-1){
+            results(TFInd(i)) ::= (curConcs(i)._1,curConcs(i)._2)
+        }
+        t += stepSize
+      }
+      for(cs: CodingSeq <- inputs){
+        cs.concentration = results(cs.name).reverse
+      }
     }
     
     /**

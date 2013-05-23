@@ -49,6 +49,25 @@ case class CodingSeq(val name: String, var concentration: List[(Double, Double)]
 	      ).apply().head
 	    }
 	  }
+	  
+	  def saveParams(input: Array[String], partType: String){
+	    DB.withConnection { implicit connection =>
+	      for(i <- 1 to input.length-1){
+	        val line = input(i).split(",")
+	        var p5 = ""
+	        if(partType=="AND") p5 = ","+line(4)
+	        SQL("insert into {partType}params values({p1},{p2},{p3},{p4}{p5})")
+	        .on(
+	            'partType -> partType,
+	            'p1 -> line(0),
+	            'p2 -> line(1),
+	            'p3 -> line(2),
+	            'p4 -> line(3),
+	            'p5 -> p5
+	         ).executeUpdate()
+	      }
+	    }
+	  }
     
     /**
      * Save this codingSequence to the database.
