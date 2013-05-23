@@ -63,6 +63,38 @@ case class Rungekuttatest (){
   }
 
   def genJson = {
+    //import models._
+    import math._
+    val plain = List.fill(1503)(1.0)
+    val domain = (0.019 to 25.0 by 0.019).toList //(-0.5*Pi to 0.5*Pi by Pi/500-0.001).toList
+    val osc1 = domain map(cos(_) + 1)
+    val osc2 = domain map(sin(_) + 1)
+    val osc3 = domain map((x:Double) => abs(log(x)))
+    val inp1 = osc1.zip(osc1)
+    val inp2 = osc2.zip(osc2)
+    val inp3 = osc3.zip(osc3)
+    val inpp = plain.zip(plain)
+    val A = CodingSeq("A",inpp,true)
+    val B = CodingSeq("B",inpp,true)
+    val C = CodingSeq("C",List((0,0)),false)
+    val D = CodingSeq("D",List((0,0)),false)
+    val E = CodingSeq("E",inpp,true)
+    val F = CodingSeq("F",List((0,0)),false)
+    val I = CodingSeq("I",List((0,0)),false)
+    //val AandB = AndGate((A,B),C)
+    //val CandD = AndGate((C,D),E)
+    val notA = NotGate(A,B)
+    val notB = NotGate(B,C)
+    val notC = NotGate(C,D)
+    val notD = NotGate(D,E)
+    val notE = NotGate(E,F)
+    val notF = NotGate(F,I)
+    val loop = NotGate(I,A)
+    //val notI = NotGate(I,E)
+    //val notAandB = AndGate((C,B),D)
+    //val notAandBandE = AndGate((D,E),F)
+    val net = new Network(List(A))
+    //net.simJson(1500.0)
     Rungekuttatest.resultsToJson(t0, tf, dt, testResults())
   }
 
