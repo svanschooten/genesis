@@ -1,0 +1,25 @@
+#application-area {
+	height: 600px;
+}
+
+#application-header-row {
+	height: 10%;
+}
+
+#application-main-row {
+	height: 90%;
+}
+
+#application-header-row header {
+	height: 100%;
+	background-color: red;
+}
+
+#application-header-row header .btn-toolbar {
+	margin-left: 20px;
+}
+
+.application-canvas, .application-sidebar {
+	background-color: white;
+	height: 100%;
+}
