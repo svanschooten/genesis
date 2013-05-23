@@ -1,6 +1,8 @@
 @(result: List[String])
 
-@main("Here is the result:") {
+@head = {}
+
+@main("Here is the result:")(head) {
 
     <ul>
        @for(v <- result){

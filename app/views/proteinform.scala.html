@@ -2,7 +2,9 @@
 
 @import helper._
 
-@main("Here is the result:") {
+@head = {}
+
+@main("Here is the result:")(head) {
 
     @form(action = routes.Projects.formFunction) {
 

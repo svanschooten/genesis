@@ -15,7 +15,7 @@ object Help extends Controller with Secured {
   /** Placeholder help page */
   def help = IsAuthenticated { email => _ =>
     User.findByEmail(email).map { user =>
-    	Ok(html.main("Help")(Html.apply(helpText)))
+    	Ok(html.main("Help")(Html.apply("Placeholder"))(Html.apply(helpText)))
     }.getOrElse(Forbidden)
 
   }

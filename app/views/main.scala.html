@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(head_extra: Html)(content: Html)
 
 @* Change the "active" class highlighting the button in the navbar of the current page *@
 @active(t : String) = {
@@ -8,6 +8,8 @@
 @head = {
     <script src=@routes.Assets.at("javascripts/lib/jquery-1.9.1.min.js") ></script>
     <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+    
+    @head_extra
 }
 
 @base(title)(head) {	
@@ -18,7 +20,7 @@
 	        	<h2 id="title">@title</h2>
 	    	</div>
 	        
-	        <div class="navbar">
+	        <div class="navbar navbar-fixed-top">
 	          <div class="navbar-inner">
 	            <div class="container">
 	            
