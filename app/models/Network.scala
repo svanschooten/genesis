@@ -153,6 +153,9 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
         }
     }
     
+    /**
+     * Save this network to the database.
+     */
     def save = {
     	Network.delete(userid,networkname)
 	    DB.withConnection { implicit connection =>
@@ -173,6 +176,11 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
 	    }
 	    
 	  }
+    
+    def setStartParameters(input: Array[String], startConc: Int) {
+      val firstLine = input(0).split(",")
+      
+    }
     
     /**
      * Delete this network from the database.
