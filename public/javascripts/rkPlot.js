@@ -53,7 +53,6 @@ function drawGraph(series) {
 
     var width = 800;
     var height = 250;
-    var test = [{name:"henk", data:[{x:1, y:50},{x:2, y:60},{x:3, y: 20},{x:4, y:30}]}];
 
     //Creating the graph to plot in
     var graph = new Rickshaw.Graph( {
@@ -116,5 +115,4 @@ function drawGraph(series) {
         graph: graph,
         element: document.getElementById('slider')
     } );
-
 }
