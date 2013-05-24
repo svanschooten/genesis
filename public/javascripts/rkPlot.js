@@ -21,7 +21,7 @@ function getPlotData(){
 
 /**
 Parses the standard JSON ouput to a usable format for plotting.
-*/
+
 function parseJSONdata(response){
 
     //Check if data in memory is empty
@@ -65,10 +65,10 @@ function parseJSONdata(response){
 
     return series;
 }
-
+*/
 /**
 Parses the standard JSON ouput to a usable format for plotting.
-
+*/
 function parseJSONdata(response){
 
     //Check if data in memory is empty
@@ -86,7 +86,7 @@ function parseJSONdata(response){
     }
 
     return data;
-}*/
+}
 
 /**
 Plots the received data in a interactive plot.
