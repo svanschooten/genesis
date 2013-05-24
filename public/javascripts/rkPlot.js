@@ -3,7 +3,7 @@ var data = null;
 var max_c_x = 0.0;
 
 $(document).ready(function(){
-    getPlotData();
+    $('body').load(getPlotData());
 });
 
 /**
@@ -19,53 +19,6 @@ function getPlotData(){
     })
 }
 
-/**
-Parses the standard JSON ouput to a usable format for plotting.
-
-function parseJSONdata(response){
-
-    //Check if data in memory is empty
-    if(data == null) {
-       data = $.parseJSON(response);
-    }
-
-    //Parse the different vectors from the JSON object
-    var time = data["t"];
-    var vectors = data["vectors"];
-    var names = data["names"];
-
-    //Instantiate a new color pallette
-    var palette = new Rickshaw.Color.Palette( { interpolatedStopsCount: vectors[0].length } );
-
-    //Make the data array, now still empty
-    var series = new Array();
-
-    //Fill the data array
-    for (var i=0;i<vectors[0].length;i++){
-        //Make new series object
-        var serie = new Object();
-        //Give it a name
-        serie.name = names[i];
-        //Instantiate the data object in memory
-        var sData = [];
-        //Fill the data object
-        for (j=0;j<time.length-1;j++){
-            var value = vectors[j][i];
-            sData.push({x: (time[j] * 1000), y: value});
-            if(max_c_x < value){
-                max_c_x = value
-            }
-        }
-        //Add data an color
-        serie.data = sData;
-        serie.color = palette.color();
-        //Push data into the data array
-        series.push(serie);
-    }
-
-    return series;
-}
-*/
 /**
 Parses the standard JSON ouput to a usable format for plotting.
 */
@@ -95,16 +48,15 @@ function drawGraph(series) {
 
     var width = 800;
     var height = 250;
-
-    console.log(JSON.stringify(series));
+    var test = [{name:"henk", data:[{x:1, y:50},{x:2, y:60},{x:3, y: 20},{x:4, y:30}]}];
 
     //Creating the graph to plot in
     var graph = new Rickshaw.Graph( {
-            element: document.querySelector("#plotDiv"),
+            element: $('#plotDiv')[0], // Graph's element must be an element, not an array of elements
             width: width,
             height: height,
             renderer: 'line',
-            series: series,
+            series: test,
     } );
 
     //Defining the x-axis
@@ -157,7 +109,7 @@ function drawGraph(series) {
     //Add the range slider for zooming in
     var slider = new Rickshaw.Graph.RangeSlider( {
         graph: graph,
-        element: document.getElementById('slider')
+        element: new Array(document.getElementById('slider')) // RangeSlider's element is apparently supposed to be an Array
     } );
 
 }
