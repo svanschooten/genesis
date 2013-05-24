@@ -9,6 +9,7 @@ import models._
 
 class NetworkSpec extends Specification {
 
+	//testing multiple gates
     "Network" should {
         "return correct results" in new WithApplication {
             val concs = List.fill(1503)(1.0)
@@ -41,4 +42,90 @@ class NetworkSpec extends Specification {
             })
         }
     }
+    
+    //testing notgate
+    "NotGate" should {
+        "return correct results" in new WithApplication {
+            val concs = List.fill(1503)(1.0)
+            val A = CodingSeq("A",concs.zip(concs),isInput=true)
+            val C = CodingSeq("C",isInput=false)
+            val AtoB = NotGate(A,C)
+            val net = new Network(List(A))
+            val results = net.simulate(1500.0)
+            // expected results generated using MATLAB R2012b
+            // A: 1 1
+            // B: 200.437196650108	999.694633766756
+            results(results.length-1)(0)._2 must beCloseTo(1.0, 0.1)
+            results(results.length-1)(0)._3 must beCloseTo(1.0, 0.1)
+            results(results.length-1)(1)._2 must beCloseTo(200.44, 0.1)
+            results(results.length-1)(1)._3 must beCloseTo(999.69, 0.1)
+        }
+    }
+    
+    //testing andgate
+     "AndGate" should {
+        "return correct results" in new WithApplication {
+            val concs = List.fill(1503)(1.0)
+            val A = CodingSeq("A",concs.zip(concs),isInput=true)
+            val B = CodingSeq("B",concs.zip(concs),isInput=true)
+            val C = CodingSeq("C",isInput=false)
+            val ABtoC = AndGate((A,B),C)
+            val net = new Network(List(A,B))
+            val results = net.simulate(1500.0)
+            // expected results generated using MATLAB R2012b
+            // A: 1 1
+            // B: 1 1
+            // C: 1.41189714584990e-05 7.04461969998677e-05
+            results(results.length-1)(0)._2 must beCloseTo(1.0, 0.1)
+            results(results.length-1)(0)._3 must beCloseTo(1.0, 0.1)
+            results(results.length-1)(1)._2 must beCloseTo(1.41e-5, 1e-5)
+            results(results.length-1)(1)._3 must beCloseTo(7.05e-5, 1e-5)
+            results(results.length-1)(2)._2 must beCloseTo(1.0, 0.1)
+            results(results.length-1)(2)._3 must beCloseTo(1.0, 0.1)
+       }
+      }
+     
+     /* 
+      * testing json, however this is not complete
+      * missing verification of data
+      */
+     "Json"should {
+       "return correct results" in new WithApplication {
+    	   val listName = List("mRNA_A", "protein_A")
+    	   val concs = List.fill(3)(1.0)
+           val A = CodingSeq("A",concs.zip(concs),isInput=true)
+           val net = new Network(List(A))
+    	   val json = net.simJson(1.0)
+    	   val jsonName = (json \\ "name").map(_.as[String])
+    	   jsonName must equalTo(listName)
+       }
+     }
+     
+     //testing the parameters of andgate
+     "AndGate parameters" should {
+		"return correct results" in {
+			running(FakeApplication()) {
+				val A = CodingSeq("A",isInput=true)
+				val B = CodingSeq("B",isInput=true)
+				val C = CodingSeq("C",isInput=false)
+				val ABtoC = AndGate((A,B),C)
+				ABtoC.input must equalTo((CodingSeq("A",isInput=true),CodingSeq("B",isInput=true)))
+				ABtoC.output must equalTo(CodingSeq("C",isInput=false))
+			}
+		}
+     }
+     
+     //testing the parameters of orgate
+     "Orgate parameters" should {
+
+		"return correct results" in {
+			running(FakeApplication()) {
+				val A = CodingSeq("A",isInput=true)
+				val B = CodingSeq("B",isInput=false)
+				val AtoB = NotGate(A,B)
+				AtoB.input must equalTo(CodingSeq("A",isInput=true))
+				AtoB.output must equalTo(CodingSeq("B",isInput=false))
+			}
+		}
+	}
 }

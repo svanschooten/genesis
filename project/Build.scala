@@ -16,7 +16,8 @@ object ApplicationBuild extends Build {
     // Add your project dependencies here,
     jdbc,
     anorm,
-    "postgresql" % "postgresql" % "9.1-901.jdbc4"
+    "postgresql" % "postgresql" % "9.1-901.jdbc4",
+    "org.seleniumhq.selenium" % "selenium-java" % "2.32.0"
   )
 
   val main = play.Project(appName, appVersion, appDependencies, settings = jacoco_settings).settings(
