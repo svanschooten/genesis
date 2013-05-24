@@ -21,8 +21,8 @@ abstract class Gate extends Part {
  * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class CodingSeq(val name: String, var concentration: List[(Double, Double)] = List((0,0)), var isInput: Boolean) extends Part{
-    private val params = getParams
+case class CodingSeq(val name: String, val libID: Int, var concentration: List[(Double, Double)] = List((0,0)), var isInput: Boolean) extends Part{
+    private val params = getParams(libID)
     val k2 = params[Double]("K2")
     val d1 = params[Double]("D1")
     val d2 = params[Double]("D2")
@@ -41,48 +41,13 @@ case class CodingSeq(val name: String, var concentration: List[(Double, Double)]
     /**
      * Retrieve the k2, d1 and d2 parameters for this CS from the database
      */
-	  def getParams = {
+	  def getParams(libraryID: Int) = {
 	    DB.withConnection { implicit connection =>
-	      SQL("select * from cdsparams where name = {name}"
+	      SQL("select * from cdsparams where name = {name} and libraryid = {libraryID}"
 	      ).on(
-	        'name -> name
+	        'name -> name,
+	        'libraryID -> libraryID
 	      ).apply().head
-	    }
-	  }
-	  
-	  def saveParams(input: Array[String], partType: String){
-	    DB.withConnection { implicit connection =>
-	      for(i <- 1 to input.length-1){
-	        val line = input(i).split(",")
-	        if(partType.toUpperCase()=="AND"){
-	          SQL("insert into andparams values({tf1},{tf2},{k1},{km},{n})")
-	          .on(
-	             'tf1 -> line(0),
-	             'tf2 -> line(1),
-	             'k1 -> line(2).toDouble,
-	             'km -> line(3).toDouble,
-	             'n -> line(4).toInt
-	          ).executeUpdate()
-	        }
-	        else if(partType.toUpperCase()=="NOT"){
-	          SQL("insert into notparams values({tf},{k1},{km},{n})")
-	          .on(
-	             'tf -> line(0),
-	             'k1 -> line(1).toDouble,
-	             'km -> line(2).toDouble,
-	             'n -> line(3).toInt
-	          ).executeUpdate()
-	        }
-	        else if(partType.toUpperCase()=="CDS"){
-	          SQL("insert into cdsparams values({gene},{k2},{d1},{d2})")
-	          .on(
-	             'gene -> line(0),
-	             'k2 -> line(1).toDouble,
-	             'd1 -> line(2).toDouble,
-	             'd2 -> line(3).toDouble
-	          ).executeUpdate()
-	        }
-	      }
 	    }
 	  }
     
@@ -143,10 +108,10 @@ case class CodingSeq(val name: String, var concentration: List[(Double, Double)]
  *  this TF
  *  the other parameters determine the transcription rate of the output
  */
-case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
+case class NotGate(input: CodingSeq, output: CodingSeq, val libID: Int) extends Gate{
   input.linksTo ::= this
   output.linkedBy = Some(this)
-  private val params = getParams
+  private val params = getParams(libID)
   val k1 = params[Double]("K1")
   val km = params[Double]("KM")
   val n = params[Int]("N")
@@ -154,11 +119,12 @@ case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
   /**
    * Retrieve the k1, km and n parameters from the database
    */
-  def getParams = {
+  def getParams(libraryid: Int) = {
     DB.withConnection { implicit connection =>
-      SQL("select * from notparams where input = {input}"
+      SQL("select * from notparams where input = {input} and libraryid={libraryid}"
       ).on(
-        'input -> input.name
+        'input -> input.name,
+        'libraryid -> libraryid
       ).apply().head
     }
   }
@@ -169,12 +135,12 @@ case class NotGate(input: CodingSeq, output: CodingSeq) extends Gate{
  *  the difference with NOT gates is what kind of ODE function will be generated
  *  for this class and the number of inputs
  */
-case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gate{
+case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq, val libID: Int) extends Gate{
   input._1.linksTo ::= this
   input._2.linksTo ::= this
   output.linkedBy = Some(this)
   
-  private val params = getParams
+  private val params = getParams(libID)
   val k1 = params[Double]("K1")
   val km = params[Double]("KM")
   val n = params[Int]("N")
@@ -182,15 +148,17 @@ case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq) extends Gat
   /**
    * Retrieve the k1, km and n parameters from the database
    */
-  def getParams = {
+  def getParams(libraryid: Int) = {
 	    DB.withConnection { implicit connection =>
 	      SQL(
 	        """
 	         select * from andparams where
-	         (input1 = {input1} AND input2 = {input2})
-	         OR (input2 = {input1} AND input1 = {input2})
+	         libraryid = {libraryid} AND
+	         ((input1 = {input1} AND input2 = {input2})
+	         OR (input2 = {input1} AND input1 = {input2}))
 	        """
 	      ).on(
+	        'libraryid -> libraryid,
 	        'input1 -> input._1.name,
 	        'input2 -> input._2.name
 	      ).apply().head

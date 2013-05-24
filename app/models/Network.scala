@@ -36,8 +36,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
     private def reset_readies(cs: CodingSeq) {
         cs.ready=false
         cs.linksTo.foreach(_ match {
-            case NotGate(_,y) if(y.ready) => reset_readies(y)
-            case AndGate((_,_),y) if(y.ready) => reset_readies(y)
+            case x:Gate if(x.output.ready) => reset_readies(x.output)
             case _ => return
         })
     }
@@ -66,10 +65,9 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
 
         // function to get all the concentrations out of the network as a list of pairs
     	def getConcs(l: List[CodingSeq] = inputs): Set[(String,Double,Double)] = l.flatMap(seq => seq match {
-            case CodingSeq(name,_,_) if(!seq.ready) => {seq.ready = true;
+            case CodingSeq(name,_,_,_) if(!seq.ready) => {seq.ready = true;
               Set((name, seq.curConc._1, seq.curConc._2)) ++ (seq.linksTo.collect( {
-                case NotGate(_,next) => getConcs(List(next))
-                case AndGate(_,next) => getConcs(List(next))
+                case x:Gate => getConcs(List(x.output))
             })).flatten}
             case _ => Nil
         }).toSet
@@ -128,8 +126,8 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
         def do_the_math(cs: CodingSeq) {
             // generate the appropriate ODEPairs and update the concentrations
             val parts = cs.linksTo.collect( {
-                case y@NotGate(_,out) if(!out.ready) => y
-                case y@AndGate((in1,in2),out) if(((in1.ready && in2==cs) || (in1==cs && in2.ready)) && !out.ready) => y
+                case y@NotGate(_,out,_) if(!out.ready) => y
+                case y@AndGate((in1,in2),out,_) if(((in1.ready && in2==cs) || (in1==cs && in2.ready)) && !out.ready) => y
             })
 
             val odePairs = mkODEs(parts)
@@ -162,7 +160,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
 	    DB.withConnection { implicit connection =>
 	      SQL(
 	        """
-	         insert into ownedby(userid,networkname) values({user},{networkname})
+	         insert into networkownedby(userid,networkname) values({user},{networkname})
 	        """
 	      ).on(
 	        'user -> userid,
@@ -252,7 +250,7 @@ object Network {
     /**
      * Return the Network object with name 'networkname' that belongs to 'user'
      */
-    def load(userid: Int, networkname: String): Network = {
+    def load(userid: Int, networkname: String, libraryID: Int): Network = {
       DB.withConnection{ implicit connection =>
       	  val id = getID(userid, networkname)
       	  val tempconcs = SQL(
@@ -297,22 +295,22 @@ object Network {
 	      	}
 		  var startCDS: List[CodingSeq] = Nil
 		  for(cs <- allCDS){
-		    val newCDS = new CodingSeq(cs._1,concentrations(cs._2),cs._3)
+		    val newCDS = new CodingSeq(cs._1,libraryID,concentrations(cs._2),cs._3)
 		    seqs += (cs._1 -> newCDS)
 		    if(cs._3) startCDS ::= newCDS
 		  }
       	  for(cs <- allCDS){
-      	    if(!(seqs contains cs._2)) seqs += (cs._2 -> new CodingSeq(cs._2,concentrations(cs._2),false))
+      	    if(!(seqs contains cs._2)) seqs += (cs._2 -> new CodingSeq(cs._2,libraryID,concentrations(cs._2),false))
       	    if(inputs1 contains cs._2) inputs2 += (cs._2 -> cs._1)
       	    else inputs1 += (cs._2 -> cs._1)
       	  }
 	      
 	      for(str: String <- inputs1.keys){
 	        if(inputs2 contains str){
-	        	val g = new AndGate((seqs(inputs1(str)),seqs(inputs2(str))),seqs(str))
+	        	val g = new AndGate((seqs(inputs1(str)),seqs(inputs2(str))),seqs(str),libraryID)
 	        }
 	        else{
-	        	val g = new NotGate(seqs(inputs1(str)),seqs(str))
+	        	val g = new NotGate(seqs(inputs1(str)),seqs(str),libraryID)
 	        }
 	      }
       	new Network(startCDS,userid,networkname)
@@ -326,7 +324,7 @@ object Network {
       DB.withConnection { implicit connection =>
         val idResults = SQL(
 	          """
-	          select networkid from ownedby
+	          select networkid from networkownedby
 	          where userid={userid} AND networkname={networkname}
 	          """
 	          ).on(
@@ -337,7 +335,7 @@ object Network {
 		  val id = idResults.head[Int]("networkid")
 	      SQL(
 	        """
-	         DELETE FROM ownedby WHERE networkid={id};
+	         DELETE FROM networkownedby WHERE networkid={id};
 	         DELETE FROM concentrations WHERE networkid={id};
 	         DELETE FROM cds WHERE networkid={id};
 	        """
@@ -354,7 +352,7 @@ object Network {
       DB.withConnection { implicit connection =>
       	  val idResult = SQL(
 	          """
-	          select networkid from ownedby
+	          select networkid from networkownedby
 	          where userid={userid} AND networkname={networkname}
 	          """
 	          ).on(
