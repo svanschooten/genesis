@@ -31,14 +31,16 @@ object Projects extends Controller with Secured {
           val pd = new CodingSeq("D",List((0.4,0.3)),false)
           val g1 = new AndGate((pa,pb),pc)
           val g2 = new NotGate(pc,pd)
+          val inp = Array("Gene,k_2,d_1,d_2","M,4.8791,0.2464,0.7085","L,4.4653,0.1567,0.7096")
+          pa.saveParams(inp,"CDS")
           val concInput = Array("t,A,B","0,0,0","70,1,0","100,0,1","140,1,1")
           curNetwork = new Network(List(pa,pb),-1,"")
           l::="Concentrations:"
           val setConcs = curNetwork.setStartParameters(concInput, 200, 1, 150)
-          for(str <- setConcs){
+          /*for(str <- setConcs){
             if(str==null) l::="null"
             else l::=str.toString
-          }
+          }*/
           for(cs:CodingSeq <- curNetwork.inputs){
             var t = 0
             for(conc:(Double,Double) <- cs.concentration){

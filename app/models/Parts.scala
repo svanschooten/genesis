@@ -54,17 +54,34 @@ case class CodingSeq(val name: String, var concentration: List[(Double, Double)]
 	    DB.withConnection { implicit connection =>
 	      for(i <- 1 to input.length-1){
 	        val line = input(i).split(",")
-	        var p5 = ""
-	        if(partType=="AND") p5 = ","+line(4)
-	        SQL("insert into {partType}params values({p1},{p2},{p3},{p4}{p5})")
-	        .on(
-	            'partType -> partType,
-	            'p1 -> line(0),
-	            'p2 -> line(1),
-	            'p3 -> line(2),
-	            'p4 -> line(3),
-	            'p5 -> p5
-	         ).executeUpdate()
+	        if(partType.toUpperCase()=="AND"){
+	          SQL("insert into andparams values({tf1},{tf2},{k1},{km},{n})")
+	          .on(
+	             'tf1 -> line(0),
+	             'tf2 -> line(1),
+	             'k1 -> line(2).toDouble,
+	             'km -> line(3).toDouble,
+	             'n -> line(4).toInt
+	          ).executeUpdate()
+	        }
+	        else if(partType.toUpperCase()=="NOT"){
+	          SQL("insert into notparams values({tf},{k1},{km},{n})")
+	          .on(
+	             'tf -> line(0),
+	             'k1 -> line(1).toDouble,
+	             'km -> line(2).toDouble,
+	             'n -> line(3).toInt
+	          ).executeUpdate()
+	        }
+	        else if(partType.toUpperCase()=="CDS"){
+	          SQL("insert into cdsparams values({gene},{k2},{d1},{d2})")
+	          .on(
+	             'gene -> line(0),
+	             'k2 -> line(1).toDouble,
+	             'd1 -> line(2).toDouble,
+	             'd2 -> line(3).toDouble
+	          ).executeUpdate()
+	        }
 	      }
 	    }
 	  }
