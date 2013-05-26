@@ -29,11 +29,6 @@ function parseJSONdata(response){
        data = $.parseJSON(response);
     }
 
-    //Parse the different vectors from the JSON object
-    var time = data["t"];
-    var vectors = data["vectors"];
-    var names = data["names"];
-
     //Instantiate a new color pallette
     var palette = new Rickshaw.Color.Palette( { interpolatedStopsCount: data.length } );
 
@@ -56,11 +51,11 @@ function drawGraph(series) {
 
     //Creating the graph to plot in
     var graph = new Rickshaw.Graph( {
-            element: document.querySelector('#chart'),
+            element: $('#chart')[0], // Graph's element must be an element, not an array of elements
             width: width,
             height: height,
             renderer: 'line',
-            series: series
+            series: series,
     } );
 
     //Defining the x-axis
@@ -113,6 +108,7 @@ function drawGraph(series) {
     //Add the range slider for zooming in
     var slider = new Rickshaw.Graph.RangeSlider( {
         graph: graph,
-        element: document.getElementById('slider')
+        element: new Array(document.getElementById('slider')) // RangeSlider's element is apparently supposed to be an Array
     } );
+
 }

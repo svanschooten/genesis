@@ -12,7 +12,9 @@ var libraries = [ 'bootstrap.min.js',
                 'element-min.js',
                 'jquery-ui-1.10.2.min.js',
                 'jquery.jsPlumb-1.4.0-all-min.js',
-                'jquery.ui.touch-punch.min.js'];
+                'jquery.ui.touch-punch.min.js',
+                'jspdf.plugin.fromhtml.js',
+                'jspdf.js'];
 
 //Load all the standard scripts. If page specific, extend
 var scripts = [ 'home.js' ];
@@ -67,10 +69,8 @@ function loadArrayScripts(prefix, files, callback) {
 /**
 Loader wrapper for script loading
 */
-function loadScript(script, callback, failFun) {
-    $.getScript("assets/javascripts/" + script)
-    .done(function(script, textStatus){callback})
-    .fail(function(jqxhr, settings, exception){failFun});
+function loadScript(script, callback) {
+    $.getScript("assets/javascripts/" + script).done(callback);
 }
 
 /**
@@ -100,4 +100,22 @@ function objToString (obj) {
         }
     }
     return str;
+}
+
+function renderPDF() {
+    var doc = new jsPDF();
+
+    // We'll make our own renderer to skip this editor
+    var specialElementHandlers = {
+    	'#editor': function(element, renderer){
+    		return true;
+    	}
+    };
+
+    // All units are in the set measurement for the document
+    // This can be changed to "pt" (points), "mm" (Default), "cm", "in"
+    doc.fromHTML($('body').get(0), 15, 15, {
+    	'width': 170,
+    	'elementHandlers': specialElementHandlers
+    });
 }

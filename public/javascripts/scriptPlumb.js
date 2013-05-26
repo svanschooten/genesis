@@ -71,7 +71,10 @@ function setProtein(connection) {
 }
 
 function makeConnection(params) {
-
+    if(params.sourceId == params.targetId) {
+        notify("Cannot connect to self.", "Warning");
+        return false;
+    }
     var confirmed = confirm("Connect " + params.sourceId + " to " + params.targetId + "?");
     if(confirmed) {
         var element = findElement(circuit, params.sourceId.replace("#",""));
