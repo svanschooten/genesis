@@ -44,6 +44,7 @@ function loadPageScript() {
             loadScript("scriptPlumb.js");
             break;
         default:
+        	loadScript("scriptPlumb.js");
             break;
     }
 }

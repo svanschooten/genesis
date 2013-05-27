@@ -1,16 +1,7 @@
+html, body {
+	height: 100%;
+}
+
 body {
-	width: 80%;
-	padding-top: 45px;
-	padding-left: 30px;
 	min-width: 768px;
-	max-width: 1200px;
-}
-
-#logo-img {
-	overflow: auto;
-}
-
-#top-logo {
-	float: right;
-	margin-bottom: 10px;
 }

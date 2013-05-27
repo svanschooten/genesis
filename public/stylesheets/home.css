@@ -1,8 +1,12 @@
+#plumbArea {
+	overflow: scroll;
+	position: relative;
+}
+
 #application-area {
-	height: 600px;
-	width: 900px;
-	margin-left: 0px;
-	margin-right: 0px;
+	height: 100%;
+	width: 100%;
+
 }
 
 #application-header-row {
@@ -29,7 +33,7 @@
 }
 
 #standard-gates, #non-standard-gates {
-	height: 49%;
+	height: auto;
 	background-color: purple;
 }
 
