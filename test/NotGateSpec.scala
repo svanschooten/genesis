@@ -8,8 +8,8 @@ class NotGateSpec extends Specification {
 		"NotGate" should {
         "return correct results" in new WithApplication {
             val concs = List.fill(1503)(1.0)
-            val A = CodingSeq("A",concs.zip(concs),isInput=true)
-            val C = CodingSeq("C",isInput=false)
+            val A = CodingSeq("A",concs.zip(concs),true)
+            val C = CodingSeq("C",false)
             val AtoB = NotGate(A,C)
             val net = new Network(List(A),-1,"")
             val results = net.simulate(1500.0)

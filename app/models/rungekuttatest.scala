@@ -83,7 +83,8 @@ case class Rungekuttatest (){
     net.simJson(274)*/
     val srlatchInput = Array("t,B,F","0,0,1","70,1,1",
 				        "140,0,1","210,1,0","280,1,1",
-				        "350,1,0","420,0,1","490,1,1","560,0,1")
+				        "350,1,0","420,0,1","490,1,1",
+				        "560,0,1")
 	val B = CodingSeq("B",2,List((0,0)),true)
 	val F = CodingSeq("F",2,List((0,0)),true)
 	val I = CodingSeq("I",2,List((0,0)),true)

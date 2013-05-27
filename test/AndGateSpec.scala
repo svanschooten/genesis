@@ -8,8 +8,8 @@ class AndGateSpec extends Specification {
 	"AndGate" should {
         "return correct results" in new WithApplication {
             val concs = List.fill(1503)(1.0)
-            val A = CodingSeq("A",concs.zip(concs),isInput=true)
-            val B = CodingSeq("B",concs.zip(concs),isInput=true)
+            val A = CodingSeq("A",concs.zip(concs),true)
+            val B = CodingSeq("B",concs.zip(concs),true)
             val C = CodingSeq("C",isInput=false)
             val ABtoC = AndGate((A,B),C)
             val net = new Network(List(A,B),-1,"")

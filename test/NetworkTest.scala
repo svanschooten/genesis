@@ -12,12 +12,12 @@ import anorm.SqlParser._
 
 class NetworkTest extends Specification {
 	running(FakeApplication()){
-		val pa = new CodingSeq("A", List((0.1, 0.1)), true)
-		val pb = new CodingSeq("B", List((0.2, 0.3)), true)
-		val pc = new CodingSeq("C", List((0.3, 0.2)), false)
-		val pd = new CodingSeq("D", List((0.4, 0.3)), false)
-		val g1 = new AndGate((pa, pb), pc)
-		val g2 = new NotGate(pc, pd)
+		val pa = CodingSeq("A", List((0.1, 0.1)), true)
+		val pb = CodingSeq("B", List((0.2, 0.3)), true)
+		val pc = CodingSeq("C", List((0.3, 0.2)), false)
+		val pd = CodingSeq("D", List((0.4, 0.3)), false)
+		val g1 = AndGate((pa, pb), pc)
+		val g2 = NotGate(pc, pd)
 		
 		"CodingSeq" should {
 			"retrieve the correct parameters for the coding sequences" in {
@@ -39,22 +39,22 @@ class NetworkTest extends Specification {
 			}
 		}
 		
-		val pas = new CodingSeq("A", List((0.1, 0.1)), true)
-		val pbs = new CodingSeq("B", List((0.2, 0.3)), true)
-		val pcs = new CodingSeq("C", List((0.3, 0.2)), false)
-		val pds = new CodingSeq("D", List((0.4, 0.3)), false)
-		val g1s = new AndGate((pas, pbs), pcs)
-		val g2s = new NotGate(pcs, pds)
+		val pas = CodingSeq("A", List((0.1, 0.1)), true)
+		val pbs = CodingSeq("B", List((0.2, 0.3)), true)
+		val pcs = CodingSeq("C", List((0.3, 0.2)), false)
+		val pds = CodingSeq("D", List((0.4, 0.3)), false)
+		val g1s = AndGate((pas, pbs), pcs)
+		val g2s = NotGate(pcs, pds)
 		val simpleNetworkSave = new Network(List(pas, pbs), -1, "simpleNetworkSaveTest")
 		
-		val pac = new CodingSeq("A", List((2.1, 3.4)), true)
-		val pbc = new CodingSeq("B", List((1.2, 1.3)), true)
-		val pcc = new CodingSeq("C", List((3.3, 2.2)), false)
-		val pdc = new CodingSeq("D", List((0.4, 1.3)), false)
-		val g1c = new AndGate((pac, pbc), pcc)
-		val g2c = new NotGate(pcc, pdc)
-		val g3c = new NotGate(pcc, pac)
-		val g4c = new AndGate((pcc,pdc),pbc)
+		val pac = CodingSeq("A", List((2.1, 3.4)), true)
+		val pbc = CodingSeq("B", List((1.2, 1.3)), true)
+		val pcc = CodingSeq("C", List((3.3, 2.2)), false)
+		val pdc = CodingSeq("D", List((0.4, 1.3)), false)
+		val g1c = AndGate((pac, pbc), pcc)
+		val g2c = NotGate(pcc, pdc)
+		val g3c = NotGate(pcc, pac)
+		val g4c = AndGate((pcc,pdc),pbc)
 		val complexNetworkSave = new Network(List(pac, pbc), -1, "complexNetworkSaveTest")
 	
 		"Network" should {
@@ -122,7 +122,7 @@ class NetworkTest extends Specification {
 				
 			"correctly load a simple network" in {
 			  running(FakeApplication()){
-			    val simpleNetworkLoad = Network.load(-1,"simpleNetworkLoadTest")
+			    val simpleNetworkLoad = Network.load(-1,"simpleNetworkLoadTest",0)
 			    val start = simpleNetworkLoad.inputs
 			    start.size must equalTo(2)
 			    
@@ -155,7 +155,7 @@ class NetworkTest extends Specification {
 			
 			"correctly load a more complex network" in {
 			  running(FakeApplication()){
-			    val complexNetworkLoad = Network.load(-1,"complexNetworkLoadTest")
+			    val complexNetworkLoad = Network.load(-1,"complexNetworkLoadTest",0)
 			    val start = complexNetworkLoad.inputs
 			    start.size must equalTo(2)
 			    val seen:Set[String] = Set()

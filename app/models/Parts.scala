@@ -21,7 +21,16 @@ abstract class Gate extends Part {
  * concentration is the current contentration of this CS as ([mRNA], [Protein])
  * linksTo is the gate this sequence links to; it is optional to enable the chain to end
  */
-case class CodingSeq(val name: String, val libID: Int, var concentration: List[(Double, Double)] = List((0,0)), var isInput: Boolean) extends Part{
+object CodingSeq {
+	def apply(name: String) = new CodingSeq(name,0,List((0,0)),false)
+    def apply(name: String, isInput: Boolean) = new CodingSeq(name,0,List((0,0)),isInput)
+    def apply(name: String, libID: Int) = new CodingSeq(name,libID,List((0,0)),false)
+    def apply(name: String, libID: Int, isInput: Boolean) = new CodingSeq(name,libID,List((0,0)),isInput)
+    def apply(name: String, conc:List[(Double,Double)], isInput: Boolean) = new CodingSeq(name,0,conc,isInput)
+    
+}
+
+case class CodingSeq(val name: String, val libID: Int, var concentration: List[(Double, Double)], var isInput: Boolean) extends Part{
     private val params = getParams(libID)
     val k2 = params[Double]("K2")
     val d1 = params[Double]("D1")
@@ -30,7 +39,7 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
     var linksTo: List[Gate] = Nil
     var ready: Boolean = false
     var currentStep: Int = 0
-
+    	
     def curConc: (Double,Double) = {
         if(isInput){
             concentration(currentStep)}
@@ -108,14 +117,14 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
  *  this TF
  *  the other parameters determine the transcription rate of the output
  */
-case class NotGate(input: CodingSeq, output: CodingSeq, val libID: Int) extends Gate{
+case class NotGate(input: CodingSeq, output: CodingSeq, val libID: Int=0) extends Gate{
   input.linksTo ::= this
   output.linkedBy = Some(this)
   private val params = getParams(libID)
   val k1 = params[Double]("K1")
   val km = params[Double]("KM")
   val n = params[Int]("N")
-    
+  
   /**
    * Retrieve the k1, km and n parameters from the database
    */
@@ -135,7 +144,7 @@ case class NotGate(input: CodingSeq, output: CodingSeq, val libID: Int) extends 
  *  the difference with NOT gates is what kind of ODE function will be generated
  *  for this class and the number of inputs
  */
-case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq, val libID: Int) extends Gate{
+case class AndGate(input: (CodingSeq, CodingSeq), output: CodingSeq, val libID: Int=0) extends Gate{
   input._1.linksTo ::= this
   input._2.linksTo ::= this
   output.linkedBy = Some(this)
