@@ -13,10 +13,10 @@
         <h3 id="proteinModalHeader" accesskey="">Choose your protein.</h3>
     </div>
     <div class="modal-body" id="proteinModalBody">
-        <div id="proteinList">
+        <div id="proteinList" class="well">
 
         </div>
-        <div id="proteinParameters">
+        <div id="proteinParameters" class="well">
 
         </div>
     </div>
@@ -31,7 +31,7 @@
             <h3 id="resultModalHeader" accesskey="">Simulation results.</h3>
         </div>
         <div class="modal-body" id="resultModalBody">
-            <div id="chart_container" data-width="500" data-height="250">
+            <div id="chart_container" data-width="565" data-height="250">
                 <div id="y_axis"></div>
                 <div id="chart"></div>
                 <div id="legend"></div><br>
@@ -40,7 +40,7 @@
         </div>
         <div id="resultModalFooter" class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-            <button class="btn btn-primary">Download csv.</button>  \\TODO create csv in backend and push to front.
+            <button class="btn btn-primary">Download csv.</button> <!-- \\TODO create csv in backend and push to front.      -->
         </div>
     </div>
 	<div id="application-area" class="container">
@@ -53,7 +53,7 @@
 						</a>
 						<ul class="dropdown-menu">
 							<li>
-								<a onclick="openPlot()">This doesn't do anything (yet)</a>
+								<a href="#proteinModal" role="button" data-toggle="modal">This doesn't do anything (yet)</a>
 							</li>
 							
 							<li class="divider" />

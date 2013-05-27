@@ -45,7 +45,8 @@ function loadPageScript() {
     var mainLibs = [
         'rickShawPlot.js',
         'lib/rickshaw.min.js',
-        'lib/d3.v3.min.js']
+        'lib/d3.v3.min.js',
+        'proteins.js']
     loadArrayScripts("", mainLibs);
 }
 

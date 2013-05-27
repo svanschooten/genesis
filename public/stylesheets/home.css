@@ -39,23 +39,34 @@
 
 #proteinList {
     float: left;
-    width: 300px;
-    height: 500px;
-    overflow: scroll;
+    width: 225px;
+    height: 350px;
+    margin-left: 9px;
 }
 
 #proteinParameters {
     float: left;
-    width: 500px;
-    height: 500px;
-    overflow: none;
+    width: 400px;
+    height: 350px;
+    margin-left: 15px;
 }
 
 .bigModal {
     width: 768px;
     margin-left: -384px;
-    height: 600px;
+}
 
+#resultModal {
+    height: 400px;
+}
+
+#proteinModal {
+    height: 500px;
+    overflow: none;
+}
+
+#proteinModalBody {
+    overflow: hidden;
 }
 
 #chart_container {
@@ -97,7 +108,8 @@
     color: #a0a0a0;
 }
 #slider {
-
+    margin-top: 255px;
+    margin-left: 30px;
 }
 
 .aLabel {
