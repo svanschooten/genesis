@@ -7,18 +7,33 @@
 
 @main(title)(head) {
     <div id="proteinModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="proteinModalHeader">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        <h3 id="proteinModalHeader" accesskey="">Choose your protein.</h3>
+    </div>
+    <div class="modal-body" id="proteinModalBody">
+        <p>
+            Protein selection and stuffs..
+        </p>
+    </div>
+    <div id="proteinModalFooter" class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary">Select</button>
+    </div>
+    </div>
+    <div id="resultModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="resultModalHeader">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-            <h3 id="proteinModalHeader" accesskey="">Choose your protein.</h3>
+            <h3 id="resultModalHeader" accesskey="">Simulation result graph.</h3>
         </div>
-        <div class="modal-body" id="proteinModalBody">
+        <div class="modal-body" id="resultModalBody">
             <p>
-                Protein selection and stuffs..
+                Plotplotplot!
             </p>
         </div>
-        <div id="proteinModalFooter" class="modal-footer">
+        <div id="resultModalFooter" class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-            <button class="btn btn-primary">Select</button>
+            <button class="btn btn-primary">Download csv.</button>  \\TODO create csv in backend and push to front.
         </div>
     </div>
 	<div id="application-area" class="container">
@@ -31,7 +46,7 @@
 						</a>
 						<ul class="dropdown-menu">
 							<li>
-								<a href="#">This doesn't do anything (yet)</a>
+								<a href="#proteinModal" role="button" data-toggle="modal">This doesn't do anything (yet)</a>
 							</li>
 							
 							<li class="divider" />
