@@ -161,6 +161,24 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
      *  @param limit The maximum time (to figure out how long the final 0 or 1 lasts)
      */
     def setStartParameters(input: Array[String], startProteinConc: Double, startMRNAConc: Double, limit: Double){
+      // these are the values that the proteins on their own would stabilize to (generated using MATLAB 2012b)
+      // [k2,d1,d2: cds; k1: not]
+      val defaultConcs = Map(
+        "A"->(30.36,175.11),
+        "B"->(66.80,297.16),
+        "C"->(33.43,175.19),
+        "D"->(111.67,737.69),
+        "E"->(24.65,134.10),
+        "F"->(31.61,166.65),
+        "G"->(27.61,150.06),
+        "H"->(30.83,83.62),
+        "I"->(43.08,232.11),
+        "J"->(46.26,280.51),
+        "K"->(52.73,273.37),
+        "L"->(58.41,367.73),
+        "M"->(37.55,258.82)
+      )
+
       val results:Map[String,List[(Double,Double)]] = Map()
       val firstLine = input(0).split(",")
       val TFInd = new Array[String](firstLine.length+1)
@@ -171,7 +189,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
       }
       val secLine = input(1).split(",")
       for(j <- 1 to secLine.length-1){
-	      if(secLine(j).toInt==1) curConcs(j) = (startMRNAConc,startProteinConc)
+	      if(secLine(j).toInt==1) curConcs(j) = defaultConcs(TFInd(j))
 	      else curConcs(j) = (0.0,0.0)
 	    }
       var t = 0
@@ -184,7 +202,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
           t += stepSize
         }
         for(j <- 1 to curLine.length-1){
-	      if(curLine(j).toInt==1) curConcs(j) = (startMRNAConc,startProteinConc)
+	      if(curLine(j).toInt==1) curConcs(j) = defaultConcs(TFInd(j))
 	      else curConcs(j) = (0.0,0.0)
 	    }
       }
