@@ -37,7 +37,7 @@ function loadPageScript() {
             loadScript("test/rkPlot.js");
             break;
         case "plumbtest":
-            loadScript("scriptPlumb.js");
+            loadScript("test/plumbTest.js");
             break;
         default:
             break;
@@ -46,7 +46,8 @@ function loadPageScript() {
         'rickShawPlot.js',
         'lib/rickshaw.min.js',
         'lib/d3.v3.min.js',
-        'proteins.js']
+        'proteins.js',
+        'plumbWorkspace.js']
     loadArrayScripts("", mainLibs);
 }
 
