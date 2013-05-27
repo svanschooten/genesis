@@ -37,7 +37,11 @@
 	margin-bottom: 2%;
 }
 
-#proteinList {
+.odd{
+    background: #e9e9e9;
+}
+
+#proteinListDiv {
     float: left;
     width: 225px;
     height: 350px;

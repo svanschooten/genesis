@@ -55,7 +55,7 @@ function loadPageScript() {
 Standard error message for AJAX requests and alerts.
 */
 function alertError(error) {
-    alert(error.responseText);
+    notify(error.responseText, "error");
 }
 
 /**
@@ -77,7 +77,7 @@ function loadScript(script, callback) {
 }
 
 /**
-Spliffy notifying method
+Spiffy stackable notifying method
 Standard yellow alert of supply with second parameter
 for different types of alerts use:
 - error (red)
@@ -133,7 +133,7 @@ function objToString (obj) {
 /**
 Wrapper for simpler data attribute retrieval.
 The id is the id of the element and the data is the name of the attribute.
-To # and no data- prefix.
+No # and no data- prefixes needed.
 */
 function getData(id, data) {
     return $("#" + id.replace("#", ""))[0].getAttribute("data-" + data.replace("data-", ""))

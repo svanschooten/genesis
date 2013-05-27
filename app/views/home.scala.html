@@ -13,11 +13,13 @@
         <h3 id="proteinModalHeader" accesskey="">Choose your protein.</h3>
     </div>
     <div class="modal-body" id="proteinModalBody">
-        <div id="proteinList" class="well">
-
+        <div id="proteinListDiv" class="well">
+            <select id="proteinList"></select>
         </div>
         <div id="proteinParameters" class="well">
-
+            <span>PK1 = <p id="pk1"></p></span>
+            <span>PKM = <p id="pkm"></p></span>
+            <span>n = <p id="pn"></p></span>
         </div>
     </div>
     <div id="proteinModalFooter" class="modal-footer">
@@ -54,7 +56,7 @@
 						</a>
 						<ul class="dropdown-menu">
 							<li>
-								<a onclick="openPlot()">This doesn't do anything (yet)</a>
+								<a href="#">This doesn't do anything (yet)</a>
 							</li>
 							
 							<li class="divider" />
