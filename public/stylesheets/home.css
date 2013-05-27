@@ -50,6 +50,7 @@ header {
 #standard-gates, #non-standard-gates {
 	height: auto;
 	background-color: purple;
+	padding: 5px;
 }
 
 #standard-gates {
