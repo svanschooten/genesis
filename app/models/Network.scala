@@ -57,7 +57,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
             if(!cs.isInput)
                 cs.concentration = List((0,0))
             cs.ready = true
-            cs.currentStep = 1
+            cs.currentStep = 0
             cs.linksTo.foreach(x => resetConcs(x.output))
         }
         // ready inputs if necessary and reset all concentrations
@@ -211,7 +211,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
         t += stepSize
       }
       for(cs: CodingSeq <- inputs){
-        cs.concentration = results(cs.name).reverse
+        if(results contains cs.name) cs.concentration = results(cs.name).reverse
       }
     }
     

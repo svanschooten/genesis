@@ -29,11 +29,11 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
     var linkedBy: Option[Gate] = None
     var linksTo: List[Gate] = Nil
     var ready: Boolean = false
-    var currentStep: Int = 1
+    var currentStep: Int = 0
 
     def curConc: (Double,Double) = {
         if(isInput){
-            concentration(currentStep-1)}
+            concentration(currentStep)}
         else
             concentration.head
     }
