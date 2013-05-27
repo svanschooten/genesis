@@ -31,6 +31,9 @@ object CodingSeq {
 }
 
 case class CodingSeq(val name: String, val libID: Int, var concentration: List[(Double, Double)], var isInput: Boolean) extends Part{
+    // we need at least one concentration
+    require(concentration.length > 0)
+
     private val params = getParams(libID)
     val k2 = params[Double]("K2")
     val d1 = params[Double]("D1")

@@ -8,29 +8,20 @@ import anorm.SqlParser._
 import scala.collection.mutable.Map
 import play.api.libs.json._
 
-/*
-TODO list of inputs:
-    list using (Double, List[List[Double]]) as (stepSize assumed in List, list of concentrations for each input in alphabetical order)
-*/
-
 /**
  *  Class to represent a network of coding sequences and transcription factors.
  *  It has functionality to simulate how the concentrations of the components of
  *  the network change over time, and outputs the corresponding concentrations if
- *  desired.
+ *  desired. It can also be saved to an external database, and its companion enables
+ *  loading back from such a database, as well as removal from it.
  */
 class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String) {
 
     /**
      *  The amount of time between steps; this also determines how many steps the
      *  simulation will take (given a fixed ending time)
-     *  Alexey (in meeting on 4/26): may need to decide this dynamically based on the end time
      */
     private val stepSize = 1
-    /**
-     *  The current time; needed by the RungeKutta integrator
-     */
-    private var currentTime = 0.0
 
     // resets all the ready flags
     private def reset_readies(cs: CodingSeq) {
@@ -46,23 +37,9 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
      *  in the system will evolve and return these concentrations as follows:
      *  Each time step a list of triplets is generated, with name, mRNA and protein concentration,
      *  and these time steps form a list as well.
-     *  This function first resets all the current concentrations to guarantee idempotence.
      *  @param finish The finish time; simulation will run from 0.0 to this time.
      */
     def simulate(finish: Double): List[List[(String,Double,Double)]] = {
-        // function to reset all concentrations in this network
-        def resetConcs(cs: CodingSeq) {
-            if(cs.ready)
-                return
-            if(!cs.isInput)
-                cs.concentration = List((0,0))
-            cs.ready = true
-            cs.currentStep = 0
-            cs.linksTo.foreach(x => resetConcs(x.output))
-        }
-        // ready inputs if necessary and reset all concentrations
-        inputs.foreach(x=> {if(x.linkedBy.isEmpty) x.ready=true; resetConcs(x)})
-
         // function to get all the concentrations out of the network as a list of pairs
     	def getConcs(l: List[CodingSeq] = inputs): Set[(String,Double,Double)] = l.flatMap(seq => seq match {
             case CodingSeq(name,_,_,_) if(!seq.ready) => {seq.ready = true;
@@ -72,13 +49,12 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
             case _ => Nil
         }).toSet
 
-        currentTime = 0.0
-        val times = currentTime to finish by stepSize
+        val times = 0.0 to finish by stepSize
         inputs.foreach(reset_readies _)
         // do the required steps and save the concentrations each round
         times.foldRight(List(getConcs().toList))((time,li)=>{
             step() // this is very poor actually: functional method fold has side effects now
-            inputs.foreach(x => {reset_readies(x); x.currentStep += 1})
+            inputs.foreach(reset_readies _)
             getConcs().toList :: li
         }).reverse
     }
@@ -113,8 +89,6 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
      *  when both of its inputs have been updated.
      */
     def step() {
-        currentTime += stepSize
-
         // reset the ready flags
         inputs.foreach(reset_readies _)
         // but not those of the inputs that have no output connected to them
