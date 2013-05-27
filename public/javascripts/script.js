@@ -7,17 +7,13 @@ Authors:
 
 //Load all the javascript libraries except for jQuery
 var libraries = [ 'bootstrap.min.js',
-                'rickshaw.min.js',
-                'd3.v3.min.js',
                 'element-min.js',
                 'jquery-ui-1.10.2.min.js',
                 'jquery.jsPlumb-1.4.0-all-min.js',
-                'jquery.ui.touch-punch.min.js',
-                'jspdf.plugin.fromhtml.js',
-                'jspdf.js'];
+                'jquery.ui.touch-punch.min.js'];
 
-//Load all the standard scripts. If page specific, extend
-var scripts = [ 'home.js' ];
+//Load all the standard scripts. If page specific, extend loadPageScript()
+var scripts = [  ];
 
 /**
 Method that fires when the document is loaded.
@@ -38,7 +34,7 @@ If needed on all pages: Put in scripts array.
 function loadPageScript() {
     switch(document.URL.split("/").pop()) {
         case "rk":
-            loadScript("rkPlot.js");
+            loadScript("test/rkPlot.js");
             break;
         case "plumbtest":
             loadScript("scriptPlumb.js");
@@ -46,6 +42,11 @@ function loadPageScript() {
         default:
             break;
     }
+    var mainLibs = [
+        'rickShawPlot.js',
+        'lib/rickshaw.min.js',
+        'lib/d3.v3.min.js']
+    loadArrayScripts("", mainLibs);
 }
 
 /**
@@ -102,20 +103,11 @@ function objToString (obj) {
     return str;
 }
 
-function renderPDF() {
-    var doc = new jsPDF();
-
-    // We'll make our own renderer to skip this editor
-    var specialElementHandlers = {
-    	'#editor': function(element, renderer){
-    		return true;
-    	}
-    };
-
-    // All units are in the set measurement for the document
-    // This can be changed to "pt" (points), "mm" (Default), "cm", "in"
-    doc.fromHTML($('body').get(0), 15, 15, {
-    	'width': 170,
-    	'elementHandlers': specialElementHandlers
-    });
+/**
+Wrapper for simpler data attribute retrieval.
+The id is the id of the element and the data is the name of the attribute.
+To # and no data- prefix.
+*/
+function getData(id, data) {
+    return $("#" + id.replace("#", ""))[0].getAttribute("data-" + data.replace("data-", ""))
 }

@@ -2,23 +2,6 @@
 var data = null;
 var max_c_x = 0.0;
 
-$(document).ready(function(){
-    getPlotData();
-});
-
-/**
-Makes a request for the JSON test method calculating a standard ODE and sending the results in JSON back.
-When received, the results are plotted on the canvas.
-*/
-function getPlotData(){
-    jsRoutes.controllers.Application.jsontest().ajax({
-        success: function(response) {
-            drawGraph(parseJSONdata(response))
-        },
-        error: function(response) { alertError(response)}
-    })
-}
-
 /**
 Parses the standard JSON ouput to a usable format for plotting.
 */
@@ -46,8 +29,8 @@ Plots the received data in a interactive plot.
 */
 function drawGraph(series) {
 
-    var width = 800;
-    var height = 250;
+    var width = getData("chart_container", "width");
+    var height = getData("chart_container", "heigth");
 
     //Creating the graph to plot in
     var graph = new Rickshaw.Graph( {
