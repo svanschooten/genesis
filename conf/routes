@@ -31,11 +31,8 @@ GET     /assets/*file               		controllers.Assets.at(path="/public", file
 GET     /canvastest                 		controllers.Application.canvastest
 GET     /jsontest                   		controllers.Application.jsontest
 GET     /rk                   		        controllers.Application.rungekutta
-GET     /index                              controllers.Projects.index
 GET		/test-home							controllers.Home.hometest
 
-#tests for Forms
-GET		/formTest							controllers.Projects.formFunction
 
 #tests for the jsPlumb usage
 GET     /plumbtest                          controllers.Application.plumbtest
