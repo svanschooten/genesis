@@ -94,7 +94,6 @@ function drawGraph(series) {
         legend: legend
     } );
 
-    //TODO werkt soort van, maar nog niet helemaal lekker, moest de timestamp *1000 doen.
     //Add the range slider for zooming in
     var slider = new Rickshaw.Graph.RangeSlider( {
         graph: graph,

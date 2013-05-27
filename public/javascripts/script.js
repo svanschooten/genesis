@@ -78,9 +78,34 @@ function loadScript(script, callback) {
 
 /**
 Spliffy notifying method
+Standard yellow alert of supply with second parameter
+for different types of alerts use:
+- error (red)
+- success (green)
+- info (blue)
 */
 function notify(message, type) {
-    alert(type + "! " + message);//TODO hier een mooi bootstrap element voor gebruiken.
+    if(type == null) {
+        type = "warning";
+    }
+    var notification = $('<div/>', {
+        class: "alert alert-" + type.toLowerCase(),
+        id: "notificationAlert"
+    })
+    .text(message)
+    .appendTo($('#alertBox'));
+
+    $('<strong></strong>')
+    .text(type.toUpperCase() + "! ")
+    .prependTo(notification);
+
+    $('<button></button>', {
+        type: "button",
+        class: "close",
+        'data-dismiss': "alert"
+    })
+    .text("×")
+    .prependTo(notification);
 }
 
 /**
@@ -112,8 +137,4 @@ To # and no data- prefix.
 */
 function getData(id, data) {
     return $("#" + id.replace("#", ""))[0].getAttribute("data-" + data.replace("data-", ""))
-}
-
-function openPlot() {
-    loadScript("test/rkPlot.js", $("#resultModal").modal('show'));
 }
