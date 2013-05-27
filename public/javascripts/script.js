@@ -111,3 +111,7 @@ To # and no data- prefix.
 function getData(id, data) {
     return $("#" + id.replace("#", ""))[0].getAttribute("data-" + data.replace("data-", ""))
 }
+
+function openPlot() {
+    loadScript("test/rkPlot.js", $("#resultModal").modal('show'));
+}

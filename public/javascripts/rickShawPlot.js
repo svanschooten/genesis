@@ -1,6 +1,6 @@
 //Global variables.
 var data = null;
-var max_c_x = 0.0;
+var graph = null;
 
 /**
 Parses the standard JSON ouput to a usable format for plotting.
@@ -10,15 +10,15 @@ function parseJSONdata(response){
     //Check if data in memory is empty
     if(data == null) {
        data = $.parseJSON(response);
-    }
 
-    //Instantiate a new color pallette
-    var palette = new Rickshaw.Color.Palette( { interpolatedStopsCount: data.length } );
+       //Instantiate a new color pallette
+       var palette = new Rickshaw.Color.Palette( { interpolatedStopsCount: data.length } );
 
-    //Fill the data array
-    for (var i=0;i<data.length;i++){
-        //Add an color
-        data[i].color = palette.color();
+       //Fill the data array
+       for (var i=0;i<data.length;i++){
+           //Add an color
+           data[i].color = palette.color();
+       }
     }
 
     return data;
@@ -29,11 +29,18 @@ Plots the received data in a interactive plot.
 */
 function drawGraph(series) {
 
+    if(!$('#chart').is(":empty")){
+        $('#chart').empty();
+        $('#y_axis').empty();
+        $('#legend').empty();
+        $('#slider').empty();
+    }
+
     var width = getData("chart_container", "width");
     var height = getData("chart_container", "heigth");
 
     //Creating the graph to plot in
-    var graph = new Rickshaw.Graph( {
+    graph = new Rickshaw.Graph( {
             element: $('#chart')[0], // Graph's element must be an element, not an array of elements
             width: width,
             height: height,
@@ -91,7 +98,7 @@ function drawGraph(series) {
     //Add the range slider for zooming in
     var slider = new Rickshaw.Graph.RangeSlider( {
         graph: graph,
-        element: new Array(document.getElementById('slider')) // RangeSlider's element is apparently supposed to be an Array
+        element: $('#slider') // RangeSlider's element is apparently supposed to be an Array
     } );
 
 }
