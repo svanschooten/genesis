@@ -15,7 +15,7 @@ object About extends Controller with Secured{
   /** Placeholder about page. */
   def about = IsAuthenticated { email => _ =>
     User.findByEmail(email).map { user =>
-    	Ok(html.main("About")(Html.apply(aboutText)))
+    	Ok(html.main("About")(Html.apply("Placeholder"))(Html.apply(aboutText)))
     }.getOrElse(Forbidden)
   }
 }

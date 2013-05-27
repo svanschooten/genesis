@@ -1,0 +1,17 @@
+@(result: List[String])
+
+@head = {}
+
+@main("Here is the result:")(head) {
+
+    <ul>
+       @for(v <- result){
+       		<li>@v</li>
+       	}
+    </ul>
+
+    <p class="buttons">
+        <a href="@routes.Projects.index">Back to the form</a>
+    </p>
+
+}

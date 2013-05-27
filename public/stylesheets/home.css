@@ -1,0 +1,38 @@
+#application-area {
+	height: 600px;
+	width: 900px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+#application-header-row {
+	height: 10%;
+}
+
+#application-main-row {
+	height: 90%;
+}
+
+#application-header-row header {
+	height: 100%;
+	background-color: red;
+	padding: 5px;
+}
+
+#application-header-row header .btn-toolbar {
+}
+
+.application-canvas, .application-sidebar {
+	background-color: white;
+	height: 100%;
+	padding: 5px;
+}
+
+#standard-gates, #non-standard-gates {
+	height: 49%;
+	background-color: purple;
+}
+
+#standard-gates {
+	margin-bottom: 2%;
+}
