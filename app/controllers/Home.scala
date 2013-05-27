@@ -10,7 +10,8 @@ import views._
 object Home extends Controller with Secured{
   
   val homeText = "Some text that'll make you feel right at home"
-    def home = IsAuthenticated { email => _ =>
+
+  def home = IsAuthenticated { email => _ =>
     User.findByEmail(email).map { user =>
     	Ok(html.home("Home")(Html.apply(homeText)))
     }.getOrElse(Forbidden)
