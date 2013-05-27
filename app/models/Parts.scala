@@ -39,14 +39,7 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
     var linksTo: List[Gate] = Nil
     var ready: Boolean = false
     var currentStep: Int = 0
-    	
-    def curConc: (Double,Double) = {
-        if(isInput){
-            concentration(currentStep)}
-        else
-            concentration.head
-    }
-    
+
     /**
      * Retrieve the k2, d1 and d2 parameters for this CS from the database
      */
