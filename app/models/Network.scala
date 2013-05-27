@@ -66,7 +66,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
         // function to get all the concentrations out of the network as a list of pairs
     	def getConcs(l: List[CodingSeq] = inputs): Set[(String,Double,Double)] = l.flatMap(seq => seq match {
             case CodingSeq(name,_,_,_) if(!seq.ready) => {seq.ready = true;
-              Set((name, seq.curConc._1, seq.curConc._2)) ++ (seq.linksTo.collect( {
+              Set((name, seq.concentration.head._1, seq.concentration.head._2)) ++ (seq.linksTo.collect( {
                 case x:Gate => getConcs(List(x.output))
             })).flatten}
             case _ => Nil
@@ -118,7 +118,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String)
         // reset the ready flags
         inputs.foreach(reset_readies _)
         // but not those of the inputs that have no output connected to them
-        inputs.foreach(x=> if(x.linkedBy.isEmpty) x.ready=true)
+        inputs.foreach(x=> {if(x.linkedBy.isEmpty) {x.ready=true; x.concentration = x.concentration.tail}})
         // figure out the new concentrations
         inputs.foreach(do_the_math _)
 

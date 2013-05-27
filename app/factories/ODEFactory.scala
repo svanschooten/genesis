@@ -45,14 +45,14 @@ object ODEFactory {
     def mkTuple(part: Part): ODEPair = part match {
         case cs:CodingSeq => (
             (time: Double, concs: VectorD) => new VectorD(Array( concs(0), concs(1))),
-            new VectorD(Array(cs.curConc._1, cs.curConc._2)))
+            new VectorD(Array(cs.concentration.head._1, cs.concentration.head._2)))
         case ng:NotGate => /*println("not: "+(ng.k1*ng.km~^ng.n)+"/("+(ng.km~^ng.n)+" + y(0)^"+ng.n+") - "+ng.output.d1+"*y(1)\n"+ng.output.k2+" * y(1) - "+ng.output.d2+" * y(2)");*/ (
             //concs(0):[TF]; concs(1): [mRNA]; concs(2): [Protein]
                 (time: Double, concs: VectorD) => new VectorD(Array(
                     (ng.k1 *  ng.km ~^ ng.n) / (ng.km ~^ ng.n + concs(0) ~^ ng.n) - ng.output.d1 * concs(1),
                     ng.output.k2 * concs(1) - ng.output.d2 * concs(2)
                 )),
-                new VectorD(Array(ng.input.curConc._2, ng.output.curConc._1, ng.output.curConc._2))
+                new VectorD(Array(ng.input.concentration.head._2, ng.output.concentration.head._1, ng.output.concentration.head._2))
         )
         case ag:AndGate => (
             // concs(0): [TF1]; concs(1): [TF2]; concs(2): [mRNA]; concs(3): [Protein]
@@ -60,7 +60,7 @@ object ODEFactory {
                 (ag.k1 * (concs(0) * concs(1)) ~^ ag.n) / (ag.km ~^ ag.n + (concs(0) * concs(1)) ~^ ag.n) - ag.output.d1 * concs(2),
                 ag.output.k2 * concs(2) - ag.output.d2 * concs(3)
             )),
-            new VectorD(Array(ag.input._1.curConc._2, ag.input._2.curConc._2, ag.output.curConc._1, ag.output.curConc._2))
+            new VectorD(Array(ag.input._1.concentration.head._2, ag.input._2.concentration.head._2, ag.output.concentration.head._1, ag.output.concentration.head._2))
         )
     }
 
