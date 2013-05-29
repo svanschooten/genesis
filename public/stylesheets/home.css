@@ -153,3 +153,18 @@ header {
     position: absolute;
 
 }
+
+.inline{
+    display: inline;
+}
+
+.block{
+    display block;
+}
+
+.spanProtein{
+    float: inherit;
+    margin-left: -5px;
+    padding: 5px;
+    width: 100%;
+}

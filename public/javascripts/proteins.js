@@ -15,17 +15,23 @@ var selectedProtein = null;
 
 function makeProteinList(){
     for(i = 0; i < proteinLibrary.length; i++) {
-        var oddClass = (1 % 2) == 0 ? "" : " odd";
-        $("<option></option>", {
-            class: "proteinSelector" + oddClass,
-            value: proteinLibrary[i].name
+        var oddClass = (i % 2) == 0 ? "" : " odd";
+        var span = $("<span></span>", {
+            class: oddClass + " spanProtein"
         })
         .text(proteinLibrary[i].name)
-        .appendTo($("#proteinList"));
-        $("<br>").appendTo($("#proteinList"));
+        .appendTo($("#proteinListDiv"));
+        $("<input>", {
+            type: "radio",
+            name: "proteinSelector",
+            class: "proteinSelector",
+            value: proteinLibrary[i].name
+        })
+        .prependTo(span);
+        $("<br>").appendTo($("#proteinListDiv"));
     }
-    $("#proteinList").change(function(){
-        selectedProtein = findProtein($("#proteinList option:selected")[0].value);
+    $(".proteinSelector").click(function(){
+        selectedProtein = findProtein($(this)[0].value);
         updateParameters();
     })
 }

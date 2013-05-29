@@ -49,3 +49,4 @@ GET     /mofu                       controllers.Application.morefun
 
 #tests for the jsPlumb usage
 GET     /plumbtest                          controllers.Application.plumbtest
+GET 	/dndtest							controllers.Application.dndtest

@@ -29,6 +29,7 @@ $(document).ready(function(){
     jsRoutes.controllers.Application.getlibrary().ajax({
         success: function(response) {
             parseLibrary(response);
+            makeProteinList();
             notify("Protein library successfully loaded!", "success");
         },
         error: function(response) { alertError(response)}

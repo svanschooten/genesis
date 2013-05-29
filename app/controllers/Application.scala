@@ -88,6 +88,10 @@ object Application extends Controller {
   def plumbtest = Action {
     Ok(views.html.plumbtest("Testing jsPlumb"))
   }
+  
+    def dndtest = Action {
+    Ok(views.html.dndtest("Testing jsPlumb"))
+  }
 
   def rungekutta = Action {
     Ok(views.html.rungekutte("Testing the plot and rungeKutta", rkt))

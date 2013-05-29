@@ -23,6 +23,7 @@ var dropOptions = {
 };
 
 var jsp;
+var currentConnection = null;
 
 
 /**
@@ -52,13 +53,22 @@ function findElement(array, elementId) {
     return null;
 }
 
-function setProtein(connection) {
+function openProteinModal(connection){
+    currentConnection = connection;
+    proteinModal.modal("show");
+}
+
+function setProtein() {
 
     //TODO Protein selectie en controle
-    var protein = prompt("What protein do you want to bind?");
-    connection.protein = protein;
-    connection.removeOverlay("label");
-    connection.addOverlay([ "Label", {label:protein, location: 0.25, cssClass: "aLabel", id:"label"}]);
+    if(selectedProtein == null){
+        alertError("Invalid protein selection!");
+        return;
+    }
+    currentConnection.protein = selectedProtein;
+    currentConnection.removeOverlay("label");
+    currentConnection.addOverlay([ "Label", {label: selectedProtein.name, location: 0.3, cssClass: "aLabel", id:"label"}]);
+    proteinModal.modal("hide");
 }
 
 function makeConnection(params) {
@@ -66,18 +76,15 @@ function makeConnection(params) {
         notify("Cannot connect to self.", "Warning");
         return false;
     }
-    var confirmed = confirm("Connect " + params.sourceId + " to " + params.targetId + "?");
-    if(confirmed) {
-        var element = findElement(circuit, params.sourceId.replace("#",""));
-        if(element == null) {
-            notify("Invalid element: " + params.sourceId, "Warning");
-        } else {
-            params.connection.protein = "";
-            params.connection.addOverlay([ "Arrow", { width:15, location: 0.5,height:10, id:"arrow" }]);
-            params.connection.bind("click", function(connection){ setProtein(connection) });
-        }
+    var element = findElement(circuit, params.sourceId.replace("#",""));
+    if(element == null) {
+        notify("Invalid element: " + params.sourceId, "Warning");
+        return false;
     }
-    return confirmed;
+    params.connection.protein = "";
+    params.connection.addOverlay([ "Arrow", { width:15, location: 0.7,height:10, id:"arrow" }]);
+    params.connection.bind("click", function(connection){ openProteinModal(connection) });
+    return true;
 }
 
 /**
@@ -165,15 +172,28 @@ function makeDraggable(div, gate) {
 /**
 Gate constructor
 */
-function Gate(name, inputs, outputs, image) {
+function Gate(name, inputs, outputs, image,px,py) {
     this.id = name + circuit.length;
     this.type = name;
-
-    var gate = $('<div/>', {
-        id: this.id,
-        class: "gateElement"
+	/*
+	var gate = $('<div style="left:' + positionx + ';top:'+ positiony +'"></div>', {
+            id: this.id,
+        class: "gateElement",
     })
     .appendTo($('#plumbArea'));
+    );
+    
+    */
+    
+    var gate = $('<div/>', {
+        id: this.id,
+        class: "gateElement",
+    })
+    gate.offset({ top: py, left: px });
+    //var gate = $("<div class = 'gateElement', id='this.id'></div>");
+    $("#plumbArea").append(gate);
+    //.appendTo($('#plumbArea'));
+    
     if(image == null) {
         var text = $("<p>").appendTo(gate);
         text.css("padding", "15px 30px");
@@ -203,13 +223,40 @@ function Protein(id, data) {
 /**
 Wrapper for simple creation of AND gates
 */
-function andGate() {
-    var gate = new Gate("and", 2, 1, null);
+function andGate(posx,posy) {
+    var gate = new Gate("and", 2, 1, null,posx,posy);
 };
 
 /**
 Wrapper for simple creation of NOT gates
 */
-function notGate() {
-    var gate = new Gate("not", 1, 1, null);
+function notGate(posx,posy) {
+    var gate = new Gate("not", 1, 1, null,posx,posy);
 };
+
+
+/**
+Testing drag and drop
+*/
+$(function() {
+    $('.product').draggable({
+        revert: "invalid",
+		helper: "clone",
+		
+    });
+
+    $('#plumbArea').droppable({                   
+		accept: '.product',
+                drop: function(event, ui) {
+	                var posx = ui.offset.left - $(this).offset().left;
+	        		var posy = ui.offset.top - $(this).offset().top;
+	        		var id = ui.draggable.attr("id");
+	        		if(id == "ng") { 
+	        			notGate(posx,posy);
+	        		}
+	        		if(id == "ag") {
+	        			andGate(posx,posy);
+	        		}
+	            }
+        });         
+});
