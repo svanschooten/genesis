@@ -16,7 +16,7 @@ import factories._
 object ProteinJSONFactory {
   
     //PType can be CDS/AND/NOT
-  def proteinParamsJSON(ptype: String, libraryID: Int = 0) = {
+  def proteinParamsJSON(ptype: String, libraryID: Int = 0):JSONObject = {
     if(ptype=="AND") proteinAndParamsJSON(libraryID)
     if(ptype=="NOT") proteinNotParamsJSON(libraryID)
     if(ptype=="CDS") proteinCDSParamsJSON(libraryID)
