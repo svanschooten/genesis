@@ -8,6 +8,7 @@ import models.Rungekuttatest
 
 import models._
 import views._
+import factories._
 
 /** The Application object handles everything related to authentication. */
 object Application extends Controller {
@@ -62,7 +63,11 @@ object Application extends Controller {
 
   def getlibrary = Action { implicit request =>
     val libraryName = request.body
-    Ok("Hier moet de library in JSON komen")
+    //Hoe haal je hier de ID op van de ingelogde user?
+    val userID = -1
+    val libraryID = FileParser.getLibraryID(userID,"") // <----
+    Ok("temporary")
+    //Ok(ProteinJSONFactory.proteinParamsJSON("CDS", libraryID))
   }
   
   def rk = Action {
