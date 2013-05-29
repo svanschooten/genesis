@@ -1,0 +1,58 @@
+.mainpage {
+	height: 100%;
+}
+
+section .content, footer {
+	width: 96%;
+	padding: 2%;
+}
+
+header {
+	margin-bottom: 20px;
+}
+
+.content {
+	height: 85%;
+}
+
+#plumbArea {
+	overflow: scroll;
+	position: relative;
+}
+
+#application-area {
+	height: 100%;
+}
+
+#application-header-row {
+	height: 10%;
+}
+
+#application-main-row {
+	height: 90%;
+}
+
+#application-header-row header {
+	height: 100%;
+	background-color: red;
+	padding: 5px;
+}
+
+#application-header-row header .btn-toolbar {
+}
+
+.application-canvas, .application-sidebar {
+	background-color: white;
+	height: 100%;
+	padding: 5px;
+}
+
+#standard-gates, #non-standard-gates {
+	height: auto;
+	background-color: purple;
+	padding: 5px;
+}
+
+#standard-gates {
+	margin-bottom: 2%;
+}

@@ -12,13 +12,15 @@ object ApplicationBuild extends Build {
 
   lazy val jacoco_settings = Defaults.defaultSettings ++ Seq(jacoco.settings: _*)
   
-  val appDependencies = Seq(
-    // Add your project dependencies here,
-    jdbc,
-    anorm,
-    "postgresql" % "postgresql" % "9.1-901.jdbc4",
-    "org.seleniumhq.selenium" % "selenium-java" % "2.32.0"
-  )
+val appDependencies = Seq(
+  jdbc,
+  anorm,
+  "com.github.nikita-volkov" % "sorm" % "0.3.7",
+  "com.h2database" % "h2" % "1.3.168",
+  "postgresql" % "postgresql" % "9.1-901.jdbc4",
+  "com.github.t3hnar" % "scala-bcrypt_2.10" % "2.1",
+  "org.seleniumhq.selenium" % "selenium-java" % "2.32.0"
+)
 
   val main = play.Project(appName, appVersion, appDependencies, settings = jacoco_settings).settings(
     // Add your own project settings here

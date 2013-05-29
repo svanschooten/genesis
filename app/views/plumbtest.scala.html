@@ -1,4 +1,4 @@
-@(title: String, rk: Rungekuttatest)
+@(title: String)
 
 <!DOCTYPE html>
 
@@ -15,15 +15,16 @@
     <script src=@routes.Assets.at("javascripts/lib/jquery-1.9.1.min.js") ></script>
 </head>
 <body>
-<div id="chart_container">
-    <div id="y_axis"></div>
-    <div id="chart"></div>
-    <div id="legend"></div><br>
-    <div id="slider"></div>
-</div>
-<br><br>
-<button onclick="renderPDF()" >Make pdf</button>
 
+<div id="plumbArea" style="width: 700px; height: 420px; border: 1px solid black; overflow: scroll; position: relative;">
+</div>
+<span>
+    <button onclick="andGate()">Add And gate</button>
+    <button onclick="notGate()">Add Not gate</button>
+    <button onclick="logCircuit()">Print circuit to log</button>
+    <button onclick="parseJsPlumbTest()">Test JSON</button>
+</span>
+<div id="circuitDiv"></div>
 <script src=@routes.Assets.at("javascripts/script.js") ></script>
 </body>
 </html>

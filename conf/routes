@@ -3,28 +3,22 @@
 # ~~~~
 
 # The home page
-GET     /                                   controllers.Home.home
-
-# test pages for the ODE solver
-GET		/rk							controllers.Application.rk
-GET     /canvastest                 controllers.Application.canvastest
-GET     /jsontest                   controllers.Application.jsontest
-GET     /mofu                       controllers.Application.morefun
+GET		/									controllers.Home.home
 
 # The about page
-GET 	/about 					controllers.About.about
+GET		/about								controllers.About.about
 
 # The settings page
-GET 	/settings 				controllers.Settings.settings
-POST 	/settings 				controllers.Settings.saveSettings
+GET		/settings							controllers.Settings.settings
+POST	/settings							controllers.Settings.saveSettings
 
 # The help page
-GET 	/help 					controllers.Help.help
+GET		/help								controllers.Help.help
 
 # Authentication
-GET 	/login 					controllers.Application.login
-POST 	/login 					controllers.Application.authenticate
-GET 	/logout 				controllers.Application.logout
+GET 	/login 					            controllers.Application.login
+POST 	/login 					            controllers.Application.authenticate
+GET 	/logout 				            controllers.Application.logout
 
 # Admination
 GET		/newuser							controllers.Admin.createUser
@@ -43,3 +37,18 @@ GET    /assets/javascripts/routes      		controllers.Application.javascriptRoute
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               		controllers.Assets.at(path="/public", file)
+
+# Test pages
+# test pages for the ODE solver
+GET     /canvastest                 		controllers.Application.canvastest
+GET     /jsontest                   		controllers.Application.jsontest
+GET     /rk                   		        controllers.Application.rungekutta
+#GET     /index                              controllers.Projects.index
+GET		/test-home							controllers.Home.hometest
+GET     /mofu                       controllers.Application.morefun
+
+#tests for Forms
+#GET		/formTest							controllers.Projects.formFunction
+
+#tests for the jsPlumb usage
+GET     /plumbtest                          controllers.Application.plumbtest

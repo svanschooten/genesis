@@ -4,18 +4,50 @@ Authors:
 -Stijn van Schooten
 */
 
-//Global variables.
-var data = null;
-var max_c_x = 0.0;
 
+//Load all the javascript libraries except for jQuery
+var libraries = [ 'bootstrap.min.js',
+                'rickshaw.min.js',
+                'd3.v3.min.js',
+                'element-min.js',
+                'jquery-ui-1.10.2.min.js',
+                'jquery.jsPlumb-1.4.0-all-min.js',
+                'jquery.ui.touch-punch.min.js',
+                'jspdf.plugin.fromhtml.js',
+                'jspdf.js'];
+
+//Load all the standard scripts. If page specific, extend
+var scripts = [ 'home.js' ];
 
 /**
 Method that fires when the document is loaded.
 Containing all the setup methods and listener setups.
 */
 $(document).ready(function(){
-    getPlotData();
+
+    loadArrayScripts("", scripts,
+        loadArrayScripts("lib/", libraries,
+            loadPageScript()));
 });
+
+
+/**
+Load page specific scripts if needed.
+If needed on all pages: Put in scripts array.
+*/
+function loadPageScript() {
+    switch(document.URL.split("/").pop()) {
+        case "rk":
+            loadScript("rkPlot.js");
+            break;
+        case "plumbtest":
+            loadScript("scriptPlumb.js");
+            break;
+        default:
+        	loadScript("scriptPlumb.js");
+            break;
+    }
+}
 
 /**
 Standard error message for AJAX requests and alerts.
@@ -25,108 +57,66 @@ function alertError(error) {
 }
 
 /**
-Makes a request for the JSON test method calculating a standard ODE and sending the results in JSON back.
-When received, the results are plotted on the canvas.
+Loads an array of .js files with a prefix to simplify importing scripts and libraries.
 */
-function getPlotData(){
-    jsRoutes.controllers.Application.jsontest().ajax({
-        success: function(response) {
-            drawGraph(parseJSONdata(response))
-        },
-        error: function(response) { alertError(response)}
-    })
+function loadArrayScripts(prefix, files, callback) {
+    if(files.length != 0) {
+        loadScript(prefix + files.shift(), loadArrayScripts(prefix, files, callback));
+    } else {
+        callback;
+    }
 }
 
 /**
-Parses the standard JSON ouput to a usable format for plotting.
+Loader wrapper for script loading
 */
-function parseJSONdata(response){
-
-    //Check if data in memory is empty
-    if(data == null) {
-       data = $.parseJSON(response);
-    }
-
-    //Instantiate a new color pallette
-    var palette = new Rickshaw.Color.Palette( { interpolatedStopsCount: data.length } );
-
-    //Fill the data array
-    for (var i=0;i<data.length;i++){
-        //Add an color
-        data[i].color = palette.color();
-    }
-
-    return data;
+function loadScript(script, callback) {
+    $.getScript("assets/javascripts/" + script).done(callback);
 }
 
 /**
-Plots the received data in a interactive plot.
+Spliffy notifying method
 */
-function drawGraph(series) {
+function notify(message, type) {
+    alert(type + "! " + message);//TODO hier een mooi bootstrap element voor gebruiken.
+}
 
-    var width = 800;
-    var height = 250;
+/**
+Enhancing the methods of an array
+*/
+Array.prototype.removeElem = function(elem)   {
+    var idx = this.indexOf(elem);
+    if(idx != -1)
+        this.splice(idx, 1);
+}
 
-    //Creating the graph to plot in
-    var graph = new Rickshaw.Graph( {
-            element: document.querySelector("#chart"),
-            width: width,
-            height: height,
-            renderer: 'line',
-            series: series,
-    } );
-
-    //Defining the x-axis
-    var x_axis = new Rickshaw.Graph.Axis.X( {
-        graph: graph,
-        orientation: 'top',
-        //tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-    } );
-
-    //Defining the y-axis
-    var y_axis = new Rickshaw.Graph.Axis.Y( {
-            graph: graph,
-            orientation: 'left',
-            tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-            element: document.getElementById('y_axis'),
-    } );
-
-    //Render the constructed graph
-    graph.render();
-
-    //Building the legend
-    var legend = new Rickshaw.Graph.Legend( {
-            element: document.querySelector('#legend'),
-            graph: graph
-    } );
-
-    //Setting up the hover detail
-    var hoverDetail = new Rickshaw.Graph.HoverDetail( {
-        graph: graph,
-        formatter: function(series, x, y) {
-            var swatch = '<span class="detail_swatch" style="background-color: ' + series.color + '"></span>';
-            var content = swatch + series.name + '<br>' + "t: " + (x / 1000) + "<br> c: " + y ;  //.toFixed(6) for rounding to decimals
-            return content;
+/**
+Generalised object toString method. JSON.stringify does not work with cyclomatic objects.
+*/
+function objToString (obj) {
+    var str = '';
+    for (var p in obj) {
+        if (obj.hasOwnProperty(p)) {
+            str += p + '::' + obj[p] + '\n';
         }
-    } );
+    }
+    return str;
+}
 
-    //Add toggle functionality
-    var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
-        graph: graph,
-        legend: legend
-    } );
+function renderPDF() {
+    var doc = new jsPDF();
 
-    //Add legend hover highlight
-    var highlight = new Rickshaw.Graph.Behavior.Series.Highlight( {
-        graph: graph,
-        legend: legend
-    } );
+    // We'll make our own renderer to skip this editor
+    var specialElementHandlers = {
+    	'#editor': function(element, renderer){
+    		return true;
+    	}
+    };
 
-    //TODO werkt soort van, maar nog niet helemaal lekker, moest de timestamp *1000 doen.
-    //Add the range slider for zooming in
-    var slider = new Rickshaw.Graph.RangeSlider( {
-        graph: graph,
-        element: document.getElementById('slider')
-    } );
-
+    // All units are in the set measurement for the document
+    // This can be changed to "pt" (points), "mm" (Default), "cm", "in"
+    doc.fromHTML($('body').get(0), 15, 15, {
+    	'width': 170,
+    	'elementHandlers': specialElementHandlers
+    });
 }
