@@ -2,9 +2,7 @@
 
 @head = {
 	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/home.css")">
-	<script src="@routes.Assets.at("stylesheets/javascripts/home.js")" type="text/javascript"></script>
-	
-	<link href=@routes.Assets.at(
+    <link href=@routes.Assets.at(
     "stylesheets/rickshaw.min.css") rel='stylesheet' />
     <link href=@routes.Assets.at(
     "stylesheets/main.css") rel='stylesheet' />
@@ -15,22 +13,46 @@
 }
 
 @main(title)(head) {
-    <div id="proteinModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="proteinModalHeader">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-            <h3 id="proteinModalHeader" accesskey="">Choose your protein.</h3>
+    <div id="proteinModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="proteinModalHeader">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        <h3 id="proteinModalHeader" accesskey="">Choose your protein.</h3>
+    </div>
+    <div class="modal-body" id="proteinModalBody">
+        <div id="proteinListDiv" class="well">
+            <select id="proteinList"></select>
         </div>
-        <div class="modal-body" id="proteinModalBody">
-            <p>
-                Protein selection and stuffs..
-            </p>
-        </div>
-        <div id="proteinModalFooter" class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-            <button class="btn btn-primary">Select</button>
+        <div id="proteinParameters" class="well">
+            <span>PK1 = <p id="pk1"></p></span>
+            <span>PKM = <p id="pkm"></p></span>
+            <span>n = <p id="pn"></p></span>
         </div>
     </div>
+    <div id="proteinModalFooter" class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary">Select</button>
+    </div>
+    </div>
+    <div id="resultModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="resultModalHeader">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+            <h3 id="resultModalHeader" accesskey="">Simulation results.</h3>
+        </div>
+        <div class="modal-body" id="resultModalBody">
+            <div id="chart_container" data-width="565" data-height="250">
+                <div id="y_axis"></div>
+                <div id="chart"></div>
+                <div id="legend"></div><br>
+                <div id="slider"></div>
+            </div>
+        </div>
+        <div id="resultModalFooter" class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button class="btn btn-primary">Download csv.</button> <!-- \\TODO create csv in backend and push to front.      -->
+        </div>
+    </div>  
 	<div id="application-area" class="container-fluid">
+        <div id="alertBox"></div>
 		<div id="application-header-row" class="row-fluid">
 			<header class="span12">
 				<div class="btn-toolbar">
@@ -88,5 +110,4 @@
 				</div>
 			</div>
 		</div>
-		<script src=@routes.Assets.at("javascripts/script.js") ></script>
 }

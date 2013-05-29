@@ -15,15 +15,12 @@
     <script src=@routes.Assets.at("javascripts/lib/jquery-1.9.1.min.js") ></script>
 </head>
 <body>
-<div id="chart_container">
+<div id="chart_container" data-width="800" data-height="500">
     <div id="y_axis"></div>
     <div id="chart"></div>
     <div id="legend"></div><br>
     <div id="slider"></div>
 </div>
-<br><br>
-<button onclick="renderPDF()" >Make pdf</button>
-
 <script src=@routes.Assets.at("javascripts/script.js") ></script>
 </body>
 </html>

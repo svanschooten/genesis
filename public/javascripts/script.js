@@ -7,17 +7,13 @@ Authors:
 
 //Load all the javascript libraries except for jQuery
 var libraries = [ 'bootstrap.min.js',
-                'rickshaw.min.js',
-                'd3.v3.min.js',
                 'element-min.js',
                 'jquery-ui-1.10.2.min.js',
                 'jquery.jsPlumb-1.4.0-all-min.js',
-                'jquery.ui.touch-punch.min.js',
-                'jspdf.plugin.fromhtml.js',
-                'jspdf.js'];
+                'jquery.ui.touch-punch.min.js'];
 
-//Load all the standard scripts. If page specific, extend
-var scripts = [ 'home.js' ];
+//Load all the standard scripts. If page specific, extend loadPageScript()
+var scripts = [  ];
 
 /**
 Method that fires when the document is loaded.
@@ -38,22 +34,29 @@ If needed on all pages: Put in scripts array.
 function loadPageScript() {
     switch(document.URL.split("/").pop()) {
         case "rk":
-            loadScript("rkPlot.js");
+            loadScript("test/rkPlot.js");
             break;
         case "plumbtest":
-            loadScript("scriptPlumb.js");
+            loadScript("test/plumbTest.js");
             break;
         default:
         	loadScript("scriptPlumb.js");
             break;
     }
+    var mainLibs = [
+        'rickShawPlot.js',
+        'lib/rickshaw.min.js',
+        'lib/d3.v3.min.js',
+        'proteins.js',
+        'plumbWorkspace.js']
+    loadArrayScripts("", mainLibs);
 }
 
 /**
 Standard error message for AJAX requests and alerts.
 */
 function alertError(error) {
-    alert(error.responseText);
+    notify(error.responseText, "error");
 }
 
 /**
@@ -75,10 +78,35 @@ function loadScript(script, callback) {
 }
 
 /**
-Spliffy notifying method
+Spiffy stackable notifying method
+Standard yellow alert of supply with second parameter
+for different types of alerts use:
+- error (red)
+- success (green)
+- info (blue)
 */
 function notify(message, type) {
-    alert(type + "! " + message);//TODO hier een mooi bootstrap element voor gebruiken.
+    if(type == null) {
+        type = "warning";
+    }
+    var notification = $('<div/>', {
+        class: "alert alert-" + type.toLowerCase(),
+        id: "notificationAlert"
+    })
+    .text(message)
+    .appendTo($('#alertBox'));
+
+    $('<strong></strong>')
+    .text(type.toUpperCase() + "! ")
+    .prependTo(notification);
+
+    $('<button></button>', {
+        type: "button",
+        class: "close",
+        'data-dismiss': "alert"
+    })
+    .text("×")
+    .prependTo(notification);
 }
 
 /**
@@ -103,20 +131,11 @@ function objToString (obj) {
     return str;
 }
 
-function renderPDF() {
-    var doc = new jsPDF();
-
-    // We'll make our own renderer to skip this editor
-    var specialElementHandlers = {
-    	'#editor': function(element, renderer){
-    		return true;
-    	}
-    };
-
-    // All units are in the set measurement for the document
-    // This can be changed to "pt" (points), "mm" (Default), "cm", "in"
-    doc.fromHTML($('body').get(0), 15, 15, {
-    	'width': 170,
-    	'elementHandlers': specialElementHandlers
-    });
+/**
+Wrapper for simpler data attribute retrieval.
+The id is the id of the element and the data is the name of the attribute.
+No # and no data- prefixes needed.
+*/
+function getData(id, data) {
+    return $("#" + id.replace("#", ""))[0].getAttribute("data-" + data.replace("data-", ""))
 }

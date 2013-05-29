@@ -24,16 +24,6 @@ var dropOptions = {
 
 var jsp;
 
-function logCircuit() {
-    var div = $("#circuitDiv");
-    div.html("");
-    var network = jsPlumb.getConnections();
-    for(i = 0; i < network.length; i++) {
-        var elem = network[i];
-        div.html(div.html() + "</br> " + elem.source.selector + " - " + elem.protein + " -> " + elem.target.selector)
-        console.log(elem.source.selector + " - " + elem.protein + " -> " + elem.target.selector);
-    }
-}
 
 /**
 Ready call for jsPlumb library
@@ -135,10 +125,6 @@ function repaintElement(elementId) {
             conns[i].repaint();
         }
     });
-}
-
-function parseJsPlumbTest() {
-    console.log(JSON.stringify(parseJsPlumb()));
 }
 
 function parseJsPlumb() {

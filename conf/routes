@@ -16,9 +16,9 @@ POST	/settings							controllers.Settings.saveSettings
 GET		/help								controllers.Help.help
 
 # Authentication
-GET 	/login 					            controllers.Application.login
-POST 	/login 					            controllers.Application.authenticate
-GET 	/logout 				            controllers.Application.logout
+GET     /login                              controllers.Application.login
+POST    /login                              controllers.Application.authenticate
+GET     /logout                             controllers.Application.logout
 
 # Admination
 GET		/newuser							controllers.Admin.createUser
@@ -38,7 +38,7 @@ GET     /assets/*file               		controllers.Assets.at(path="/public", file
 GET     /canvastest                 		controllers.Application.canvastest
 GET     /jsontest                   		controllers.Application.jsontest
 GET     /rk                   		        controllers.Application.rungekutta
-#GET     /index                              controllers.Projects.index
+GET     /index                              controllers.Projects.index
 GET		/test-home							controllers.Home.hometest
 GET     /mofu                       controllers.Application.morefun
 
