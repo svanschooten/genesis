@@ -11,7 +11,7 @@ object ApplicationBuild extends Build {
   val appVersion      = "1.0-SNAPSHOT"
 
   lazy val jacoco_settings = Defaults.defaultSettings ++ Seq(jacoco.settings: _*)
-  
+
 val appDependencies = Seq(
   jdbc,
   anorm,

@@ -1,9 +1,10 @@
 package models
 
 import play.api.libs.json._
-
 import scalation.{VectorD, RungeKutta}
 import scalation.Derivatives.DerivativeV
+import controllers.Projects
+import factories.FileParser
 
 /**
  * ODE solving class containing some testing values but also contains an actual ODE solving method using the RungeKutta method.
@@ -63,39 +64,40 @@ case class Rungekuttatest (){
   }
 
   def genJson = {
-    //import models._
+    import models._
     import math._
-    val plain = List.fill(1502)(1.0)
-    val domain = (0.019 to 25.0 by 0.019).toList //(-0.5*Pi to 0.5*Pi by Pi/500-0.001).toList
-    val osc1 = domain map(cos(_) + 1)
-    val osc2 = domain map(sin(_) + 1)
-    val osc3 = domain map((x:Double) => abs(log(x)))
-    val inp1 = osc1.zip(osc1)
-    val inp2 = osc2.zip(osc2)
-    val inp3 = osc3.zip(osc3)
-    val inpp = plain.zip(plain)
-    val A = CodingSeq("A",inpp,true)
-    val B = CodingSeq("B",inpp,true)
-    val C = CodingSeq("C",List((0,0)),false)
-    val D = CodingSeq("D",List((0,0)),false)
-    val E = CodingSeq("E",inpp,true)
-    val F = CodingSeq("F",List((0,0)),false)
-    val I = CodingSeq("I",List((0,0)),false)
-    //val AandB = AndGate((A,B),C)
-    //val CandD = AndGate((C,D),E)
-    val notA = NotGate(A,C)
-    //val notB = NotGate(B,C)
-    //val notC = NotGate(C,D)
-    //val notD = NotGate(D,E)
-    //val notE = NotGate(E,F)
-    //val notF = NotGate(F,I)
-    //val loop = NotGate(I,A)
-    //val notI = NotGate(I,E)
-    val notAandB = AndGate((C,B),D)
-    val notAandBandE = AndGate((D,E),F)
-    val net = new Network(List(A,B,E))
-    net.simJson(1500.0)
-    //Rungekuttatest.resultsToJson(t0, tf, dt, testResults())
+    /*val orInput = Array("t,A,M","0,1,1","70,0,1","140,1,0","210,0,0")
+    val libID = FileParser.getLibraryID(-1,"newLibrary1")
+    val A = CodingSeq("A",2,List((0,0)),true)
+    val B = CodingSeq("B",2,List((0,0)),false)
+    val M = CodingSeq("M",2,List((0,0)),true)
+    val K = CodingSeq("K",2,List((0,0)),false)
+    val F = CodingSeq("F",2,List((0,0)),false)
+    val I = CodingSeq("I",2,List((0,0)),false)
+    val notA = NotGate(A,K,2)
+    val notM = NotGate(M,I,2)
+    val KandI = AndGate((K,I),B,2)
+    val notB = NotGate(B,F,2)
+    val net = new Network(List(A,M),-1,"")
+    net.setStartParameters(orInput, 175, 30, 275)
+    net.simJson(274)*/
+    val srlatchInput = Array("t,B,F","0,0,1","70,1,1",
+				        "140,0,1","210,1,0","280,1,1",
+				        "350,1,0","420,0,1","490,1,1",
+				        "560,0,1")
+	val B = CodingSeq("B",2,List((0,0)),true)
+	val F = CodingSeq("F",2,List((0,0)),true)
+	val I = CodingSeq("I",2,List((0,0)),true)
+	val K = CodingSeq("K",2,List((0,0)),true)
+	val A = CodingSeq("A",2,List((0,0)),false)
+	val M = CodingSeq("M",2,List((0,0)),false)
+	val BandI = AndGate((B,I),A,2)
+	val FandK = AndGate((F,K),M,2)
+	val NotM = NotGate(M,I,2)
+	val NotA = NotGate(A,K,2)
+	val net = new Network(List(B,F,K,I),-1,"")
+    net.setStartParameters(srlatchInput, 200, 30, 600)
+    net.simJson(599)
   }
 
 }
@@ -122,7 +124,7 @@ object Rungekuttatest {
       "vectors" -> Json.toJson(convert(results)),
       "names" -> Json.toJson((0 to results.head.length).toList)
     )
-  )
+  )  
 
   /**
    * Generalised method for solving the ODE's given and returns a JSON value.

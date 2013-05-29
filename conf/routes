@@ -24,11 +24,6 @@ GET 	/logout 				            controllers.Application.logout
 GET		/newuser							controllers.Admin.createUser
 POST	/newuser							controllers.Admin.saveUser
 
-# test pages for the ODE solver
-GET 	/canvastest 			controllers.Application.canvastest
-GET 	/jsontest 				controllers.Application.jsontest
-GET     /index                              controllers.Projects.index
-
 #Forms
 GET		/formTest							controllers.Projects.formFunction
 

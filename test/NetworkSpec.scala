@@ -13,16 +13,16 @@ class NetworkSpec extends Specification {
     "Network" should {
         "return correct results" in new WithApplication {
             val concs = List.fill(1503)(1.0)
-            val A = CodingSeq("A",concs.zip(concs), true)
-            val B = CodingSeq("B",concs.zip(concs),isInput=true)
-            val C = CodingSeq("C",isInput=false)
-            val D = CodingSeq("D",isInput=false)
-            val E = CodingSeq("E",concs.zip(concs),isInput=true)
-            val F = CodingSeq("F",isInput=false)
+            val A = CodingSeq("A",concs.zip(concs),true)
+            val B = CodingSeq("B",concs.zip(concs),true)
+            val C = CodingSeq("C",false)
+            val D = CodingSeq("D",false)
+            val E = CodingSeq("E",concs.zip(concs),true)
+            val F = CodingSeq("F",false)
             val notA = NotGate(A,C)
             val notAandB = AndGate((C,B),D)
             val notAandBandE = AndGate((D,E),F)
-            val net = new Network(List(A,B,E))
+            val net = new Network(List(A,B,E),-1,"")
             val results = net.simulate(1500.0)
             // expected results generated using MATLAB R2012b
             //._2 = mRna, ._3 = protein
