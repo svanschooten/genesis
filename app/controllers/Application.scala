@@ -11,7 +11,7 @@ import views._
 
 /** The Application object handles everything related to authentication. */
 object Application extends Controller {
-
+  
   val rkt = Rungekuttatest()
 
   /** Form used for authenticating a user. */
@@ -35,8 +35,10 @@ object Application extends Controller {
       "success" -> "You've been logged out"
     )
   }
-
-  /** Handle login form submission. */
+  
+  /**
+   * Handle login form submission.
+   */
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors)),
@@ -53,12 +55,20 @@ object Application extends Controller {
     ).as("text/javascript")
   }
   
+  def rk = Action {
+    Ok(views.html.rungekutte("good ol' runge kutta test",rkt))
+  }
+
   def jsontest = Action {
     Ok(Rungekuttatest().genJson).as("text/plain")
   }
 
   def canvastest = Action {
     Ok(views.html.canvastest("just a quick test with a canvas"))
+  }
+
+  def morefun = Action {
+    Ok(views.html.mofu("another test with the lastest and greatest model"))
   }
 }
 

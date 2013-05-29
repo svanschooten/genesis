@@ -1,68 +1,45 @@
-/**
-Authors:
--Jeroen Peperkamp
--Stijn van Schooten
-*/
-
-//Global variables.
-var data = null;
-var max_c_x = 0.0;
+@(title: String)
 
 
-/**
-Method that fires when the document is loaded.
-Containing all the setup methods and listener setups.
-*/
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@title</title>
+    <link href=@routes.Assets.at(
+    "stylesheets/rickshaw.min.css") rel='stylesheet' />
+    <link href=@routes.Assets.at(
+    "stylesheets/main.css") rel='stylesheet' />
+    <link href=@routes.Assets.at(
+    "stylesheets/jquery-ui-1.10.2.min.css") rel='stylesheet' />
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+    <script src=@routes.Assets.at("javascripts/jquery-1.9.1.min.js") ></script>
+    <script src=@routes.Assets.at("javascripts/jquery-ui-1.10.2.min.js") ></script>
+    <script src=@routes.Assets.at("javascripts/d3.v3.min.js") ></script>
+    <script src=@routes.Assets.at("javascripts/rickshaw.min.js") ></script>
+<script type="text/javascript">
 $(document).ready(function(){
-    getPlotData();
-});
-
-/**
-Standard error message for AJAX requests and alerts.
-*/
-function alertError(error) {
-    alert(error.responseText);
-}
-
-/**
-Makes a request for the JSON test method calculating a standard ODE and sending the results in JSON back.
-When received, the results are plotted on the canvas.
-*/
-function getPlotData(){
     jsRoutes.controllers.Application.jsontest().ajax({
         success: function(response) {
-            drawGraph(parseJSONdata(response))
+            drawGraph($.parseJSON(response))
         },
         error: function(response) { alertError(response)}
     })
-}
-
-/**
-Parses the standard JSON ouput to a usable format for plotting.
-*/
-function parseJSONdata(response){
-
-    //Check if data in memory is empty
-    if(data == null) {
-       data = $.parseJSON(response);
-    }
-
-    //Instantiate a new color pallette
-    var palette = new Rickshaw.Color.Palette( { interpolatedStopsCount: data.length } );
-
-    //Fill the data array
-    for (var i=0;i<data.length;i++){
-        //Add an color
-        data[i].color = palette.color();
-    }
-
-    return data;
-}
-
-/**
-Plots the received data in a interactive plot.
-*/
+});
 function drawGraph(series) {
+    var palette = new Rickshaw.Color.Palette( { interpolatedStopsCount: series.length } );
+    series.forEach(function(obj) {
+        obj["color"] = palette.color();
+        var meh=false;
+        obj.data.forEach(function(ob) {
+            if(ob["y"]<0) {
+                if(!meh)
+                    alert("Warning: negative value(s) in data!");
+                meh=true;
+                ob["y"]=-ob["y"];
+            }
+        });
+    });
 
     var width = 800;
     var height = 250;
@@ -80,7 +57,7 @@ function drawGraph(series) {
     var x_axis = new Rickshaw.Graph.Axis.X( {
         graph: graph,
         orientation: 'top',
-        //tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+        tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
     } );
 
     //Defining the y-axis
@@ -130,3 +107,14 @@ function drawGraph(series) {
     } );
 
 }
+</script>
+</head>
+<body>
+<div id="chart_container">
+    <div id="y_axis"></div>
+    <div id="chart"></div>
+    <div id="legend"></div><br>
+    <div id="slider"></div>
+</div>
+</body>
+</html>

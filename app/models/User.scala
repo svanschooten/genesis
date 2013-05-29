@@ -67,15 +67,32 @@ object User {
     }
   }
   
+  /** Creates a new User */
+  def create(email: String, password: String, fname: Option[String], lname: Option[String]) = {
+    DB.withConnection{ implicit connection =>
+      SQL(
+        """
+INSERT INTO User( email, password, fname, lname )
+VALUES ({email}, {password}, {fname}, {lname})
+"""
+      ).on(
+        'email -> email,
+        'password -> password,
+        'fname -> fname,
+        'lname -> lname
+      ).executeUpdate
+    }
+  }
+  
   /** Updates a user's email, provided the user's id */
   def updateEmail(id: Int, email: String) = {
     DB.withConnection{ implicit connection =>
       SQL(
         """
-        UPDATE User
-        SET email={email}
-        WHERE id = {id}
-        """
+UPDATE User
+SET email={email}
+WHERE id = {id}
+"""
       ).on(
         'id -> id,
         'email -> email
@@ -88,10 +105,10 @@ object User {
     DB.withConnection{ implicit connection =>
       SQL(
           """
-          UPDATE User
-          SET password = {password}
-          WHERE id = {id}
-          """
+UPDATE User
+SET password = {password}
+WHERE id = {id}
+"""
       ).on(
         'password -> password,
         'id -> id
@@ -101,13 +118,13 @@ object User {
   
   /** Updates a User's first name, provided the user's id */
   def updateFirstName(id: Int, fname: String) = {
-    DB.withConnection{ implicit connection => 
+    DB.withConnection{ implicit connection =>
       SQL(
         """
-          UPDATE User
-          SET fname={fname}
-          WHERE id = {id}
-        """
+UPDATE User
+SET fname={fname}
+WHERE id = {id}
+"""
       ).on(
         'fname -> fname,
         'id -> id
@@ -117,13 +134,13 @@ object User {
   
   /** Updates a User's last name, provided the user's id */
   def updateLastName(id: Int, lname: String) = {
-    DB.withConnection{ implicit connection => 
+    DB.withConnection{ implicit connection =>
       SQL(
         """
-          UPDATE User
-          SET lname={lname}
-          WHERE id = {id}
-        """
+UPDATE User
+SET lname={lname}
+WHERE id = {id}
+"""
       ).on(
         'lname -> lname,
         'id -> id
