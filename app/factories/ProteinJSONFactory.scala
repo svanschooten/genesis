@@ -31,12 +31,10 @@ object FileParser {
   		  case in1~in2~k1~km~n => (in1,in2,k1,km,n)
   		} *
       }
-      val jsonobj = results.flatMap(data => {
+      results.flatMap(data => {
         Map((Json.toJson(data._1),Json.toJson(data._2)) ->
             Map("k1"-> Json.toJson(data._3),"km"->Json.toJson(data._4),"n"->Json.toJson(data._5)))
       })
-      println(jsonobj)
-      jsonobj
     }
   }
   
@@ -49,12 +47,10 @@ object FileParser {
   		  case in~k1~km~n => (in,k1,km,n)
   		} *
       }
-      val jsonobj = results.flatMap(data => {
+      results.flatMap(data => {
         Map(Json.toJson(data._1) ->
             Map("k1"-> Json.toJson(data._2),"km"->Json.toJson(data._3),"n"->Json.toJson(data._4)))
       })
-      println(jsonobj)
-      jsonobj
     }
   }
   
@@ -67,12 +63,10 @@ object FileParser {
   		  case name~k2~d1~d2 => (name,k2,d1,d2)
   		} *
       }
-      val jsonobj = results.flatMap(data => {
+      results.flatMap(data => {
         Map(Json.toJson(data._1) ->
             Map("k2"-> Json.toJson(data._2),"d1"->Json.toJson(data._3),"d2"->Json.toJson(data._4)))
       })
-      println(jsonobj)
-      jsonobj
     }
   }
 }
