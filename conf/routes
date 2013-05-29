@@ -36,3 +36,4 @@ GET		/test-home							controllers.Home.hometest
 
 #tests for the jsPlumb usage
 GET     /plumbtest                          controllers.Application.plumbtest
+GET 	/dndtest							controllers.Application.dndtest

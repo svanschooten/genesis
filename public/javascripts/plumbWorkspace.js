@@ -164,15 +164,28 @@ function makeDraggable(div, gate) {
 /**
 Gate constructor
 */
-function Gate(name, inputs, outputs, image) {
+function Gate(name, inputs, outputs, image,px,py) {
     this.id = name + circuit.length;
     this.type = name;
-
-    var gate = $('<div/>', {
-        id: this.id,
-        class: "gateElement"
+	/*
+	var gate = $('<div style="left:' + positionx + ';top:'+ positiony +'"></div>', {
+            id: this.id,
+        class: "gateElement",
     })
     .appendTo($('#plumbArea'));
+    );
+    
+    */
+    
+    var gate = $('<div/>', {
+        id: this.id,
+        class: "gateElement",
+    })
+    gate.offset({ top: py, left: px });
+    //var gate = $("<div class = 'gateElement', id='this.id'></div>");
+    $("#plumbArea").append(gate);
+    //.appendTo($('#plumbArea'));
+    
     if(image == null) {
         var text = $("<p>").appendTo(gate);
         text.css("padding", "15px 30px");
@@ -202,13 +215,40 @@ function Protein(id, data) {
 /**
 Wrapper for simple creation of AND gates
 */
-function andGate() {
-    var gate = new Gate("and", 2, 1, null);
+function andGate(posx,posy) {
+    var gate = new Gate("and", 2, 1, null,posx,posy);
 };
 
 /**
 Wrapper for simple creation of NOT gates
 */
-function notGate() {
-    var gate = new Gate("not", 1, 1, null);
+function notGate(posx,posy) {
+    var gate = new Gate("not", 1, 1, null,posx,posy);
 };
+
+
+/**
+Testing drag and drop
+*/
+$(function() {
+    $('.product').draggable({
+        revert: "invalid",
+		helper: "clone",
+		
+    });
+
+    $('#plumbArea').droppable({                   
+		accept: '.product',
+                drop: function(event, ui) {
+	                var posx = ui.offset.left - $(this).offset().left;
+	        		var posy = ui.offset.top - $(this).offset().top;
+	        		var id = ui.draggable.attr("id");
+	        		if(id == "ng") { 
+	        			notGate(posx,posy);
+	        		}
+	        		if(id == "ag") {
+	        			andGate(posx,posy);
+	        		}
+	            }
+        });         
+});
