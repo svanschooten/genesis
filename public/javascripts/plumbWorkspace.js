@@ -53,6 +53,7 @@ function findElement(array, elementId) {
 }
 
 function setProtein(connection) {
+
     //TODO Protein selectie en controle
     var protein = prompt("What protein do you want to bind?");
     connection.protein = protein;

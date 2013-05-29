@@ -4,6 +4,8 @@ authors:
 - Stijn van Schooten
 */
 
+var inputs = "";//TODO hier het inputsignaal zetten
+
 var proteinLibrary = [
     {name:"henk", pk1:0.145, pkm:2.14, pn:0.0124},
     {name:"klaas", pk1:1.5421, pkm:1.544, pn:0.0476},

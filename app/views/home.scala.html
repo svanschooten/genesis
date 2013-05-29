@@ -11,44 +11,7 @@
 }
 
 @main(title)(head) {
-    <div id="proteinModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="proteinModalHeader">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3 id="proteinModalHeader" accesskey="">Choose your protein.</h3>
-    </div>
-    <div class="modal-body" id="proteinModalBody">
-        <div id="proteinListDiv" class="well">
-            <select id="proteinList"></select>
-        </div>
-        <div id="proteinParameters" class="well">
-            <span>PK1 = <p id="pk1"></p></span>
-            <span>PKM = <p id="pkm"></p></span>
-            <span>n = <p id="pn"></p></span>
-        </div>
-    </div>
-    <div id="proteinModalFooter" class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary">Select</button>
-    </div>
-    </div>
-    <div id="resultModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="resultModalHeader">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-            <h3 id="resultModalHeader" accesskey="">Simulation results.</h3>
-        </div>
-        <div class="modal-body" id="resultModalBody">
-            <div id="chart_container" data-width="565" data-height="250">
-                <div id="y_axis"></div>
-                <div id="chart"></div>
-                <div id="legend"></div><br>
-                <div id="slider"></div>
-            </div>
-        </div>
-        <div id="resultModalFooter" class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-            <button class="btn btn-primary">Download csv.</button> <!-- \\TODO create csv in backend and push to front.      -->
-        </div>
-    </div>  
+    @modals
 	<div id="application-area" class="container-fluid">
         <div id="alertBox"></div>
 		<div id="application-header-row" class="row-fluid">
@@ -56,7 +19,7 @@
 				<div class="btn-toolbar">
 					<div class="btn-group">
 						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-					   	 File...
+					   	 Circuit
 						</a>
 						<ul class="dropdown-menu">
 							<li>
@@ -84,11 +47,11 @@
 					</div>
 					<div class="btn-group">
 						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-					   	 Run...
+					   	 Simulation
 						</a>
 						<ul class="dropdown-menu">
 							<li>
-								<a href="#">Run circuit</a>
+								<a onclick="beginSimulation()">Run circuit</a>
 							</li>
 						</ul>
 					</div>

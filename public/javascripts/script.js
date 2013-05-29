@@ -15,6 +15,8 @@ var libraries = [ 'bootstrap.min.js',
 //Load all the standard scripts. If page specific, extend loadPageScript()
 var scripts = [  ];
 
+var proteinModal, resultModal, signalModal;
+
 /**
 Method that fires when the document is loaded.
 Containing all the setup methods and listener setups.
@@ -27,10 +29,14 @@ $(document).ready(function(){
     jsRoutes.controllers.Application.getlibrary().ajax({
         success: function(response) {
             parseLibrary(response);
-            notify("Library successfully loaded!", "success");
+            notify("Protein library successfully loaded!", "success");
         },
         error: function(response) { alertError(response)}
-    })
+    });
+    proteinModal = $("#proteinModal");
+    resultModal = $("#resultModal");
+    signalModal = $("#signalModal");
+
 });
 
 
@@ -144,4 +150,23 @@ No # and no data- prefixes needed.
 */
 function getData(id, data) {
     return $("#" + id.replace("#", ""))[0].getAttribute("data-" + data.replace("data-", ""))
+}
+
+function beginSimulation(){
+//TODO Checken van verbindingen enzo
+    signalModal.modal("show");
+}
+
+function completeSimulation(){
+    //TODO Checken van inputsignalen
+    signalModal.modal("hide");
+    var simulateData = {circuit: parseJsPlumb(), inputs: inputs};
+    // jsRoutes.controllers.Application.simulate().ajax({
+    jsRoutes.controllers.Application.jsontest().ajax({
+        success: function(response) {
+            drawGraph(parseJSONdataRickShaw(response));
+            resultModal.modal("show");
+        },
+        error: function(response) { alertError(response)}
+    });
 }

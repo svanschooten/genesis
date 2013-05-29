@@ -9,7 +9,7 @@ When received, the results are plotted on the canvas.
 function getPlotData(){
     jsRoutes.controllers.Application.jsontest().ajax({
         success: function(response) {
-            drawGraph(parseJSONdata(response))
+            drawGraph(parseJSONdataRickShaw(response))
         },
         error: function(response) { alertError(response)}
     })

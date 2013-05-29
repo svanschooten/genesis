@@ -57,12 +57,12 @@ object Application extends Controller {
 
   def simulate = Action { implicit request =>
     val data = request.body.asJson
-    Ok("Hier moeten de resultaten in JSON komen").as("text/plain")
+    Ok("Hier moeten de resultaten in JSON komen")
   }
 
   def getlibrary = Action { implicit request =>
     val libraryName = request.body
-    Ok("Hier moet de library in JSON komen").as("text/plain")
+    Ok("Hier moet de library in JSON komen")
   }
   
   def rk = Action {
@@ -70,7 +70,7 @@ object Application extends Controller {
   }
 
   def jsontest = Action {
-    Ok(Rungekuttatest().genJson).as("text/plain")
+    Ok(Rungekuttatest().genJson)
   }
 
   def canvastest = Action {

@@ -5,7 +5,7 @@ var graph = null;
 /**
 Parses the standard JSON ouput to a usable format for plotting.
 */
-function parseJSONdata(response){
+function parseJSONdataRickShaw(response){
 
     //Check if data in memory is empty
     if(data == null) {
@@ -27,7 +27,7 @@ function parseJSONdata(response){
 /**
 Plots the received data in a interactive plot.
 */
-function drawGraph(series) {
+function drawGraph(responc) {
 
     if(!$('#chart').is(":empty")){
         $('#chart').empty();
