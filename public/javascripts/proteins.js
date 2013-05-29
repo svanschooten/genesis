@@ -28,6 +28,10 @@ function makeProteinList(){
     })
 }
 
+function parseLibrary(json) {
+    return true;
+}
+
 function findProtein(name) {
     var res = null;
     $.each(proteinLibrary, function(index, protein) {

@@ -24,6 +24,13 @@ $(document).ready(function(){
     loadArrayScripts("", scripts,
         loadArrayScripts("lib/", libraries,
             loadPageScript()));
+    jsRoutes.controllers.Application.getlibrary().ajax({
+        success: function(response) {
+            parseLibrary(response);
+            notify("Library successfully loaded!", "success");
+        },
+        error: function(response) { alertError(response)}
+    })
 });
 
 
@@ -40,7 +47,6 @@ function loadPageScript() {
             loadScript("test/plumbTest.js");
             break;
         default:
-        	loadScript("scriptPlumb.js");
             break;
     }
     var mainLibs = [

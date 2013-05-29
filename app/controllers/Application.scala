@@ -48,9 +48,21 @@ object Application extends Controller {
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-        routes.javascript.Application.jsontest
+        routes.javascript.Application.jsontest,
+        routes.javascript.Application.getlibrary,
+        routes.javascript.Application.simulate
       )
     ).as("text/javascript")
+  }
+
+  def simulate = Action { implicit request =>
+    val data = request.body.asJson
+    Ok("Hier moeten de resultaten in JSON komen").as("text/plain")
+  }
+
+  def getlibrary = Action { implicit request =>
+    val libraryName = request.body
+    Ok("Hier moet de library in JSON komen").as("text/plain")
   }
   
   def rk = Action {
