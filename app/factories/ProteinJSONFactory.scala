@@ -13,7 +13,7 @@ import views._
 import scalation._
 import factories._
 
-object FileParser {
+object ProteinJSONFactory {
   
     //PType can be CDS/AND/NOT
   def proteinParamsJSON(ptype: String, libraryID: Int = 0) = {
