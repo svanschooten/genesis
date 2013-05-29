@@ -66,7 +66,8 @@ object Application extends Controller {
     //Hoe haal je hier de ID op van de ingelogde user?
     val userID = -1
     val libraryID = FileParser.getLibraryID(userID,"") // <----
-    Ok(ProteinJSONFactory.proteinParamsJSON("CDS", libraryID))
+    Ok("temporary")
+    //Ok(ProteinJSONFactory.proteinParamsJSON("CDS", libraryID))
   }
   
   def rk = Action {
