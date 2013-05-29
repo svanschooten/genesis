@@ -168,3 +168,9 @@ header {
     padding: 5px;
     width: 100%;
 }
+
+#mainIcon{
+    float: left;
+    align: middle;
+    display: inline;
+}

@@ -14,19 +14,20 @@
 	<div class="mainpage">
 		<header>
 	        <div class="navbar navbar-static-top">
-	          <div class="navbar-inner">
-	            <div class="container">
-	            
-	              <ul class="nav pull-left">
-	                <li @active("Home")><a href="/">Home</a></li>
-	              </ul>
-	              <ul class="nav pull-right">
-	              	<li @active("Help")><a href="/help">Help</a></li>
-	              	<li @active("Settings")><a href="/settings">Settings</a></li>
-	              	<li><a href="/logout">Logout</a></li>
-	              </ul>
-	             </div> 
-	          </div>
+                <div class="navbar-inner">
+                    <div class="container">
+                        <ul class="nav pull-left">
+                            <li><img src="@routes.Assets.at("images/genesis-logo-h40.png")"></li>
+                            <li>&nbsp;</li>
+                            <li @active("Home")><a href="/">Home</a></li>
+                        </ul>
+                        <ul class="nav pull-right">
+                            <li @active("Help")><a href="/help">Help</a></li>
+                            <li @active("Settings")><a href="/settings">Settings</a></li>
+                            <li><a href="/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
 	        </div>  
 		</header>
 

@@ -102,9 +102,10 @@ function notify(message, type) {
     if(type == null) {
         type = "warning";
     }
+    var notificationID = "notification" + Math.floor((Math.random()*100)+1);
     var notification = $('<div/>', {
-        class: "alert alert-" + type.toLowerCase(),
-        id: "notificationAlert"
+        class: "alert fade in alert-" + type.toLowerCase(),
+        id: notificationID
     })
     .text(message)
     .appendTo($('#alertBox'));
@@ -120,6 +121,11 @@ function notify(message, type) {
     })
     .text("×")
     .prependTo(notification);
+    setTimeout(function(){disposeNotification(notificationID);}, 10000);
+}
+
+function disposeNotification(notificationID){
+    $("#" + notificationID).alert('close');
 }
 
 /**
@@ -160,6 +166,7 @@ function beginSimulation(){
 
 function completeSimulation(){
     //TODO Checken van inputsignalen
+    inputs = $("#signalArea")[0].value;
     signalModal.modal("hide");
     var simulateData = {circuit: parseJsPlumb(), inputs: inputs};
     // jsRoutes.controllers.Application.simulate().ajax({
