@@ -4,6 +4,7 @@ Authors:
 */
 
 //Globals
+var gateid = 0
 var circuit = new Array();
 var endpointOptions = { isTarget:true, isSource:true };
 var connectorPaintStyle = {
@@ -209,9 +210,26 @@ function Gate(name, inputs, outputs, image,px,py) {
     this.x = gate.position().left;
     this.y = gate.position().top;
 
+	
     addEndPoints(inputs, outputs, this);
     makeDraggable(gate, this);
     circuit.push(this);
+    
+    $('#'+	this.id).bind('contextmenu', {gate: this}, function(event){
+		if(confirm("Delete this gate?")){
+			
+			gate = event.data.gate
+			i = circuit.indexOf(gate);
+			if(~i){
+				circuit[i] = null; // Replace instead of remove because the ids depend on circuit.length...
+			}
+			
+			jsPlumb.detachAllConnections(this);
+			jsPlumb.removeAllEndpoints(this);
+			$(this).remove();
+		}
+		return false;
+	});
 }
 
 /**
