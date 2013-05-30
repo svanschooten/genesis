@@ -82,17 +82,12 @@ object Application extends Controller {
   }
 
   def getlibrary = Action(parse.json) { implicit request =>
-      val libraryId = (request.body \ "id").asOpt[Int]
-      libraryId match{
-        case Some(id) => {
-          val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(id),
-            "not"->ProteinJSONFactory.proteinNotParamsJSON(id),
-            "cds"->ProteinJSONFactory.proteinCDSParamsJSON(id))
-          Ok(jsonObject).as("plain/text")
-        }
-        case _ => BadRequest("invalid JSON")
-      }
-
+      val libraryId = (request.body \ "id").toString.replace("\"","").toInt
+      val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(libraryId),
+        "not"->ProteinJSONFactory.proteinNotParamsJSON(libraryId),
+        "cds"->ProteinJSONFactory.proteinCDSParamsJSON(libraryId))
+      println(jsonObject)
+      Ok(jsonObject).as("plain/text")
   }
   
   def rk = Action {

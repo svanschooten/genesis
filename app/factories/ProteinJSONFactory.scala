@@ -89,10 +89,12 @@ object ProteinJSONFactory {
   		  case name~k2~d1~d2 => (name,k2,d1,d2)
   		} *
       }
-      Json.toJson(results.map(data => {
+      val res = Json.toJson(results.map(data => {
         Json.obj(data._1 ->
             Json.obj("k2"-> data._2,"d1"-> data._3,"d2"-> data._4))
       }))
+      println(res)
+      res
     }
   }
 }
