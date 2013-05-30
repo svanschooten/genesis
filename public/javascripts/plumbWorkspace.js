@@ -141,12 +141,14 @@ function parseJsPlumb() {
     network.vertices = new Array();
     network.edges = new Array();
     for(i = 0; i < circuit.length; i++) {
-        network.vertices.push({
-            id: circuit[i].id,
-            type: circuit[i].type,
-            x: circuit[i].x,
-            y: circuit[i].y
-        });
+        if(circuit[i] != null){
+            network.vertices.push({
+                id: circuit[i].id,
+                type: circuit[i].type,
+                x: circuit[i].x,
+                y: circuit[i].y
+            });
+        }
     }
     for(i = 0; i < plumb.length; i++) {
         network.edges.push({
