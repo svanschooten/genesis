@@ -5,6 +5,7 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import models.Rungekuttatest
+import libs.json.{Json, __}
 
 import models._
 import views._
@@ -41,7 +42,7 @@ object Application extends Controller {
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => Redirect(routes.Home.home).withSession("inlog" -> user._1)
+      user => Redirect(routes.Home.home).withSession("email" -> user._1)
     )
   }
 
@@ -61,20 +62,39 @@ object Application extends Controller {
     val data = request.body.asJson
     Ok("Hier moeten de resultaten in JSON komen")
   }
-
-  def getlibrary = Action { implicit request =>
-    val libraryName = request.body.toString
-    System.out.println(libraryName)
-    //Hoe haal je hier de ID op van de ingelogde user?
-    val userID = -1
-    val libraryID = FileParser.getLibraryID(userID,"") // <----
-    Ok("temporary")
-    //Ok(ProteinJSONFactory.proteinParamsJSON("CDS", libraryID))
+  
+  def getalllibraries = Action { implicit request =>
+    request.session.get("email") match{
+      case Some(email) => {
+        User.findByEmail(email) match{
+          case Some(u) => {
+            Ok(ProteinJSONFactory.libraryListJSON(u.id)).as("text/plain")
+          }
+          case _ => Redirect(routes.Application.login)
+        }
+      }
+      case _ => Redirect(routes.Application.login)
+    }
   }
 
-  def getalllibraries = Action { implicit request =>
-    val libraries = "placeholder"
-    Ok(libraries).as("plain/text")
+  def getlibrary = Action { implicit request =>
+    val libraryName = request.body.toString()
+    request.session.get("email") match{
+      case Some(email) => {
+        User.findByEmail(email) match{
+          case Some(u) => {
+            val userID = u.id
+            val libraryID = FileParser.getLibraryID(userID,libraryName)
+		    val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(libraryID),
+		    					"not"->ProteinJSONFactory.proteinNotParamsJSON(libraryID),
+		    					"cds"->ProteinJSONFactory.proteinCDSParamsJSON(libraryID))    					
+		    Ok(jsonObject)
+          }
+          case _ => Redirect(routes.Application.login).withNewSession
+        }	    
+      }
+      case _ => Redirect(routes.Application.login).withNewSession
+    }
   }
   
   def rk = Action {
@@ -110,7 +130,7 @@ object Application extends Controller {
 trait Secured {
   
   /** Retrieve the connected user. */
-  private def username(request: RequestHeader) = request.session.get("inlog")
+  private def username(request: RequestHeader) = request.session.get("email")
 
   private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Application.login)
   
