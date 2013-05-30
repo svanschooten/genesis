@@ -24,6 +24,9 @@ GET     /logout                             controllers.Application.logout
 GET		/newuser							controllers.Admin.createUser
 POST	/newuser							controllers.Admin.saveUser
 
+# JSON to model to simulation to JSON call
+POST    /getcooking                         controllers.Application.getCooking
+
 #Forms
 GET		/formTest							controllers.Projects.formFunction
 
