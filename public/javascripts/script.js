@@ -16,6 +16,7 @@ var libraries = [ 'bootstrap.min.js',
 var scripts = [  ];
 
 var proteinModal, resultModal, signalModal, setupModal;
+var circuitName, timeSpan, numSteps;
 
 /**
 Method that fires when the document is loaded.
@@ -26,8 +27,8 @@ $(document).ready(function(){
     loadArrayScripts("", scripts,
         loadArrayScripts("lib/", libraries,
             loadPageScript()));
-    wrapModals();
-    getAvailableLibraries();
+
+    setTimeout(wrapModals, 1000);
 });
 
 function wrapModals(){
@@ -35,6 +36,7 @@ function wrapModals(){
     resultModal = $("#resultModal");
     signalModal = $("#signalModal");
     setupModal = $("#setupModal");
+    getAvailableLibraries();
 }
 
 
@@ -175,6 +177,25 @@ function completeSimulation(){
     });
 }
 
+function showSetup(){
+    setupModal.modal("show");
+}
+
 function applySetup(){
-    getLibrary($("#librarySelector option:selected")[0].value);
+    var lib = $("#setupLibrarySelector option:selected")[0].value;
+    var name = $("#circuitName")[0].value;
+    if(lib == -1){
+        $("#setupErrorDiv").text("Choose a library first!");
+    } else if(name == ""){
+        $("#setupErrorDiv").text("You must specify a name!");
+    } else {
+        $("#setupErrorDiv").text("");
+        getLibrary($("#setupLibrarySelector option:selected")[0].value);
+        circuitName = name;
+        timeSpan = $("#simTimeSpan")[0].value;
+        numSteps = $("#simSteps")[0].value;
+        console.log(lib + " " + name + " " + timeSpan + " " + numSteps);
+        setupModal.modal("hide");
+    }
+
 }

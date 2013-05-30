@@ -87,5 +87,5 @@ function setupLibrarySelector(libraries) {
         .text(libraries[i].libraryname)
         .appendTo(selector);
     }
-    setupModal.modal("show");
+    showSetup();
 }
