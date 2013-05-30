@@ -43,9 +43,7 @@ object Application extends Controller {
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => {
-        println(user)
-        Redirect(routes.Home.home).withSession("email" -> user._1)}
+      user => Redirect(routes.Home.home).withSession("email" -> user._1)
     )
   }
 
@@ -56,15 +54,9 @@ object Application extends Controller {
         routes.javascript.Application.jsontest,
         routes.javascript.Application.getlibrary,
         routes.javascript.Application.getCooking,
-        routes.javascript.Application.getalllibraries,
-        routes.javascript.Application.simulate
+        routes.javascript.Application.getalllibraries
       )
     ).as("text/javascript")
-  }
-
-  def simulate = Action { implicit request =>
-    val data = request.body.asJson
-    Ok("Hier moeten de resultaten in JSON komen")
   }
   
   def getalllibraries = Action { implicit request =>
@@ -82,12 +74,11 @@ object Application extends Controller {
   }
 
   def getlibrary = Action(parse.json) { implicit request =>
-      val libraryId = (request.body \ "id").toString.replace("\"","").toInt
-      val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(libraryId),
-        "not"->ProteinJSONFactory.proteinNotParamsJSON(libraryId),
-        "cds"->ProteinJSONFactory.proteinCDSParamsJSON(libraryId))
-      println(jsonObject)
-      Ok(jsonObject).as("plain/text")
+    val id = Integer.parseInt((request.body \ "id").as[String])
+    val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(id),
+      "not"->ProteinJSONFactory.proteinNotParamsJSON(id),
+      "cds"->ProteinJSONFactory.proteinCDSParamsJSON(id))
+    Ok(jsonObject).as("plain/text")
   }
   
   def rk = Action {
@@ -119,14 +110,7 @@ object Application extends Controller {
   }
 
   def getCooking = Action(parse.json) { implicit request =>
-    println(request.body)
-    /*val body = request.body
-    val data = body.asText
-    if(data.isEmpty)
-        BadRequest("Sorry, you need to provide data.")
-    else*/
-        Ok(Network.fromJSON(request.body).simJson(1500.0)).as("text/plain")
-        //Ok("blA")
+    Ok(Network.fromJSON(request.body)).as("text/plain")
   }
 }
 
