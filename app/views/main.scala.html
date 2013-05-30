@@ -7,7 +7,9 @@
 
 @head = {
     <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+	
     @head_extra
+
 }
 
 @base(title)(head) {	
@@ -44,5 +46,5 @@
 		</footer>
 		
 	</div>
-    <script src="@routes.Assets.at("javascripts/script.js")" type="text/javascript"></script>
-}
+	<script src=@routes.Assets.at("javascripts/script.js") ></script>
+    }

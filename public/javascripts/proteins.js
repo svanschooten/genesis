@@ -56,9 +56,9 @@ function updateParameters(){
     $("#pn").text(selectedProtein.pn);
 }
 
-function getLibrary(libraryName){
+function getLibrary(libraryId){
     jsRoutes.controllers.Application.getlibrary().ajax({
-        data: libraryName,
+        data: libraryId,
         success: function(response) {
             parseLibrary(response);
             makeProteinList();
@@ -72,7 +72,7 @@ function getAvailableLibraries(){
     jsRoutes.controllers.Application.getalllibraries().ajax({
         success: function(response) {
             console.log(response);
-            //setupLibrarySelector($.parseJSON(response));
+            setupLibrarySelector($.parseJSON(response));
         },
         error: function(response) { alertError(response)}
     });
@@ -82,10 +82,10 @@ function setupLibrarySelector(libraries) {
     var selector = $("#setupLibrarySelector");
     for(i = 0; i < libraries.length; i++) {
         $("<option></option>",{
-            value: library[i]
+            value: libraries[i].libraryid
         })
-        .text(library[i])
+        .text(libraries[i].libraryname)
         .appendTo(selector);
     }
-    setupModal.modal("show");
+    showSetup();
 }
