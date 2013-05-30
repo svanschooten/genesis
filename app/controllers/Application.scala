@@ -64,13 +64,13 @@ object Application extends Controller {
     Ok("Hier moeten de resultaten in JSON komen")
   }
   
-  def getLibraryList = Action { implicit request =>
+  def getalllibraries = Action { implicit request =>
     request.session.get("email") match{
       case Some(email) => {
         User.findByEmail(email) match{
           case Some(u) => {
             val userID = u.id
-            Ok(ProteinJSONFactory.libraryListJSON(userID))
+            Ok(ProteinJSONFactory.libraryListJSON(userID)).as("text/plain")
           }
           case _ => Redirect(routes.Application.login).withNewSession
         }
@@ -97,11 +97,6 @@ object Application extends Controller {
       }
       case _ => Redirect(routes.Application.login).withNewSession
     }
-  }
-
-  def getalllibraries = Action { implicit request =>
-    val libraries = "placeholder"
-    Ok(libraries).as("plain/text")
   }
   
   def rk = Action {
