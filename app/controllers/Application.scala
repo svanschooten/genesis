@@ -6,7 +6,7 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc.BodyParsers.parse
 import models.Rungekuttatest
-import libs.json.{JsResult, Json, __}
+import libs.json.{Json, __}
 
 import models._
 import views._
@@ -116,13 +116,7 @@ object Application extends Controller {
   }
 
   def getCooking = Action(parse.json) { implicit request =>
-    /*val body = request.body
-    val data = body.asText
-    if(data.isEmpty)
-        BadRequest("Sorry, you need to provide data.")
-    else*/
-        Ok(Network.fromJSON(request.body).simJson(1500.0)).as("text/plain")
-        //Ok("blA")
+    Ok(Network.fromJSON(request.body)).as("text/plain")
   }
 }
 
