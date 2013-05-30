@@ -55,3 +55,37 @@ function updateParameters(){
     $("#pkm").text(selectedProtein.pkm);
     $("#pn").text(selectedProtein.pn);
 }
+
+function getLibrary(libraryId){
+    jsRoutes.controllers.Application.getlibrary().ajax({
+        data: libraryId,
+        success: function(response) {
+            parseLibrary(response);
+            makeProteinList();
+            notify("Protein library successfully loaded!", "success");
+        },
+        error: function(response) { alertError(response)}
+    });
+}
+
+function getAvailableLibraries(){
+    jsRoutes.controllers.Application.getalllibraries().ajax({
+        success: function(response) {
+            console.log(response);
+            setupLibrarySelector($.parseJSON(response));
+        },
+        error: function(response) { alertError(response)}
+    });
+}
+
+function setupLibrarySelector(libraries) {
+    var selector = $("#setupLibrarySelector");
+    for(i = 0; i < libraries.length; i++) {
+        $("<option></option>",{
+            value: libraries[i].libraryid
+        })
+        .text(libraries[i].libraryname)
+        .appendTo(selector);
+    }
+    showSetup();
+}

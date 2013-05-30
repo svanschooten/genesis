@@ -7,9 +7,10 @@
     <script src=@routes.Assets.at("javascripts/lib/jquery-ui-1.9.2.js") ></script> 
 	<script src=@routes.Assets.at("javascripts/lib/jquery.jsPlumb-1.4.0-all-min.js") ></script>
 	<script src=@routes.Assets.at("javascripts/plumbWorkspace.js") ></script>
-	
+	<script src=@routes.Assets.at("javascripts/proteins.js") ></script>
 	
     }
+
 
 @main(title)(head) {
     @modals()
@@ -54,6 +55,9 @@
 							<li>
 								<a onclick="beginSimulation()">Run circuit</a>
 							</li>
+                            <li>
+                                <a onclick="showSetup()">Setup</a>
+                            </li>
 						</ul>
 					</div>
 				</div>

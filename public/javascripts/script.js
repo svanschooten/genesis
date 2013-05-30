@@ -15,7 +15,8 @@ var libraries = [ 'bootstrap.min.js',
 //Load all the standard scripts. If page specific, extend loadPageScript()
 var scripts = [  ];
 
-var proteinModal, resultModal, signalModal;
+var proteinModal, resultModal, signalModal, setupModal;
+var circuitName, timeSpan, numSteps;
 
 /**
 Method that fires when the document is loaded.
@@ -26,19 +27,17 @@ $(document).ready(function(){
     loadArrayScripts("", scripts,
         loadArrayScripts("lib/", libraries,
             loadPageScript()));
-    jsRoutes.controllers.Application.getlibrary().ajax({
-        success: function(response) {
-            parseLibrary(response);
-            makeProteinList();
-            notify("Protein library successfully loaded!", "success");
-        },
-        error: function(response) { alertError(response)}
-    });
+
+    setTimeout(wrapModals, 1000);
+});
+
+function wrapModals(){
     proteinModal = $("#proteinModal");
     resultModal = $("#resultModal");
     signalModal = $("#signalModal");
-
-});
+    setupModal = $("#setupModal");
+    getAvailableLibraries();
+}
 
 
 /**
@@ -60,7 +59,6 @@ function loadPageScript() {
         'rickShawPlot.js',
         'lib/rickshaw.min.js',
         'lib/d3.v3.min.js',
-        'proteins.js',
         'plumbWorkspace.js']
     loadArrayScripts("", mainLibs);
 }
@@ -177,4 +175,27 @@ function completeSimulation(){
         },
         error: function(response) { alertError(response)}
     });
+}
+
+function showSetup(){
+    setupModal.modal("show");
+}
+
+function applySetup(){
+    var lib = $("#setupLibrarySelector option:selected")[0].value;
+    var name = $("#circuitName")[0].value;
+    if(lib == -1){
+        $("#setupErrorDiv").text("Choose a library first!");
+    } else if(name == ""){
+        $("#setupErrorDiv").text("You must specify a name!");
+    } else {
+        $("#setupErrorDiv").text("");
+        getLibrary($("#setupLibrarySelector option:selected")[0].value);
+        circuitName = name;
+        timeSpan = $("#simTimeSpan")[0].value;
+        numSteps = $("#simSteps")[0].value;
+        console.log(lib + " " + name + " " + timeSpan + " " + numSteps);
+        setupModal.modal("hide");
+    }
+
 }
