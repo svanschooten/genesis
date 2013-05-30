@@ -5,6 +5,7 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import models.Rungekuttatest
+import play.api.libs.json._
 
 import models._
 import views._
@@ -27,6 +28,7 @@ object Application extends Controller {
 
   /** Login page. */
   def login = Action { implicit request =>
+    println(ProteinJSONFactory.proteinAndParamsJSON("A",0))
     Ok(html.login(loginForm))
   }
   
@@ -60,14 +62,40 @@ object Application extends Controller {
     val data = request.body.asJson
     Ok("Hier moeten de resultaten in JSON komen")
   }
+  
+  def getLibraryList = Action { implicit request =>
+    request.session.get("email") match{
+      case Some(email) => {
+        User.findByEmail(email) match{
+          case Some(u) => {
+            val userID = u.id
+            Ok(ProteinJSONFactory.libraryListJSON(userID))
+          }
+          case _ => Redirect(routes.Application.login).withNewSession
+        }
+      }
+      case _ => Redirect(routes.Application.login).withNewSession
+    }
+  }
 
   def getlibrary = Action { implicit request =>
-    val libraryName = request.body
-    //Hoe haal je hier de ID op van de ingelogde user?
-    val userID = -1
-    val libraryID = FileParser.getLibraryID(userID,"") // <----
-    Ok("temporary")
-    //Ok(ProteinJSONFactory.proteinParamsJSON("CDS", libraryID))
+    val libraryName = request.body.toString()
+    request.session.get("email") match{
+      case Some(email) => {
+        User.findByEmail(email) match{
+          case Some(u) => {
+            val userID = u.id
+            val libraryID = FileParser.getLibraryID(userID,libraryName)
+		    val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(libraryID),
+		    					"not"->ProteinJSONFactory.proteinNotParamsJSON(libraryID),
+		    					"cds"->ProteinJSONFactory.proteinCDSParamsJSON(libraryID))    					
+		    Ok(jsonObject)
+          }
+          case _ => Redirect(routes.Application.login).withNewSession
+        }	    
+      }
+      case _ => Redirect(routes.Application.login).withNewSession
+    }
   }
   
   def rk = Action {
