@@ -26,20 +26,8 @@ $(document).ready(function(){
     loadArrayScripts("", scripts,
         loadArrayScripts("lib/", libraries,
             loadPageScript()));
-    jsRoutes.controllers.Application.getlibrary().ajax({
-        success: function(response) {
-            parseLibrary(response);
-            makeProteinList();
-            notify("Protein library successfully loaded!", "success");
-        },
-        error: function(response) { alertError(response)}
-    });
     wrapModals();
     getAvailableLibraries();
-    if(proteinLibrary == null){
-
-        setupModal.modal("show");
-    }
 });
 
 function wrapModals(){
@@ -186,4 +174,8 @@ function completeSimulation(){
         },
         error: function(response) { alertError(response)}
     });
+}
+
+function applySetup(){
+    getLibrary($("#librarySelector option:selected")[0].value);
 }
