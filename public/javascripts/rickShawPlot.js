@@ -27,7 +27,7 @@ function parseJSONdataRickShaw(response){
 /**
 Plots the received data in a interactive plot.
 */
-function drawGraph(responc) {
+function drawGraph(series) {
 
     if(!$('#chart').is(":empty")){
         $('#chart').empty();

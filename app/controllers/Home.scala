@@ -13,7 +13,7 @@ object Home extends Controller with Secured{
     
   def home = IsAuthenticated { email => _ =>
       User.findByEmail(email).map { user =>
-        Ok(html.home("Home")(Html.apply(homeText)))
+        Ok(html.home("Home")(Html.apply(homeText))).withSession("user"->User.findByEmail(email).get.toString)
       }.getOrElse(Forbidden)
   }
   

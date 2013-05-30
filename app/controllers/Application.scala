@@ -4,6 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import play.api.mvc.BodyParsers.parse
 import models.Rungekuttatest
 import libs.json.{Json, __}
 
@@ -52,6 +53,7 @@ object Application extends Controller {
       Routes.javascriptRouter("jsRoutes")(
         routes.javascript.Application.jsontest,
         routes.javascript.Application.getlibrary,
+        routes.javascript.Application.getCooking,
         routes.javascript.Application.getalllibraries,
         routes.javascript.Application.simulate
       )
@@ -102,7 +104,7 @@ object Application extends Controller {
   }
 
   def jsontest = Action {
-    Ok(Rungekuttatest().genJson)
+    Ok(Rungekuttatest().genJson).as("text/plain")
   }
 
   def canvastest = Action {
@@ -123,6 +125,16 @@ object Application extends Controller {
 
   def rungekutta = Action {
     Ok(views.html.rungekutte("Testing the plot and rungeKutta", rkt))
+  }
+
+  def getCooking = Action(parse.json) { implicit request =>
+    /*val body = request.body
+    val data = body.asText
+    if(data.isEmpty)
+        BadRequest("Sorry, you need to provide data.")
+    else*/
+        Ok(Network.fromJSON(request.body).simJson(1500.0)).as("text/plain")
+        //Ok("blA")
   }
 }
 
