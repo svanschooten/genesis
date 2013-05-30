@@ -8,7 +8,7 @@ Authors:
 //Load all the javascript libraries except for jQuery
 var libraries = [ 'bootstrap.min.js',
                 'element-min.js',
-                'jquery-ui-1.10.2.min.js',
+                //'jquery-ui-1.10.2.min.js',
                 'jquery.jsPlumb-1.4.0-all-min.js',
                 'jquery.ui.touch-punch.min.js'];
 

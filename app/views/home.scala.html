@@ -2,14 +2,15 @@
 
 @head = {
 	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/home.css")">
-    <link href=@routes.Assets.at(
-    "stylesheets/rickshaw.min.css") rel='stylesheet' />
-    <link href=@routes.Assets.at(
-    "stylesheets/main.css") rel='stylesheet' />
-    <link href=@routes.Assets.at(
-    "stylesheets/jquery-ui-1.10.2.min.css") rel='stylesheet' />
-    <script src="@routes.Assets.at("javascripts/proteins.js")" type="text/javascript"></script>
-}
+    <link href=@routes.Assets.at("stylesheets/rickshaw.min.css") rel='stylesheet' />
+    <link href=@routes.Assets.at("stylesheets/main.css") rel='stylesheet' />
+    <script src=@routes.Assets.at("javascripts/lib/jquery-ui-1.9.2.js") ></script> 
+	<script src=@routes.Assets.at("javascripts/lib/jquery.jsPlumb-1.4.0-all-min.js") ></script>
+	<script src=@routes.Assets.at("javascripts/plumbWorkspace.js") ></script>
+	<script src=@routes.Assets.at("javascripts/proteins.js") ></script>
+	
+    }
+
 
 @main(title)(head) {
     @modals()
@@ -66,13 +67,17 @@
 			<div id="plumbArea" class="application-canvas span9">
 			</div>
 			<div class="application-sidebar span3">
-				<div id="standard-gates">
-					<button class="btn btn-block" onclick="andGate()">Add And gate</button>
-    				<button class="btn btn-block" onclick="notGate()">Add Not gate</button>
-				</div>
-				<div id="non-standard-gates">
-					Not Standard
-				</div>
+					<br></br>
+					<div>
+					<code id="ag" class = "product" style="padding: 32px 8px;border:1px solid black;">And gate</code>
+					<code id="ng" class = "product" style="padding: 32px 12px;border:1px solid black;">Not gate</code>
+					</div>
+					<br></br>
+					<code>Modified gates :</code>
+					<div>
+    				<button onclick="logCircuit()">Print circuit to log</button>
+    				<button onclick="parseJsPlumbTest()">Test JSON</button>
+					</div>
 			</div>
 		</div>
     </div>

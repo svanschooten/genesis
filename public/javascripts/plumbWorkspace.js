@@ -85,6 +85,12 @@ function makeConnection(params) {
     params.connection.protein = "";
     params.connection.addOverlay([ "Arrow", { width:15, location: 0.7,height:10, id:"arrow" }]);
     params.connection.bind("click", function(connection){ openProteinModal(connection) });
+    params.connection.bind("contextmenu", function(connection){ 
+    		if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
+					jsPlumb.detach(connection);
+			}
+			return false;
+			});
     return true;
 }
 
