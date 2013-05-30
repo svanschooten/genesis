@@ -50,7 +50,7 @@ class NetworkSpec extends Specification {
             val A = CodingSeq("A",concs.zip(concs),isInput=true)
             val C = CodingSeq("C",isInput=false)
             val AtoB = NotGate(A,C)
-            val net = new Network(List(A))
+            val net = new Network(List(A),-1,"")
             val results = net.simulate(1500.0)
             // expected results generated using MATLAB R2012b
             // A: 1 1
@@ -70,7 +70,7 @@ class NetworkSpec extends Specification {
             val B = CodingSeq("B",concs.zip(concs),isInput=true)
             val C = CodingSeq("C",isInput=false)
             val ABtoC = AndGate((A,B),C)
-            val net = new Network(List(A,B))
+            val net = new Network(List(A,B),-1,"")
             val results = net.simulate(1500.0)
             // expected results generated using MATLAB R2012b
             // A: 1 1
@@ -94,7 +94,7 @@ class NetworkSpec extends Specification {
     	   val listName = List("mRNA_A", "protein_A")
     	   val concs = List.fill(3)(1.0)
            val A = CodingSeq("A",concs.zip(concs),isInput=true)
-           val net = new Network(List(A))
+           val net = new Network(List(A),-1,"")
     	   val json = net.simJson(1.0)
     	   val jsonName = (json \\ "name").map(_.as[String])
     	   jsonName must equalTo(listName)

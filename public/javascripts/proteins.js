@@ -61,9 +61,9 @@ function updateParameters(){
 
 function getLibrary(libraryId){
     jsRoutes.controllers.Application.getlibrary().ajax({
-        type: "POST",
-        dataType: "JSON",
-        data: {id: libraryId},
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({id: libraryId}),
         success: function(response) {
             parseLibrary(response);
             makeProteinList();

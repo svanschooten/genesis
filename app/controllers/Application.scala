@@ -43,7 +43,9 @@ object Application extends Controller {
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => Redirect(routes.Home.home).withSession("email" -> user._1)
+      user => {
+        println(user)
+        Redirect(routes.Home.home).withSession("email" -> user._1)}
     )
   }
 
@@ -79,17 +81,18 @@ object Application extends Controller {
     }
   }
 
-  def getlibrary = Action { implicit request =>
-    request.body.asFormUrlEncoded match {
-      case Some(map) => {
-        val libraryId = Integer.parseInt(map.head._2.head)
-        val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(libraryId),
-          "not"->ProteinJSONFactory.proteinNotParamsJSON(libraryId),
-          "cds"->ProteinJSONFactory.proteinCDSParamsJSON(libraryId))
-        Ok(jsonObject).as("plain/text")
+  def getlibrary = Action(parse.json) { implicit request =>
+      val libraryId = (request.body \ "id").asOpt[Int]
+      libraryId match{
+        case Some(id) => {
+          val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(id),
+            "not"->ProteinJSONFactory.proteinNotParamsJSON(id),
+            "cds"->ProteinJSONFactory.proteinCDSParamsJSON(id))
+          Ok(jsonObject).as("plain/text")
+        }
+        case _ => BadRequest("invalid JSON")
       }
-      case _ => BadRequest("Faulty JSON")
-    }
+
   }
   
   def rk = Action {
