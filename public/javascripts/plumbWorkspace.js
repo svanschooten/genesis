@@ -4,6 +4,7 @@ Authors:
 */
 
 //Globals
+var gateid = 0
 var circuit = new Array();
 var endpointOptions = { isTarget:true, isSource:true };
 var connectorPaintStyle = {
@@ -123,7 +124,7 @@ function addEndPoints(inputs, outputs, element) {
                 connectorStyle: connectorPaintStyle,
                 hoverPaintStyle: endpointHoverStyle,
                 connectorHoverStyle: connectorHoverStyle,
-                maxConnections:-1,
+                //maxConnections:-1,
                 anchor: [1, (1 / (outputs+1)) * (i + 1), 1, 0],
                 ConnectionOverlays : [ [ "Label", {label:" ", location: 0.25, cssClass: "aLabel", id:"label"}]],
             }
@@ -147,12 +148,14 @@ function parseJsPlumb() {
     network.vertices = new Array();
     network.edges = new Array();
     for(i = 0; i < circuit.length; i++) {
-        network.vertices.push({
-            id: circuit[i].id,
-            type: circuit[i].type,
-            x: circuit[i].x,
-            y: circuit[i].y
-        });
+        if(circuit[i] != null){
+            network.vertices.push({
+                id: circuit[i].id,
+                type: circuit[i].type,
+                x: circuit[i].x,
+                y: circuit[i].y
+            });
+        }
     }
     for(i = 0; i < plumb.length; i++) {
         network.edges.push({
@@ -213,9 +216,26 @@ function Gate(name, inputs, outputs, image,px,py) {
     this.x = gate.position().left;
     this.y = gate.position().top;
 
+	
     addEndPoints(inputs, outputs, this);
     makeDraggable(gate, this);
     circuit.push(this);
+    
+    $('#'+	this.id).bind('contextmenu', {gate: this}, function(event){
+		if(confirm("Delete this gate?")){
+			
+			gate = event.data.gate
+			i = circuit.indexOf(gate);
+			if(~i){
+				circuit[i] = null; // Replace instead of remove because the ids depend on circuit.length...
+			}
+			
+			jsPlumb.detachAllConnections(this);
+			jsPlumb.removeAllEndpoints(this);
+			$(this).remove();
+		}
+		return false;
+	});
 }
 
 /**

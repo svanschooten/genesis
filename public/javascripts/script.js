@@ -165,18 +165,25 @@ function beginSimulation(){
 function completeSimulation(){
     //TODO Checken van inputsignalen
     inputs = $("#signalArea")[0].value;
-    var simulateData = {circuit: parseJsPlumb(), inputs: inputs};
-    jsRoutes.controllers.Application.getCooking().ajax({
-        data: JSON.stringify(simulateData),
-        method: "POST",
-        contentType: "application/json",
-        success: function(response) {
-            drawGraph(parseJSONdataRickShaw(response));
-            signalModal.modal("hide");
-            resultModal.modal("show");
-        },
-        error: function(response) { alertError(response)}
-    });
+    //TODO Checken van inputsignalen
+    if(inputs == ""){
+        $("#signalErrorDiv").text("No input signal given.")
+    } else {
+        signalModal.modal("hide");
+        var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, time: timeSpan, steps: numSteps};
+        // jsRoutes.controllers.Application.simulate().ajax({
+        jsRoutes.controllers.Application.getCooking().ajax({
+            data: JSON.stringify(simulateData),
+            method: "POST",
+            contentType: "application/json",
+            success: function(response) {
+                drawGraph(parseJSONdataRickShaw(response));
+                signalModal.modal("hide");
+                resultModal.modal("show");
+            },
+            error: function(response) { alertError(response)}
+        });
+    }
 }
 
 function showSetup(){
@@ -198,6 +205,11 @@ function applySetup(){
         numSteps = $("#simSteps")[0].value;
         console.log(lib + " " + name + " " + timeSpan + " " + numSteps);
         setupModal.modal("hide");
+        
+		var gin = new Gate("Input", 0, 1, null, 30, 30);
+        var gout = new Gate("Output", 1, 0, null, 130, 130);
+        
+        // TODO: When setup is newly applied, remove old in- and output gates
     }
 
 }
