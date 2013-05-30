@@ -83,17 +83,16 @@ object Application extends Controller {
     println(request.body)
     request.body.asJson match {
       case Some(id) => {
-        val libraryID = id.as[Int]
-        println(libraryID)
+        val libraryID = 0 //id.as[Int]
 	  	request.session.get("email") match{
 	      case Some(email) => {
 	        User.findByEmail(email) match{
 	          case Some(u) => {
 	            val userID = u.id
-	            println("userid:"+userID+" libraryName:"+id)
-			    val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(0),
-			    					"not"->ProteinJSONFactory.proteinNotParamsJSON(0),
-			    					"cds"->ProteinJSONFactory.proteinCDSParamsJSON(0))    					
+	            println("userid:"+userID)
+			    val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(libraryID),
+			    					"not"->ProteinJSONFactory.proteinNotParamsJSON(libraryID),
+			    					"cds"->ProteinJSONFactory.proteinCDSParamsJSON(libraryID))    					
 			    println(jsonObject)
 			    Ok(jsonObject).as("plain/text")
 	          }
