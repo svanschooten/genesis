@@ -17,6 +17,9 @@ import play.api.libs.json._
  */
 class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String, stepSize: Double = 1) {
 
+    println("look at me, I have inputs: ")
+    inputs.foreach(println _)
+
     // resets all the ready flags
     private def reset_readies(cs: CodingSeq) {
         cs.ready=false
@@ -349,6 +352,8 @@ object Network {
      */
     def fromJSON(json: JsValue) = {
         val net_name = (json \ "name").as[String]
+        println(json \ "library")
+        val libraryID = (json \ "library").as[String].toInt
 
         // parse the network
         val jsVertices = (json \ "circuit" \ "vertices").as[List[JsValue]]
@@ -360,7 +365,7 @@ object Network {
             val src = (e \ "source").as[String]
             val csName = (e \ "protein").as[String]
             if(!csMap.contains(csName)) {
-                val cs = CodingSeq(csName, -1, List((0,0)), false)
+                val cs = CodingSeq(csName, libraryID, List((0,0)), false)
                 // startsWith can be replaced by == once the setup only generates
                 // the source and sink "gates" once
                 if(src.startsWith("Input"))
@@ -387,13 +392,13 @@ object Network {
             if(gateType == "not") {
                 val inCS = csMap(destToCSMap(id))
                 val outCS = csMap(srcToCSMap(id))
-                NotGate(inCS,outCS) // TODO figure out the library ID
+                NotGate(inCS,outCS,libraryID)
             }
             if(gateType == "and") {
                 val inCS1 = csMap(destToCSMap(id+"1"))
                 val inCS2 = csMap(destToCSMap(id+"2"))
                 val outCS = csMap(srcToCSMap(id))
-                AndGate((inCS1,inCS2),outCS)
+                AndGate((inCS1,inCS2),outCS,libraryID)
             }
         })
         val time = (json \ "time").as[Double]
