@@ -39,7 +39,7 @@ object ProteinJSONFactory {
   		  case in1~in2~k1~km~n => (in1,in2,k1,km,n)
   		} *
       }
-      Json.arr(results.map(data => {
+      Json.toJson(results.map(data => {
             Json.obj("input1"->data._1,"input2"->data._2,"k1"->data._3,"km"->data._4,"n"->data._5)
       }))
     }
@@ -57,7 +57,7 @@ object ProteinJSONFactory {
   		  case in1~in2~k1~km~n if(in2==input1) => (in1,k1,km,n)
   		} *
       }
-      Json.arr(results.map(data => {
+      Json.toJson(results.map(data => {
         Json.obj(data._1 ->
             Json.obj("k1"-> data._2,"km"-> data._3,"n"-> data._4))
       }))
@@ -73,7 +73,7 @@ object ProteinJSONFactory {
   		  case in~k1~km~n => (in,k1,km,n)
   		} *
       }
-      Json.arr(results.map(data => {
+      Json.toJson(results.map(data => {
         Json.obj(data._1 ->
             Json.obj("k1"-> data._2,"km"-> data._3,"n"-> data._4))
       }))
@@ -89,7 +89,7 @@ object ProteinJSONFactory {
   		  case name~k2~d1~d2 => (name,k2,d1,d2)
   		} *
       }
-      Json.arr(results.map(data => {
+      Json.toJson(results.map(data => {
         Json.obj(data._1 ->
             Json.obj("k2"-> data._2,"d1"-> data._3,"d2"-> data._4))
       }))

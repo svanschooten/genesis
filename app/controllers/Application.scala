@@ -66,45 +66,30 @@ object Application extends Controller {
   }
   
   def getalllibraries = Action { implicit request =>
-    request.session.get("email") match{
+    request.session.get("user") match{
       case Some(email) => {
         User.findByEmail(email) match{
           case Some(u) => {
             Ok(ProteinJSONFactory.libraryListJSON(u.id)).as("text/plain")
           }
-          case _ => Redirect(routes.Application.login)
+          case _ => BadRequest("No user found")
         }
       }
-      case _ => Redirect(routes.Application.login)
+      case _ => BadRequest("No email found")
     }
   }
 
   def getlibrary = Action { implicit request =>
-    println(request.body)
-    request.body.asJson match {
-      case Some(id) => {
-        val libraryID = 0 //id.as[Int]
-	  	request.session.get("email") match{
-	      case Some(email) => {
-	        User.findByEmail(email) match{
-	          case Some(u) => {
-	            val userID = u.id
-	            println("userid:"+userID)
-			    val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(libraryID),
-			    					"not"->ProteinJSONFactory.proteinNotParamsJSON(libraryID),
-			    					"cds"->ProteinJSONFactory.proteinCDSParamsJSON(libraryID))    					
-			    println(jsonObject)
-			    Ok(jsonObject).as("plain/text")
-	          }
-	          case _ => Redirect(routes.Application.login)
-	        }	    
-	      }
-	      case _ => Redirect(routes.Application.login)
-	    }
+    request.body.asFormUrlEncoded match {
+      case Some(map) => {
+        val libraryId = Integer.parseInt(map.head._2.head)
+        val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(libraryId),
+          "not"->ProteinJSONFactory.proteinNotParamsJSON(libraryId),
+          "cds"->ProteinJSONFactory.proteinCDSParamsJSON(libraryId))
+        Ok(jsonObject).as("plain/text")
       }
-      case _ => Redirect(routes.Application.login)
+      case _ => BadRequest("Faulty JSON")
     }
-    
   }
   
   def rk = Action {
