@@ -6,7 +6,7 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc.BodyParsers.parse
 import models.Rungekuttatest
-import libs.json.{Json, __}
+import libs.json.{JsResult, Json, __}
 
 import models._
 import views._
@@ -43,9 +43,7 @@ object Application extends Controller {
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => {
-        println(user)
-        Redirect(routes.Home.home).withSession("email" -> user._1)}
+      user => Redirect(routes.Home.home).withSession("email" -> user._1)
     )
   }
 
@@ -82,17 +80,11 @@ object Application extends Controller {
   }
 
   def getlibrary = Action(parse.json) { implicit request =>
-      val libraryId = (request.body \ "id").asOpt[Int]
-      libraryId match{
-        case Some(id) => {
-          val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(id),
-            "not"->ProteinJSONFactory.proteinNotParamsJSON(id),
-            "cds"->ProteinJSONFactory.proteinCDSParamsJSON(id))
-          Ok(jsonObject).as("plain/text")
-        }
-        case _ => BadRequest("invalid JSON")
-      }
-
+    val id = Integer.parseInt((request.body \ "id").as[String])
+    val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(id),
+      "not"->ProteinJSONFactory.proteinNotParamsJSON(id),
+      "cds"->ProteinJSONFactory.proteinCDSParamsJSON(id))
+    Ok(jsonObject).as("plain/text")
   }
   
   def rk = Action {
@@ -124,7 +116,6 @@ object Application extends Controller {
   }
 
   def getCooking = Action(parse.json) { implicit request =>
-    println(request.body)
     /*val body = request.body
     val data = body.asText
     if(data.isEmpty)

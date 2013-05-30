@@ -170,7 +170,7 @@ function completeSimulation(){
         $("#signalErrorDiv").text("No input signal given.")
     } else {
         signalModal.modal("hide");
-        var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, time: timeSpan, steps: numSteps};
+        var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, time: timeSpan, steps: numSteps, library: selectedLibrary};
         // jsRoutes.controllers.Application.simulate().ajax({
         jsRoutes.controllers.Application.getCooking().ajax({
             data: JSON.stringify(simulateData),

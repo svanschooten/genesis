@@ -12,6 +12,7 @@ var proteinLibrary = [
     {name:"piet", pk1:0.846, pkm:0.9954, pn:0.1457},
     {name:"kees", pk1:1.024, pkm:2.476, pn:0.0864}];//new Array();
 var selectedProtein = "";
+var selectedLibrary = -1;
 
 function makeProteinList(){
     for(i = 0; i < proteinLibrary.length; i++) {
@@ -65,6 +66,7 @@ function getLibrary(libraryId){
         contentType: "application/json",
         data: JSON.stringify({id: libraryId}),
         success: function(response) {
+            selectedLibrary = libraryId;
             parseLibrary(response);
             makeProteinList();
             notify("Protein library successfully loaded!", "success");
