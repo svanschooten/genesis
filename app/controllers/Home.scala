@@ -6,6 +6,7 @@ import play.api.data.Forms._
 import play.api.templates.Html
 import models._
 import views._
+import factories._
 
 object Home extends Controller with Secured{
   
@@ -13,7 +14,7 @@ object Home extends Controller with Secured{
     
   def home = IsAuthenticated { email => _ =>
       User.findByEmail(email).map { user =>
-        Ok(html.home("Home")(Html.apply(homeText))).withSession("user"->User.findByEmail(email).get.toString)
+        Ok(html.home("Home")(Html.apply(homeText))).withSession("user"->email)
       }.getOrElse(Forbidden)
   }
   

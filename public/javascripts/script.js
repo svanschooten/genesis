@@ -203,7 +203,6 @@ function applySetup(){
         circuitName = name;
         timeSpan = $("#simTimeSpan")[0].value;
         numSteps = $("#simSteps")[0].value;
-        console.log(lib + " " + name + " " + timeSpan + " " + numSteps);
         setupModal.modal("hide");
         
 		var gin = new Gate("Input", 0, 1, null, 30, 30);

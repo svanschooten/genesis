@@ -25,6 +25,7 @@ var dropOptions = {
 
 var jsp;
 var currentConnection = null;
+var gateHeight = 80, gateWith = 80;
 
 
 /**
@@ -62,13 +63,13 @@ function openProteinModal(connection){
 function setProtein() {
 
     //TODO Protein selectie en controle
-    if(selectedProtein == null){
+    if(selectedProtein == ""){
         alertError("Invalid protein selection!");
         return;
     }
     currentConnection.protein = selectedProtein;
     currentConnection.removeOverlay("label");
-    currentConnection.addOverlay([ "Label", {label: selectedProtein.name, location: 0.3, cssClass: "aLabel", id:"label"}]);
+    currentConnection.addOverlay([ "Label", {label: selectedProtein, location: 0.3, cssClass: "aLabel", id:"label"}]);
     proteinModal.modal("hide");
 }
 
@@ -86,11 +87,11 @@ function makeConnection(params) {
     params.connection.addOverlay([ "Arrow", { width:15, location: 0.7,height:10, id:"arrow" }]);
     params.connection.bind("click", function(connection){ openProteinModal(connection) });
     params.connection.bind("contextmenu", function(connection){ 
-    		if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
-					jsPlumb.detach(connection);
-			}
-			return false;
-			});
+        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
+            jsPlumb.detach(connection);
+        }
+        return false;
+        });
     return true;
 }
 
@@ -209,7 +210,11 @@ function Gate(name, inputs, outputs, image,px,py) {
         gate.css("border", "1px solid black");
         text.text(this.id);
     } else {
-        gate.css("background-image", image);
+        $("<img>",{
+            src: image,
+            height: gateHeight,
+            width: gateWith
+        }).appendTo(gate);
     }
 
 
@@ -250,14 +255,14 @@ function Protein(id, data) {
 Wrapper for simple creation of AND gates
 */
 function andGate(posx,posy) {
-    var gate = new Gate("and", 2, 1, null,posx,posy);
+    var gate = new Gate("and", 2, 1, "assets/images/AND_gate.png",posx,posy);
 };
 
 /**
 Wrapper for simple creation of NOT gates
 */
 function notGate(posx,posy) {
-    var gate = new Gate("not", 1, 1, null,posx,posy);
+    var gate = new Gate("not", 1, 1, "assets/images/NOT_gate.png",posx,posy);
 };
 
 

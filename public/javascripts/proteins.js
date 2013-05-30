@@ -11,7 +11,7 @@ var proteinLibrary = [
     {name:"klaas", pk1:1.5421, pkm:1.544, pn:0.0476},
     {name:"piet", pk1:0.846, pkm:0.9954, pn:0.1457},
     {name:"kees", pk1:1.024, pkm:2.476, pn:0.0864}];//new Array();
-var selectedProtein = null;
+var selectedProtein = "";
 
 function makeProteinList(){
     for(i = 0; i < proteinLibrary.length; i++) {
@@ -31,14 +31,16 @@ function makeProteinList(){
         $("<br>").appendTo($("#proteinListDiv"));
     }
     $(".proteinSelector").click(function(){
-        selectedProtein = findProtein($(this)[0].value);
+        selectedProtein = $(this)[0].value;
         updateParameters();
     })
 }
 
 function parseLibrary(json) {
-    console.log(json.and[0]);
-    return true;
+	//console.log(json)
+	
+    //proteinLibrary = [{name:"nieuw", pk1:0.145, pkm:2.14, pn:0.0124}]
+    //console.log(proteinLibrary)
 }
 
 function findProtein(name) {
@@ -59,6 +61,8 @@ function updateParameters(){
 
 function getLibrary(libraryId){
     jsRoutes.controllers.Application.getlibrary().ajax({
+        type: "POST",
+        dataType: "JSON",
         data: {id: libraryId},
         success: function(response) {
             parseLibrary(response);
