@@ -51,7 +51,8 @@ object Application extends Controller {
       Routes.javascriptRouter("jsRoutes")(
         routes.javascript.Application.jsontest,
         routes.javascript.Application.getlibrary,
-        routes.javascript.Application.simulate
+        routes.javascript.Application.simulate,
+        routes.javascript.Application.getCooking
       )
     ).as("text/javascript")
   }
@@ -63,8 +64,8 @@ object Application extends Controller {
 
   def getlibrary = Action { implicit request =>
     val libraryName = request.body
-    //Hoe haal je hier de ID op van de ingelogde user?
-    val userID = -1
+    //Hoe haal je hier de ID op van de ingelogde user? via implicit session:
+    val userID = session.apply("user").asInstanceOf[Int]
     val libraryID = FileParser.getLibraryID(userID,"") // <----
     Ok("temporary")
     //Ok(ProteinJSONFactory.proteinParamsJSON("CDS", libraryID))
@@ -75,7 +76,7 @@ object Application extends Controller {
   }
 
   def jsontest = Action {
-    Ok(Rungekuttatest().genJson)
+    Ok(Rungekuttatest().genJson).as("text/plain")
   }
 
   def canvastest = Action {
@@ -96,6 +97,15 @@ object Application extends Controller {
 
   def rungekutta = Action {
     Ok(views.html.rungekutte("Testing the plot and rungeKutta", rkt))
+  }
+
+  def getCooking = Action { implicit request =>
+    val v = request.getQueryString("input")
+    if(v.isEmpty)
+        BadRequest("Sorry, I need a network in the 'input' get variable.")
+    else
+        //Ok(Network.fromJSON(v.get).simJson(1500.0)).as("text/plain")
+        Ok("blA")
   }
 }
 
