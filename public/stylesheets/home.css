@@ -174,3 +174,8 @@ header {
     align: middle;
     display: inline;
 }
+
+.product{
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
