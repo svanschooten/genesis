@@ -15,7 +15,7 @@ var libraries = [ 'bootstrap.min.js',
 //Load all the standard scripts. If page specific, extend loadPageScript()
 var scripts = [  ];
 
-var proteinModal, resultModal, signalModal;
+var proteinModal, resultModal, signalModal, setupModal;
 
 /**
 Method that fires when the document is loaded.
@@ -26,19 +26,16 @@ $(document).ready(function(){
     loadArrayScripts("", scripts,
         loadArrayScripts("lib/", libraries,
             loadPageScript()));
-    jsRoutes.controllers.Application.getlibrary().ajax({
-        success: function(response) {
-            parseLibrary(response);
-            makeProteinList();
-            notify("Protein library successfully loaded!", "success");
-        },
-        error: function(response) { alertError(response)}
-    });
+    wrapModals();
+    getAvailableLibraries();
+});
+
+function wrapModals(){
     proteinModal = $("#proteinModal");
     resultModal = $("#resultModal");
     signalModal = $("#signalModal");
-
-});
+    setupModal = $("#setupModal");
+}
 
 
 /**
@@ -177,4 +174,8 @@ function completeSimulation(){
         },
         error: function(response) { alertError(response)}
     });
+}
+
+function applySetup(){
+    getLibrary($("#librarySelector option:selected")[0].value);
 }
