@@ -63,7 +63,8 @@ object Application extends Controller {
   }
 
   def getlibrary = Action { implicit request =>
-    val libraryName = request.body
+    val libraryName = request.body.toString
+    System.out.println(libraryName)
     //Hoe haal je hier de ID op van de ingelogde user?
     val userID = -1
     val libraryID = FileParser.getLibraryID(userID,"") // <----

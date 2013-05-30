@@ -71,7 +71,7 @@ function getLibrary(libraryName){
 function getAvailableLibraries(){
     jsRoutes.controllers.Application.getalllibraries().ajax({
         success: function(response) {
-            setupLibrarySelector(Json.parseJSON(response));
+            setupLibrarySelector($.parseJSON(response));
         },
         error: function(response) { alertError(response)}
     });
