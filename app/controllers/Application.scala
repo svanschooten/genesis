@@ -68,9 +68,7 @@ object Application extends Controller {
       case Some(email) => {
         User.findByEmail(email) match{
           case Some(u) => {
-            val res = ProteinJSONFactory.libraryListJSON(u.id)
-            println("baa "+res)
-            Ok(res).as("text/plain")
+            Ok(ProteinJSONFactory.libraryListJSON(u.id)).as("text/plain")
           }
           case _ => Redirect(routes.Application.login)
         }
