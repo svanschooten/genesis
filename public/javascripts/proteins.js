@@ -37,7 +37,10 @@ function makeProteinList(){
 }
 
 function parseLibrary(json) {
-    return true;
+	//console.log(json)
+	
+    //proteinLibrary = [{name:"nieuw", pk1:0.145, pkm:2.14, pn:0.0124}]
+    //console.log(proteinLibrary)
 }
 
 function findProtein(name) {
