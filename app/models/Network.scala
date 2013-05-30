@@ -349,4 +349,53 @@ object Network {
 		  idResult.head[Int]("networkid") 
 	    }
     }
+
+    /**
+     *  Generate a new Network based on JSON input.
+     */
+    def fromJSON(input: String) = {
+        val json = Json.parse(input)
+        val jsVertices = (json \ "vertices").as[List[JsValue]]
+        val jsEdges = (json \ "edges").as[List[JsValue]]
+        // map from protein name to actual CS
+        val csMap = scala.collection.mutable.Map[String,CodingSeq]()
+        // map from source of an edge to protein name for that edge
+        val srcToCSMap = jsEdges.foldLeft(Map[String,String]())((m,e) => {
+            val src = (e \ "source").as[String]
+            val csName = (e \ "protein").as[String]
+            if(!csMap.contains(csName)) {
+                val cs = CodingSeq(csName, -1, List((0,0)), false)
+                csMap+= csName -> cs
+            }
+            m + (src -> csName)
+        })
+        // map from destination of an edge to protein name for that edge
+        val destToCSMap = jsEdges.foldLeft(Map[String,String]())((m,e) => {
+            val dest = (e \ "target").as[String]
+            val csName = (e \ "protein").as[String]
+            if(m.contains(dest+"1"))
+                m + (dest+"2" -> csName)
+            else
+                m + (dest+"1" -> csName)
+        })
+        // list of inputs for the network
+        val inputs = List[CodingSeq]()
+
+        jsVertices.foreach(v => {
+            val id = (v \ "id").as[String]
+            val gateType = (v \ "type").as[String]
+            if(gateType == "not") {
+                val inCS = csMap(destToCSMap(id))
+                val outCS = csMap(srcToCSMap(id))
+                NotGate(inCS,outCS) // TODO figure out the library ID
+            }
+            if(gateType == "and") {
+                val inCS1 = csMap(destToCSMap(id+"1"))
+                val inCS2 = csMap(destToCSMap(id+"2"))
+                val outCS = csMap(srcToCSMap(id))
+                AndGate((inCS1,inCS2),outCS)
+            }
+        })
+        (new Network(inputs.toList,-1,"network")).simJson(1500.0)
+    }
 }
