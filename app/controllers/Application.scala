@@ -128,13 +128,7 @@ object Application extends Controller {
   }
 
   def getCooking = Action(parse.json) { implicit request =>
-    /*val body = request.body
-    val data = body.asText
-    if(data.isEmpty)
-        BadRequest("Sorry, you need to provide data.")
-    else*/
-        Ok(Network.fromJSON(request.body).simJson(1500.0)).as("text/plain")
-        //Ok("blA")
+    Ok(Network.fromJSON(request.body)).as("text/plain")
   }
 }
 
