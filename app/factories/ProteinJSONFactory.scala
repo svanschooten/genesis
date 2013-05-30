@@ -17,15 +17,15 @@ object ProteinJSONFactory {
   
   def libraryListJSON(userID: Int) = {
     DB.withConnection { implicit connection =>
-      val results = SQL("select * from proteinlibraries where userid={userid}")
+      val results = SQL("select * from proteinlibraries where userid={userid} or userid=-1")
       .on('userid -> userID)
       .as{
   		get[String]("libraryname")~get[Int]("libraryid") map{
   		  case lbname~lbid => (lbname,lbid)
   		} *
       }
-      Json.arr(results.map(data => {
-    	  Json.obj("libraryname"->data._1, "libraryid"->data._2)
+      Json.toJson(results.map(data => {
+    	  Json.obj("libraryname"->data._1,"libraryId"->data._2)
       	}))
       }
     }
