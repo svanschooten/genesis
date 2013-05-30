@@ -166,9 +166,10 @@ function completeSimulation(){
     //TODO Checken van inputsignalen
     inputs = $("#signalArea")[0].value;
     var simulateData = {circuit: parseJsPlumb(), inputs: inputs};
-    // jsRoutes.controllers.Application.simulate().ajax({
     jsRoutes.controllers.Application.getCooking().ajax({
-        data: "input="+JSON.stringify(simulateData),
+        data: JSON.stringify(simulateData),
+        method: "POST",
+        contentType: "application/json",
         success: function(response) {
             drawGraph(parseJSONdataRickShaw(response));
             signalModal.modal("hide");

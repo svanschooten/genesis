@@ -353,10 +353,9 @@ object Network {
     /**
      *  Generate a new Network based on JSON input.
      */
-    def fromJSON(input: String) = {
-        val json = Json.parse(input)
-        val jsVertices = (json \ "vertices").as[List[JsValue]]
-        val jsEdges = (json \ "edges").as[List[JsValue]]
+    def fromJSON(json: JsValue) = {
+        val jsVertices = (json \ "circuit" \ "vertices").as[List[JsValue]]
+        val jsEdges = (json \ "circuit" \ "edges").as[List[JsValue]]
         // map from protein name to actual CS
         val csMap = scala.collection.mutable.Map[String,CodingSeq]()
         // map from source of an edge to protein name for that edge
@@ -396,6 +395,6 @@ object Network {
                 AndGate((inCS1,inCS2),outCS)
             }
         })
-        (new Network(inputs.toList,-1,"network")).simJson(1500.0)
+        new Network(inputs.toList,-1,"network")
     }
 }

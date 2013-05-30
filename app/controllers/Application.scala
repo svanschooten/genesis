@@ -4,6 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import play.api.mvc.BodyParsers.parse
 import models.Rungekuttatest
 import libs.json.{Json, __}
 
@@ -126,13 +127,14 @@ object Application extends Controller {
     Ok(views.html.rungekutte("Testing the plot and rungeKutta", rkt))
   }
 
-  def getCooking = Action { implicit request =>
-    val v = request.getQueryString("input")
-    if(v.isEmpty)
-        BadRequest("Sorry, I need a network in the 'input' get variable.")
-    else
-        //Ok(Network.fromJSON(v.get).simJson(1500.0)).as("text/plain")
-        Ok("blA")
+  def getCooking = Action(parse.json) { implicit request =>
+    /*val body = request.body
+    val data = body.asText
+    if(data.isEmpty)
+        BadRequest("Sorry, you need to provide data.")
+    else*/
+        Ok(Network.fromJSON(request.body).simJson(1500.0)).as("text/plain")
+        //Ok("blA")
   }
 }
 
