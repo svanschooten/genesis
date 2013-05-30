@@ -5,7 +5,7 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import models.Rungekuttatest
-import play.api.libs.json._
+import libs.json.{Json, __}
 
 import models._
 import views._
@@ -28,7 +28,6 @@ object Application extends Controller {
 
   /** Login page. */
   def login = Action { implicit request =>
-    println(ProteinJSONFactory.proteinAndParamsJSON("A",0))
     Ok(html.login(loginForm))
   }
   
@@ -43,7 +42,7 @@ object Application extends Controller {
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => Redirect(routes.Home.home).withSession("inlog" -> user._1)
+      user => Redirect(routes.Home.home).withSession("email" -> user._1)
     )
   }
 
@@ -70,13 +69,12 @@ object Application extends Controller {
       case Some(email) => {
         User.findByEmail(email) match{
           case Some(u) => {
-            val userID = u.id
-            Ok(ProteinJSONFactory.libraryListJSON(userID)).as("text/plain")
+            Ok(ProteinJSONFactory.libraryListJSON(u.id)).as("text/plain")
           }
-          case _ => Redirect(routes.Application.login).withNewSession
+          case _ => Redirect(routes.Application.login)
         }
       }
-      case _ => Redirect(routes.Application.login).withNewSession
+      case _ => Redirect(routes.Application.login)
     }
   }
 
@@ -142,7 +140,7 @@ object Application extends Controller {
 trait Secured {
   
   /** Retrieve the connected user. */
-  private def username(request: RequestHeader) = request.session.get("inlog")
+  private def username(request: RequestHeader) = request.session.get("email")
 
   private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Application.login)
   
