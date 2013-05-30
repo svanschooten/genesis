@@ -54,15 +54,9 @@ object Application extends Controller {
         routes.javascript.Application.jsontest,
         routes.javascript.Application.getlibrary,
         routes.javascript.Application.getCooking,
-        routes.javascript.Application.getalllibraries,
-        routes.javascript.Application.simulate
+        routes.javascript.Application.getalllibraries
       )
     ).as("text/javascript")
-  }
-
-  def simulate = Action { implicit request =>
-    val data = request.body.asJson
-    Ok("Hier moeten de resultaten in JSON komen")
   }
   
   def getalllibraries = Action { implicit request =>
