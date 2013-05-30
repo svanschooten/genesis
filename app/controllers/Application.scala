@@ -51,6 +51,7 @@ object Application extends Controller {
       Routes.javascriptRouter("jsRoutes")(
         routes.javascript.Application.jsontest,
         routes.javascript.Application.getlibrary,
+        routes.javascript.Application.getalllibraries,
         routes.javascript.Application.simulate
       )
     ).as("text/javascript")
@@ -68,6 +69,11 @@ object Application extends Controller {
     val libraryID = FileParser.getLibraryID(userID,"") // <----
     Ok("temporary")
     //Ok(ProteinJSONFactory.proteinParamsJSON("CDS", libraryID))
+  }
+
+  def getalllibraries = Action { implicit request =>
+    val libraries = "placeholder"
+    Ok(libraries).as("plain/text")
   }
   
   def rk = Action {

@@ -1,3 +1,18 @@
+<div id="setupModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="setupModalHeader">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        <h3 id="setupModalHeader" accesskey="">Choose your protein.</h3>
+    </div>
+    <div class="modal-body" id="setupModalBody">
+        <select name="librarySelector">
+            <option value="-1">Select a library.</option>
+        </select>
+    </div>
+    <div id="setupModalFooter" class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" onclick="applySetup()">Apply setup</button>
+    </div>
+</div>
 <div id="proteinModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="proteinModalHeader">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>

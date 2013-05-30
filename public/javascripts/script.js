@@ -15,7 +15,7 @@ var libraries = [ 'bootstrap.min.js',
 //Load all the standard scripts. If page specific, extend loadPageScript()
 var scripts = [  ];
 
-var proteinModal, resultModal, signalModal;
+var proteinModal, resultModal, signalModal, setupModal;
 
 /**
 Method that fires when the document is loaded.
@@ -34,11 +34,20 @@ $(document).ready(function(){
         },
         error: function(response) { alertError(response)}
     });
+    wrapModals();
+    getAvailableLibraries();
+    if(proteinLibrary == null){
+
+        setupModal.modal("show");
+    }
+});
+
+function wrapModals(){
     proteinModal = $("#proteinModal");
     resultModal = $("#resultModal");
     signalModal = $("#signalModal");
-
-});
+    setupModal = $("#setupModal");
+}
 
 
 /**

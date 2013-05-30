@@ -55,3 +55,23 @@ function updateParameters(){
     $("#pkm").text(selectedProtein.pkm);
     $("#pn").text(selectedProtein.pn);
 }
+
+function getAvailableLibraries(){
+    jsRoutes.controllers.Application.getalllibraries().ajax({
+        success: function(response) {
+            setupLibrarySelector(Json.parseJSON(response));
+        },
+        error: function(response) { alertError(response)}
+    });
+}
+
+function setupLibrarySelector(libraries) {
+    var selector = $("#setupLibrarySelector");
+    for(i = 0; i < libraries.length; i++) {
+        $("<option></option>",{
+            value: library[i]
+        })
+        .text(library[i])
+        .appendTo(selector);
+    }
+}
