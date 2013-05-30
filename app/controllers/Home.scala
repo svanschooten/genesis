@@ -6,6 +6,7 @@ import play.api.data.Forms._
 import play.api.templates.Html
 import models._
 import views._
+import factories._
 
 object Home extends Controller with Secured{
   

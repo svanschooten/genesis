@@ -78,23 +78,32 @@ object Application extends Controller {
   }
 
   def getlibrary = Action { implicit request =>
-    val libraryName = request.body.toString()
-    request.session.get("email") match{
-      case Some(email) => {
-        User.findByEmail(email) match{
-          case Some(u) => {
-            val userID = u.id
-            val libraryID = FileParser.getLibraryID(userID,libraryName)
-		    val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(libraryID),
-		    					"not"->ProteinJSONFactory.proteinNotParamsJSON(libraryID),
-		    					"cds"->ProteinJSONFactory.proteinCDSParamsJSON(libraryID))    					
-		    Ok(jsonObject)
-          }
-          case _ => Redirect(routes.Application.login).withNewSession
-        }	    
+    println(request.body)
+    request.body.asJson match {
+      case Some(id) => {
+        val libraryID = id.as[Int]
+        println(libraryID)
+	  	request.session.get("email") match{
+	      case Some(email) => {
+	        User.findByEmail(email) match{
+	          case Some(u) => {
+	            val userID = u.id
+	            println("userid:"+userID+" libraryName:"+id)
+			    val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(0),
+			    					"not"->ProteinJSONFactory.proteinNotParamsJSON(0),
+			    					"cds"->ProteinJSONFactory.proteinCDSParamsJSON(0))    					
+			    println(jsonObject)
+			    Ok(jsonObject).as("plain/text")
+	          }
+	          case _ => Redirect(routes.Application.login)
+	        }	    
+	      }
+	      case _ => Redirect(routes.Application.login)
+	    }
       }
-      case _ => Redirect(routes.Application.login).withNewSession
+      case _ => Redirect(routes.Application.login)
     }
+    
   }
   
   def rk = Action {
