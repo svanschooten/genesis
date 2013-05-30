@@ -33,6 +33,7 @@ GET		/formTest							controllers.Projects.formFunction
 # Javascript routing
 GET    /assets/javascripts/routes      		controllers.Application.javascriptRoutes
 GET    /assets/javascripts/routes      		controllers.Application.getlibrary
+GET    /assets/javascripts/routes      		controllers.Application.getalllibraries
 GET    /assets/javascripts/routes      		controllers.Application.simulate
 
 # Map static resources from the /public folder to the /assets URL path
