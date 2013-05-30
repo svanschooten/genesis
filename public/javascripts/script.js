@@ -158,23 +158,27 @@ function getData(id, data) {
 }
 
 function beginSimulation(){
-//TODO Checken van verbindingen enzo
+    //TODO Checken van verbindingen enzo
     signalModal.modal("show");
 }
 
 function completeSimulation(){
-    //TODO Checken van inputsignalen
     inputs = $("#signalArea")[0].value;
-    signalModal.modal("hide");
-    var simulateData = {circuit: parseJsPlumb(), inputs: inputs};
-    // jsRoutes.controllers.Application.simulate().ajax({
-    jsRoutes.controllers.Application.jsontest().ajax({
-        success: function(response) {
-            drawGraph(parseJSONdataRickShaw(response));
-            resultModal.modal("show");
-        },
-        error: function(response) { alertError(response)}
-    });
+    //TODO Checken van inputsignalen
+    if(inputs == ""){
+        $("#signalErrorDiv").text("No input signal given.")
+    } else {
+        signalModal.modal("hide");
+        var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, time: timeSpan, steps: numSteps};
+        // jsRoutes.controllers.Application.simulate().ajax({
+        jsRoutes.controllers.Application.jsontest().ajax({
+            success: function(response) {
+                drawGraph(parseJSONdataRickShaw(response));
+                resultModal.modal("show");
+            },
+            error: function(response) { alertError(response)}
+        });
+    }
 }
 
 function showSetup(){
@@ -194,7 +198,6 @@ function applySetup(){
         circuitName = name;
         timeSpan = $("#simTimeSpan")[0].value;
         numSteps = $("#simSteps")[0].value;
-        console.log(lib + " " + name + " " + timeSpan + " " + numSteps);
         setupModal.modal("hide");
     }
 

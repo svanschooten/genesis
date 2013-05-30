@@ -37,6 +37,7 @@ function makeProteinList(){
 }
 
 function parseLibrary(json) {
+    console.log(json.and[0]);
     return true;
 }
 
@@ -58,7 +59,7 @@ function updateParameters(){
 
 function getLibrary(libraryId){
     jsRoutes.controllers.Application.getlibrary().ajax({
-        data: libraryId,
+        data: {id: libraryId},
         success: function(response) {
             parseLibrary(response);
             makeProteinList();
@@ -71,7 +72,6 @@ function getLibrary(libraryId){
 function getAvailableLibraries(){
     jsRoutes.controllers.Application.getalllibraries().ajax({
         success: function(response) {
-            console.log(response);
             setupLibrarySelector($.parseJSON(response));
         },
         error: function(response) { alertError(response)}
@@ -82,7 +82,7 @@ function setupLibrarySelector(libraries) {
     var selector = $("#setupLibrarySelector");
     for(i = 0; i < libraries.length; i++) {
         $("<option></option>",{
-            value: libraries[i].libraryid
+            value: libraries[i].libraryId
         })
         .text(libraries[i].libraryname)
         .appendTo(selector);
