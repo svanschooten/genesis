@@ -61,15 +61,14 @@ function openProteinModal(connection){
 }
 
 function setProtein() {
-
     //TODO Protein selectie en controle
     if(selectedProtein == ""){
         alertError("Invalid protein selection!");
         return;
     }
-    currentConnection.protein = selectedProtein;
+    currentConnection.protein = selectedProtein["input1"];
     currentConnection.removeOverlay("label");
-    currentConnection.addOverlay([ "Label", {label: selectedProtein, location: 0.3, cssClass: "aLabel", id:"label"}]);
+    currentConnection.addOverlay([ "Label", {label: selectedProtein["input1"], location: 0.3, cssClass: "aLabel", id:"label"}]);
     proteinModal.modal("hide");
 }
 
