@@ -378,10 +378,14 @@ object Network {
         val destToCSMap = jsEdges.foldLeft(Map[String,String]())((m,e) => {
             val dest = (e \ "target").as[String]
             val csName = (e \ "protein").as[String]
-            if(m.contains(dest+"1"))
-                m + (dest+"2" -> csName)
+            if(dest.startsWith("and")) {
+                if(m.contains(dest+"1"))
+                    m + (dest+"2" -> csName)
+                else
+                    m + (dest+"1" -> csName)
+            }
             else
-                m + (dest+"1" -> csName)
+                m + (dest -> csName)
         })
         // list of inputs for the network
         val inputs = (json \ "inputs").as[String].split("\n")
@@ -401,8 +405,8 @@ object Network {
                 AndGate((inCS1,inCS2),outCS,libraryID)
             }
         })
-        val time = (json \ "time").as[Double]
-        val steps = (json \ "steps").as[Int]
+        val time = (json \ "time").as[String].toDouble
+        val steps = (json \ "steps").as[String].toInt
         val net = new Network(csMap.values.filter(_.isInput).toList,-1,net_name,time/steps)
         net.setStartParameters(inputs, 100.0, 10.0, time)
         net.simJson(time)
