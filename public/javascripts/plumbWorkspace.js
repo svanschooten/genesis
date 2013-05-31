@@ -265,11 +265,22 @@ function notGate(posx,posy) {
     var gate = new Gate("not", 1, 1, "assets/images/NOT_gate.png",posx,posy);
 };
 
-
+/**
+Provided a connection this method will return the protein
+linked to the other input if it exists, or "" otherwise
+*/
 function connSourceHasOther(connection){
-    return jsPlumb.getConnections({
-            target: connection.target.selector.replace("#","")
+    var targetId = connection.target.selector.replace("#","");
+    var other = jsPlumb.getConnections({
+            target: targetId
     });
+    for(i = 0; i <  other.length; i++){
+        var otherId = other[i].target.selector.replace("#","");
+        if(otherId == targetId){
+            return other[i].protein;
+        }
+    }
+    return "";
 }
 
 /**
