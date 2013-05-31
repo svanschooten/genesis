@@ -205,8 +205,12 @@ function applySetup(){
         numSteps = $("#simSteps")[0].value;
         setupModal.modal("hide");
         
-		var gin = new Gate("Input", 0, 1, null, 30, 30);
-        var gout = new Gate("Output", 1, 0, null, 130, 130);
+		var gin = new InputGate();
+		var gout = new OutputGate();
+		console.log("gin: ")
+		console.log(gin);
+		jsPlumb.makeSource(gin, {deleteEndpointsOnDetach: false});
+		jsPlumb.makeTarget(gout, {deleteEndpointsOnDetach: false});
         
         // TODO: When setup is newly applied, remove old in- and output gates
     }

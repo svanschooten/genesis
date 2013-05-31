@@ -179,30 +179,66 @@ function makeDraggable(div, gate) {
     });
 }
 
+function InputGate() {
+	this.id = "input";
+	this.type = "input";
+	
+	var gate = $('<div>', {
+		id: this.id,
+		class: "gateElement",
+	});
+	$('#plumbArea').append(gate);
+	
+	var text = $('<p>').appendTo(gate);
+	text.css('padding', "15px 30px");
+	gate.css('border', '2px dashed black');
+	text.text(this.id);
+	
+	this.x = gate.position().left;
+	this.y = gate.position().top;
+	circuit.push(this);
+	
+	return gate;
+}
+
+function OutputGate() {
+	this.id = "output";
+	this.type = "output";
+	
+	var gate = $('<div>', {
+		id: this.id,
+		class: "gateElement",
+	});
+	$('#plumbArea').append(gate);
+	
+	var text = $('<p>').appendTo(gate);
+	text.css('padding', "15px 30px");
+	gate.css({
+		border: '2px dashed brown',
+		left: '500px'
+	});
+	text.text(this.id);
+	
+	this.x = gate.position().left;
+	this.y = gate.position().top;
+	circuit.push(this);
+	
+	return gate;
+}
+
 /**
 Gate constructor
 */
 function Gate(name, inputs, outputs, image,px,py) {
     this.id = name + circuit.length;
     this.type = name;
-	/*
-	var gate = $('<div style="left:' + positionx + ';top:'+ positiony +'"></div>', {
-            id: this.id,
-        class: "gateElement",
-    })
-    .appendTo($('#plumbArea'));
-    );
-    
-    */
     
     var gate = $('<div/>', {
         id: this.id,
         class: "gateElement",
     })
     gate.offset({ top: py, left: px });
-    //var gate = $("<div class = 'gateElement', id='this.id'></div>");
     $("#plumbArea").append(gate);
-    //.appendTo($('#plumbArea'));
     
     if(image == null) {
         var text = $("<p>").appendTo(gate);
@@ -228,8 +264,7 @@ function Gate(name, inputs, outputs, image,px,py) {
     
     $('#'+	this.id).bind('contextmenu', {gate: this}, function(event){
 		if(confirm("Delete this gate?")){
-			
-			gate = event.data.gate
+			gate = event.data.gate;
 			i = circuit.indexOf(gate);
 			if(~i){
 				circuit[i] = null; // Replace instead of remove because the ids depend on circuit.length...
