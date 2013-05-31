@@ -266,6 +266,12 @@ function notGate(posx,posy) {
 };
 
 
+function connSourceHasOther(connection){
+    return jsPlumb.getConnections({
+            target: connection.target.selector.replace("#","")
+    });
+}
+
 /**
 Testing drag and drop
 */
