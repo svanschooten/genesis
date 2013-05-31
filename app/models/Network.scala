@@ -17,12 +17,6 @@ import play.api.libs.json._
  */
 class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String, stepSize: Double = 1) {
 
-<<<<<<< HEAD
-=======
-    println("look at me, I have inputs: ")
-    inputs.foreach(println _)
-
->>>>>>> 9c47a297784fecd06a4d20b91b654d9d576934e0
     // resets all the ready flags
     private def reset_readies(cs: CodingSeq) {
         cs.ready=false
@@ -126,7 +120,6 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
                            case (ode, concs) if concs.length == 4 => RungeKutta.integrateVV(Array((d, v)=>0.0, (d, v)=>0.0, (d, v)=>ode(d, v)(0), (d, v)=>ode(d, v)(1)), concs, stepSize, 0.0, stepSize)
                            } )
         }
-<<<<<<< HEAD
     }
 
     /**
@@ -223,8 +216,6 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
      */
     def delete {
       Network.delete(userid,networkname)
-=======
->>>>>>> 9c47a297784fecd06a4d20b91b654d9d576934e0
     }
     
     /**
@@ -250,82 +241,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
 	    }
 	    
 	  }
-    
-    /**
-     *  Generate the input list for the proteins that form the input to the network
-     *  using a file that dictates when the concentration is zero or one
-     *  @param input The array of input lines of the file
-     *  @param startProteinConc The concentration to use when a protein is 1 (on)
-     *  @param startMRNAConc The concentration to use when an mRNA is 1 (on)
-     *  @param limit The maximum time (to figure out how long the final 0 or 1 lasts)
-     */
-    def setStartParameters(input: Array[String], startProteinConc: Double, startMRNAConc: Double, limit: Double){
-      // these are the values that the proteins on their own would stabilize to (generated using MATLAB 2012b)
-      // [k2,d1,d2: cds; k1: not]
-      val defaultConcs = Map(
-        "A"->(30.36,175.11),
-        "B"->(66.80,297.16),
-        "C"->(33.43,175.19),
-        "D"->(111.67,737.69),
-        "E"->(24.65,134.10),
-        "F"->(31.61,166.65),
-        "G"->(27.61,150.06),
-        "H"->(30.83,83.62),
-        "I"->(43.08,232.11),
-        "J"->(46.26,280.51),
-        "K"->(52.73,273.37),
-        "L"->(58.41,367.73),
-        "M"->(37.55,258.82)
-      )
 
-<<<<<<< HEAD
-=======
-      val results:Map[String,List[(Double,Double)]] = Map()
-      val firstLine = input(0).split(",")
-      val TFInd = new Array[String](firstLine.length+1)
-      val curConcs = new Array[(Double,Double)](firstLine.length+1)
-      for(i <- 1 to firstLine.length-1){
-        TFInd(i) = firstLine(i)
-        results += (TFInd(i)->List())
-      }
-      val secLine = input(1).split(",")
-      for(j <- 1 to secLine.length-1){
-	      if(secLine(j).toInt==1) curConcs(j) = defaultConcs(TFInd(j))
-	      else curConcs(j) = (0.0,0.0)
-	    }
-      var t = 0.0
-      for(i <- 2 to input.length-1){
-        val curLine = input(i).split(",")
-        while(t<curLine(0).toDouble){
-          for(j <- 1 to curLine.length-1){
-            results(TFInd(j)) ::= (curConcs(j)._1,curConcs(j)._2)
-          }
-          t += stepSize
-        }
-        for(j <- 1 to curLine.length-1){
-	      if(curLine(j).toInt==1) curConcs(j) = defaultConcs(TFInd(j))
-	      else curConcs(j) = (0.0,0.0)
-	    }
-      }
-      while(t<=limit){
-        for(i <- 1 to firstLine.length-1){
-            results(TFInd(i)) ::= (curConcs(i)._1,curConcs(i)._2)
-        }
-        t += stepSize
-      }
-      for(cs: CodingSeq <- inputs){
-        if(results contains cs.name) cs.concentration = results(cs.name).reverse
-      }
-    }
-    
-    /**
-     * Delete this network from the database.
-     */
-    def delete {
-      Network.delete(userid,networkname)
-    }
-    
->>>>>>> 9c47a297784fecd06a4d20b91b654d9d576934e0
     /**
      * Return the networkID that belongs to this network in the database.
      */
@@ -338,7 +254,6 @@ object Network {
 
     /**
      * Return the Network object with name 'networkname' that belongs to 'user'
-<<<<<<< HEAD
      */
     def load(userid: Int, networkname: String, libraryID: Int): Network = {
       DB.withConnection{ implicit connection =>
@@ -458,128 +373,6 @@ object Network {
      */
     def fromJSON(json: JsValue) = {
         val net_name = (json \ "name").as[String]
-=======
-     */
-    def load(userid: Int, networkname: String, libraryID: Int): Network = {
-      DB.withConnection{ implicit connection =>
-      	  val id = getID(userid, networkname)
-      	  val tempconcs = SQL(
-			      """
-			      select * from concentrations
-	    		  where networkid = {id}
-			      """
-			      ).on('id -> id)
-			      .as {
-	      	  		get[String]("name")~get[Int]("time")~get[Double]("conc1")~get[Double]("conc2") map{
-	      	  		  case name~time~conc1~conc2 => (name,time,conc1,conc2)
-	      	  		} *
-	      	}
-      	  var tempconcs2:Map[String,List[(Double,Double,Double)]] = Map()
-      	  for(c <- tempconcs){
-      	    if(tempconcs2 contains c._1){
-      	      tempconcs2(c._1) ::= (c._2,c._3,c._4)
-      	    }
-      	    else{
-      	      tempconcs2 += (c._1 -> List((c._2,c._3,c._4)))
-      	    }
-      	  }
-      	  var concentrations:Map[String,List[(Double,Double)]] = Map()
-      	  for(c <- tempconcs2.keys){
-      	    val list = tempconcs2(c).sortBy(_._1).map(x => (x._2,x._3))
-      	    concentrations += c -> list
-      	  }      	  
-      	  
-		  var inputs1:Map[String,String] = Map()
-	      var inputs2:Map[String,String] = Map()
-	      var seqs:Map[String,CodingSeq] = Map()
-	      val allCDS = SQL(
-			      """
-			      select * from cds
-	    		  where networkid = {id}
-			      """
-			      ).on('id -> id)
-			      .as {
-	      	  		get[String]("name")~get[String]("next")~get[Boolean]("isInput") map{
-	      	  		  case name~next~isInput => (name,next,isInput)
-	      	  		} *
-	      	}
-		  var startCDS: List[CodingSeq] = Nil
-		  for(cs <- allCDS){
-		    val newCDS = new CodingSeq(cs._1,libraryID,concentrations(cs._2),cs._3)
-		    seqs += (cs._1 -> newCDS)
-		    if(cs._3) startCDS ::= newCDS
-		  }
-      	  for(cs <- allCDS){
-      	    if(!(seqs contains cs._2)) seqs += (cs._2 -> new CodingSeq(cs._2,libraryID,concentrations(cs._2),false))
-      	    if(inputs1 contains cs._2) inputs2 += (cs._2 -> cs._1)
-      	    else inputs1 += (cs._2 -> cs._1)
-      	  }
-	      
-	      for(str: String <- inputs1.keys){
-	        if(inputs2 contains str){
-	        	val g = new AndGate((seqs(inputs1(str)),seqs(inputs2(str))),seqs(str),libraryID)
-	        }
-	        else{
-	        	val g = new NotGate(seqs(inputs1(str)),seqs(str),libraryID)
-	        }
-	      }
-      	new Network(startCDS,userid,networkname)
-      }
-    }
-    
-    /**
-     * Delete the network that corresponds with userid and networkname from the database
-     */
-    def delete(userid: Int, networkname: String){
-      DB.withConnection { implicit connection =>
-        val idResults = SQL(
-	          """
-	          select networkid from networkownedby
-	          where userid={userid} AND networkname={networkname}
-	          """
-	          ).on(
-		        'userid -> userid,
-		        'networkname -> networkname
-		      ).apply()
-		  if(idResults.isEmpty) return
-		  val id = idResults.head[Int]("networkid")
-	      SQL(
-	        """
-	         DELETE FROM networkownedby WHERE networkid={id};
-	         DELETE FROM concentrations WHERE networkid={id};
-	         DELETE FROM cds WHERE networkid={id};
-	        """
-	      ).on(
-	        'id -> id
-	      ).executeUpdate()
-      	}
-    }
-    
-    /**
-     * Return the networkID that belongs to the corresponding network in the database.
-     */
-    def getID(userid: Int, networkname: String): Int = {
-      DB.withConnection { implicit connection =>
-      	  val idResult = SQL(
-	          """
-	          select networkid from networkownedby
-	          where userid={userid} AND networkname={networkname}
-	          """
-	          ).on(
-		        'userid -> userid,
-		        'networkname -> networkname
-		      ).apply()
-		  idResult.head[Int]("networkid") 
-	    }
-    }
-
-    /**
-     *  Generate a new Network based on JSON input.
-     */
-    def fromJSON(json: JsValue) = {
-        val net_name = (json \ "name").as[String]
-        println(json \ "library")
->>>>>>> 9c47a297784fecd06a4d20b91b654d9d576934e0
         val libraryID = (json \ "library").as[String].toInt
 
         // parse the network
