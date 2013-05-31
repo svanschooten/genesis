@@ -217,30 +217,6 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
     def delete {
       Network.delete(userid,networkname)
     }
-    
-    /**
-     * Save this network to the database.
-     */
-    def save = {
-    	Network.delete(userid,networkname)
-	    DB.withConnection { implicit connection =>
-	      SQL(
-	        """
-	         insert into networkownedby(userid,networkname) values({user},{networkname})
-	        """
-	      ).on(
-	        'user -> userid,
-	        'networkname -> networkname
-	      ).executeUpdate()
-	      
-	      val id = getID
-	      
-		  for(cs:CodingSeq <- inputs) {
-		    cs.save(id,true,true)
-		  }
-	    }
-	    
-	  }
 
     /**
      * Return the networkID that belongs to this network in the database.
