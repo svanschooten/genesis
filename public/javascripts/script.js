@@ -203,16 +203,9 @@ function applySetup(){
         circuitName = name;
         timeSpan = $("#simTimeSpan")[0].value;
         numSteps = $("#simSteps")[0].value;
+        makeInput();
+        makeOutput();
         setupModal.modal("hide");
-        
-		var gin = new InputGate();
-		var gout = new OutputGate();
-		console.log("gin: ")
-		console.log(gin);
-		jsPlumb.makeSource(gin, {deleteEndpointsOnDetach: false});
-		jsPlumb.makeTarget(gout, {deleteEndpointsOnDetach: false});
-        
-        // TODO: When setup is newly applied, remove old in- and output gates
+       // TODO: When setup is newly applied, remove old in- and output gates
     }
-
 }

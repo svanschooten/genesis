@@ -23,7 +23,7 @@ var dropOptions = {
     activeClass:"dragActive"
 };
 
-var jsp;
+var jsp, gin, gout;
 var currentConnection = null;
 var gateHeight = 80, gateWith = 80;
 
@@ -40,9 +40,9 @@ jsPlumb.ready(function(){
     });
     jsp.Defaults.Container = "plumbArea";
     jsp.importDefaults({
-        DragOptions : { cursor: "pointer", zIndex:2000 },
+        DragOptions : { cursor: "pointer", zIndex:-2 },
         HoverClass: connectorHoverStyle,
-        ConnectionOverlays : [[ "Arrow", { location:-40 } ]],
+        ConnectionOverlays : [[ "Arrow", { width:15, location: 0.6,height:10, id:"arrow" }]],
     });
 });
 
@@ -69,7 +69,7 @@ function setProtein() {
     }
     currentConnection.protein = selectedProtein;
     currentConnection.removeOverlay("label");
-    currentConnection.addOverlay([ "Label", {label: selectedProtein, location: 0.3, cssClass: "aLabel", id:"label"}]);
+    currentConnection.addOverlay([ "Label", {label: selectedProtein, location: 0.7, cssClass: "aLabel", id:"label"}]);
     proteinModal.modal("hide");
 }
 
@@ -84,7 +84,7 @@ function makeConnection(params) {
         return false;
     }
     params.connection.protein = "";
-    params.connection.addOverlay([ "Arrow", { width:15, location: 0.7,height:10, id:"arrow" }]);
+    params.connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
     params.connection.bind("click", function(connection){ openProteinModal(connection) });
     params.connection.bind("contextmenu", function(connection){ 
         if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
@@ -126,8 +126,7 @@ function addEndPoints(inputs, outputs, element) {
                 hoverPaintStyle: endpointHoverStyle,
                 connectorHoverStyle: connectorHoverStyle,
                 //maxConnections:-1,
-                anchor: [1, (1 / (outputs+1)) * (i + 1), 1, 0],
-                ConnectionOverlays : [ [ "Label", {label:" ", location: 0.25, cssClass: "aLabel", id:"label"}]],
+                anchor: [1, (1 / (outputs+1)) * (i + 1), 1, 0]
             }
         );
     }
@@ -184,14 +183,20 @@ function InputGate() {
 	this.type = "input";
 	
 	var gate = $('<div>', {
-		id: this.id,
-		class: "gateElement",
+		id: this.id
+		//class: "gateElement",
 	});
 	$('#plumbArea').append(gate);
 	
 	var text = $('<p>').appendTo(gate);
-	text.css('padding', "15px 30px");
-	gate.css('border', '2px dashed black');
+	text.css('margin', "15px 30px");
+	gate.css({
+	    border: "2px dashed black",
+	    position: "absolute",
+	    left: 0,
+	    height: "100%",
+	    width: "80px"
+	});
 	text.text(this.id);
 	
 	this.x = gate.position().left;
@@ -206,16 +211,19 @@ function OutputGate() {
 	this.type = "output";
 	
 	var gate = $('<div>', {
-		id: this.id,
-		class: "gateElement",
+		id: this.id
+		//class: "gateElement",
 	});
 	$('#plumbArea').append(gate);
 	
 	var text = $('<p>').appendTo(gate);
-	text.css('padding', "15px 30px");
+	text.css('margin', "15px 30px");
 	gate.css({
 		border: '2px dashed brown',
-		left: '500px'
+		position: "absolute",
+        right: 0,
+        height: "100%",
+        width: "80px"
 	});
 	text.text(this.id);
 	
@@ -262,17 +270,21 @@ function Gate(name, inputs, outputs, image,px,py) {
     makeDraggable(gate, this);
     circuit.push(this);
     
-    $('#'+	this.id).bind('contextmenu', {gate: this}, function(event){
+    makeDeletable(this);
+}
+
+function makeDeletable(gate){
+    $('#' +	gate.id).bind('contextmenu', {gate: gate}, function(event){
 		if(confirm("Delete this gate?")){
 			gate = event.data.gate;
 			i = circuit.indexOf(gate);
 			if(~i){
 				circuit[i] = null; // Replace instead of remove because the ids depend on circuit.length...
 			}
-			
-			jsPlumb.detachAllConnections(this);
-			jsPlumb.removeAllEndpoints(this);
-			$(this).remove();
+
+			jsPlumb.detachAllConnections(gate);
+			jsPlumb.removeAllEndpoints(gate);
+			$("#" + gate.id).remove();
 		}
 		return false;
 	});
@@ -326,3 +338,32 @@ $(function() {
 	            }
         });         
 });
+
+function makeInput(){
+    if(gin != null){
+        $("#input").remove();
+    }
+    gin = new InputGate();
+    jsPlumb.makeSource(gin, {
+        anchor:[ "Perimeter", { shape:"Rectangle"} ],
+        connector:[ "Flowchart", { cornerRadius:5 } ],
+        connectorStyle: connectorPaintStyle,
+        connectorHoverStyle: connectorHoverStyle
+    });
+}
+
+function makeOutput(){
+    if(gout != null){
+        $("#output").remove();
+    }
+    gout = new OutputGate();
+    jsPlumb.makeTarget(gout, {
+        deleteEndpointsOnDetach: false,
+        anchor:[ "Perimeter", { shape:"Rectangle"} ],
+        beforeDrop: makeConnection,
+        dropOptions: dropOptions
+    });
+}
+
+
+
