@@ -24,6 +24,13 @@ object User {
       case id~email~password~fname~lname => User(id.toInt, email, password, fname, lname)
     }
   }
+
+  /** Parse a hashed password from a ResultSet */
+  val hashedPasswordParser = {
+    get[String]("user.password") map {
+      case password => password
+    }
+  }
   
   // -- Queries
   
@@ -39,31 +46,27 @@ object User {
   
   /** Authenticates a user given an email and password. */
   def authenticate(email: String, password: String): Option[User] = {
-    DB.withConnection { implicit connection =>
-      findByEmail(email) match {
-        case Some(u: User) =>
-          if(password.isBcrypted(u.password)) Some(u)
-          else None
-        case None => None
-      }
+    findByEmail(email) match {
+      case Some(User(id,email,hashedPw,fname,lname)) => if (password.isBcrypted(hashedPw)) Some(User(id, email, hashedPw, fname, lname)) else None
+      case _ => None
     }
   }
   
   /** Creates a new User */
   def create(email: String, password: String, fname: Option[String], lname: Option[String]) = {
-    val hap = password.bcrypt(12)
-    DB.withConnection{ implicit connection =>
+    val hashedPassword = password.bcrypt(12)
+    DB.withConnection { implicit connection =>
       SQL(
         """
-        INSERT INTO "User"(email, password, fname, lname)
+        INSERT INTO User( email, password, fname, lname )
         VALUES ({email}, {password}, {fname}, {lname})
         """
       ).on(
         'email -> email,
-        'password -> hap,
+        'password -> hashedPassword,
         'fname -> fname,
         'lname -> lname
-      ).executeInsert()
+      ).executeUpdate
     }
   }
   
@@ -85,6 +88,7 @@ object User {
   
   /** Update the password, given that the user can insert the old password. */
   def updatePassword(id: Int, password: String) = {
+    val hashedPassword = password.bcrypt(12)
     DB.withConnection{ implicit connection =>
       SQL(
           """
@@ -93,7 +97,7 @@ object User {
           WHERE id = {id}
           """
       ).on(
-        'password -> password,
+        'password -> hashedPassword,
         'id -> id
       ).executeUpdate
     }
@@ -101,12 +105,12 @@ object User {
   
   /** Updates a User's first name, provided the user's id */
   def updateFirstName(id: Int, fname: String) = {
-    DB.withConnection{ implicit connection => 
+    DB.withConnection{ implicit connection =>
       SQL(
         """
-          UPDATE User
-          SET fname={fname}
-          WHERE id = {id}
+        UPDATE User
+        SET fname={fname}
+        WHERE id = {id}
         """
       ).on(
         'fname -> fname,
@@ -117,7 +121,7 @@ object User {
   
   /** Updates a User's last name, provided the user's id */
   def updateLastName(id: Int, lname: String) = {
-    DB.withConnection{ implicit connection => 
+    DB.withConnection{ implicit connection =>
       SQL(
         """
           UPDATE User

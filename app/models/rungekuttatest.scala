@@ -1,9 +1,10 @@
 package models
 
 import play.api.libs.json._
-
 import scalation.{VectorD, RungeKutta}
 import scalation.Derivatives.DerivativeV
+import controllers.Projects
+import factories.FileParser
 
 /**
  * ODE solving class containing some testing values but also contains an actual ODE solving method using the RungeKutta method.
@@ -63,7 +64,40 @@ case class Rungekuttatest (){
   }
 
   def genJson = {
-    Rungekuttatest.resultsToJson(t0, tf, dt, testResults())
+    import models._
+    import math._
+    /*val orInput = Array("t,A,M","0,1,1","70,0,1","140,1,0","210,0,0")
+    val libID = FileParser.getLibraryID(-1,"newLibrary1")
+    val A = CodingSeq("A",2,List((0,0)),true)
+    val B = CodingSeq("B",2,List((0,0)),false)
+    val M = CodingSeq("M",2,List((0,0)),true)
+    val K = CodingSeq("K",2,List((0,0)),false)
+    val F = CodingSeq("F",2,List((0,0)),false)
+    val I = CodingSeq("I",2,List((0,0)),false)
+    val notA = NotGate(A,K,2)
+    val notM = NotGate(M,I,2)
+    val KandI = AndGate((K,I),B,2)
+    val notB = NotGate(B,F,2)
+    val net = new Network(List(A,M),-1,"")
+    net.setStartParameters(orInput, 175, 30, 275)
+    net.simJson(274)*/
+    val srlatchInput = Array("t,B,F","0,0,1","70,1,1",
+				        "140,0,1","210,1,0","280,1,1",
+				        "350,1,0","420,0,1","490,1,1",
+				        "560,0,1")
+	val B = CodingSeq("B",2,List((0,0)),true)
+	val F = CodingSeq("F",2,List((0,0)),true)
+	val I = CodingSeq("I",2,List((0,0)),true)
+	val K = CodingSeq("K",2,List((0,0)),true)
+	val A = CodingSeq("A",2,List((0,0)),false)
+	val M = CodingSeq("M",2,List((0,0)),false)
+	val BandI = AndGate((B,I),A,2)
+	val FandK = AndGate((F,K),M,2)
+	val NotM = NotGate(M,I,2)
+	val NotA = NotGate(A,K,2)
+	val net = new Network(List(B,F,K,I),-1,"")
+    net.setStartParameters(srlatchInput, 200, 30, 600)
+    net.simJson(599)
   }
 
 }
@@ -90,7 +124,7 @@ object Rungekuttatest {
       "vectors" -> Json.toJson(convert(results)),
       "names" -> Json.toJson((0 to results.head.length).toList)
     )
-  )
+  )  
 
   /**
    * Generalised method for solving the ODE's given and returns a JSON value.

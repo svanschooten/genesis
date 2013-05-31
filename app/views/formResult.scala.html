@@ -1,15 +1,15 @@
 @(result: List[String])
 
-@main("Here is the result:") {
+@main("Here is the result:")(Html.apply("Placeholder")){
 
-    <ul>
-       @for(v <- result){
-       		<li>@v</li>
-       	}
-    </ul>
+<ul>
+    @for(v <- result){
+    <li>@v</li>
+    }
+</ul>
 
-    <p class="buttons">
-        <a href="@routes.Projects.index">Back to the form</a>
-    </p>
+<p class="buttons">
+    <a href="@routes.Projects.index">Back to the form</a>
+</p>
 
 }

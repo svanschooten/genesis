@@ -5,7 +5,10 @@ Site: http://stackoverblog.wordpress.com
 Twitter: @ReturnFalse
 Location: The Netherlands, Rotterdam
 
-Developer: Stijn
+Developer: Stijn van Schooten
+Site: http://svanschooten.nl
+Twitter: @SSchooten
+Location: The Netherlands, Delft
 
 Developer: Edward
 

@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(head_extra: Html)(content: Html)
 
 @* Change the "active" class highlighting the button in the navbar of the current page *@
 @active(t : String) = {
@@ -6,40 +6,34 @@
 }
 
 @head = {
-	<script src="@routes.Assets.at("javascripts/home.js")" type="text/javascript"></script>
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+	
+    @head_extra
+
 }
 
 @base(title)(head) {	
 	<div class="mainpage">
 		<header>
-			<div id="logo-img">
-				<img id="top-logo" src="@routes.Assets.at("images/genesis-logo64x64.png")" />
-	        	<h2 id="title">@title</h2>
-	    	</div>
-	        
-	        <div class="navbar">
-	          <div class="navbar-inner">
-	            <div class="container">
-	            
-	              <ul class="nav pull-left">
-	                <li @active("Home")><a href="/">Home</a></li>
-	              </ul>
-	              <ul class="nav pull-right">
-	              	<li @active("Help")><a href="/help">Help</a></li>
-	              	<li @active("Settings")><a href="/settings">Settings</a></li>
-	              	<li><a href="/logout">Logout</a></li>
-	              </ul>
-	             </div> 
-	          </div>
+	        <div class="navbar navbar-static-top">
+                <div class="navbar-inner">
+                    <div class="container">
+                        <ul class="nav pull-left">
+                            <li><img src="@routes.Assets.at("images/genesis-logo-h40.png")"></li>
+                            <li>&nbsp;</li>
+                            <li @active("Home")><a href="/">Home</a></li>
+                        </ul>
+                        <ul class="nav pull-right">
+                            <li @active("Help")><a href="/help">Help</a></li>
+                            <li @active("Settings")><a href="/settings">Settings</a></li>
+                            <li><a href="/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
 	        </div>  
 		</header>
 
-		<div class="container-fluid">
-			<div class="row-fluid">
-				<section class="content span10">@content</section>
-				<section class="sidebar span2" style="background-color: white;">Sidebar section</section>
-			</div>
-		</div>
+		<section class="content">@content</section>
 		
 		<footer>
 			<div class="pull-left">
@@ -52,4 +46,5 @@
 		</footer>
 		
 	</div>
-}
+	<script src=@routes.Assets.at("javascripts/script.js") ></script>
+    }

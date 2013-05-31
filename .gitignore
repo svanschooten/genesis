@@ -27,7 +27,7 @@ target
 # Ignore Play! working directory #
 db
 eclipse
-lib
+./lib
 log
 logs
 modules
@@ -43,3 +43,7 @@ server.pid
 
 # ignore scalation
 scalation*
+
+#Ignore 
+build.sbt
+#For play version incompatibility.

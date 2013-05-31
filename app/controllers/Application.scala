@@ -4,10 +4,13 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import play.api.mvc.BodyParsers.parse
 import models.Rungekuttatest
+import libs.json.{Json, __}
 
 import models._
 import views._
+import factories._
 
 /** The Application object handles everything related to authentication. */
 object Application extends Controller {
@@ -40,7 +43,7 @@ object Application extends Controller {
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => Redirect(routes.Home.home).withSession("inlog" -> user._1)
+      user => Redirect(routes.Home.home).withSession("email" -> user._1)
     )
   }
 
@@ -48,11 +51,40 @@ object Application extends Controller {
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-        routes.javascript.Application.jsontest
+        routes.javascript.Application.jsontest,
+        routes.javascript.Application.getlibrary,
+        routes.javascript.Application.getCooking,
+        routes.javascript.Application.getalllibraries
       )
     ).as("text/javascript")
   }
   
+  def getalllibraries = Action { implicit request =>
+    request.session.get("user") match{
+      case Some(email) => {
+        User.findByEmail(email) match{
+          case Some(u) => {
+            Ok(ProteinJSONFactory.libraryListJSON(u.id)).as("text/plain")
+          }
+          case _ => BadRequest("No user found")
+        }
+      }
+      case _ => BadRequest("No email found")
+    }
+  }
+
+  def getlibrary = Action(parse.json) { implicit request =>
+    val id = Integer.parseInt((request.body \ "id").as[String])
+    val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(id),
+      "not"->ProteinJSONFactory.proteinNotParamsJSON(id),
+      "cds"->ProteinJSONFactory.proteinCDSParamsJSON(id))
+    Ok(jsonObject).as("plain/text")
+  }
+  
+  def rk = Action {
+    Ok(views.html.rungekutte("good ol' runge kutta test",rkt))
+  }
+
   def jsontest = Action {
     Ok(Rungekuttatest().genJson).as("text/plain")
   }
@@ -60,13 +92,33 @@ object Application extends Controller {
   def canvastest = Action {
     Ok(views.html.canvastest("just a quick test with a canvas"))
   }
+
+  def morefun = Action {
+    Ok(views.html.mofu("another test with the lastest and greatest model"))
+  }
+
+  def plumbtest = Action {
+    Ok(views.html.plumbtest("Testing jsPlumb"))
+  }
+  
+    def dndtest = Action {
+    Ok(views.html.dndtest("Testing jsPlumb"))
+  }
+
+  def rungekutta = Action {
+    Ok(views.html.rungekutte("Testing the plot and rungeKutta", rkt))
+  }
+
+  def getCooking = Action(parse.json) { implicit request =>
+    Ok(Network.fromJSON(request.body)).as("text/plain")
+  }
 }
 
 /** Provide security features */
 trait Secured {
   
   /** Retrieve the connected user. */
-  private def username(request: RequestHeader) = request.session.get("inlog")
+  private def username(request: RequestHeader) = request.session.get("email")
 
   private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Application.login)
   

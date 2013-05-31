@@ -1,23 +1,82 @@
 @(title: String)(content: Html)
 
-@* Change the "active" class highlighting the button in the navbar of the current page *@
-@active(t : String) = {
-  @if(title equals t){class=active"}
-}
-
 @head = {
-	<script src="@routes.Assets.at("stylesheets/javascripts/home.js")" type="text/javascript"></script>
-}
+	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/home.css")">
+    <link href=@routes.Assets.at("stylesheets/rickshaw.min.css") rel='stylesheet' />
+    <link href=@routes.Assets.at("stylesheets/main.css") rel='stylesheet' />
+    <script src=@routes.Assets.at("javascripts/lib/jquery-ui-1.9.2.js") ></script> 
+	<script src=@routes.Assets.at("javascripts/lib/jquery.jsPlumb-1.4.0-all-min.js") ></script>
+	<script src=@routes.Assets.at("javascripts/plumbWorkspace.js") ></script>
+	<script src=@routes.Assets.at("javascripts/proteins.js") ></script>
+	
+    }
 
-@main(title) {	
-		<div>
-			<ul class="nav nav-tabs" id="myTab">
-				<li id="add-tab-button">
-						<button class="btn btn-link" onclick="addTab()">+</button>
-				</li>
-			</ul>
-			
-			<div class="tab-content">
+
+@main(title)(head) {
+    @modals()
+	<div id="application-area" class="container-fluid">
+        <div id="alertBox"></div>
+		<div id="application-header-row" class="row-fluid">
+			<header class="span12">
+				<div class="btn-toolbar">
+					<div class="btn-group">
+						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+					   	 Circuit
+						</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="#">This doesn't do anything (yet)</a>
+							</li>
+							
+							<li class="divider" />
+							
+							<li>
+								<a href="#">New...</a>
+							</li>
+							<li>
+								<a href="#">Open...</a>
+							</li>
+							<li>
+								<a href="#">Save...</a>
+							</li>
+							<li>
+								<a href="#">Import...</a>
+							</li>
+							<li>
+								<a href="#">Export...</a>
+							</li>
+						</ul>
+					</div>
+					<div class="btn-group">
+						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+					   	 Simulation
+						</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a onclick="beginSimulation()">Run circuit</a>
+							</li>
+                            <li>
+                                <a onclick="showSetup()">Setup</a>
+                            </li>
+						</ul>
+					</div>
+				</div>
+			</header>
+		</div>
+		<div id="application-main-row" class="row-fluid">	
+			<div id="plumbArea" class="application-canvas span9">
+			</div>
+			<div class="application-sidebar span3">
+					<br></br>
+					<div>
+					<div id="ag" class="product"><img height="80px" width="80px" src=@routes.Assets.at("images/AND_gate.png")></div>
+					<div id="ng" class="product"><img height="80px" width="80px" src=@routes.Assets.at("images/NOT_gate.png")></div>
+					</div>
+					<br></br>
+					<div>Modified gates :</div>
+					<div>
+					</div>
 			</div>
 		</div>
+    </div>
 }
