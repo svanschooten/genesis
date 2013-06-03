@@ -7,19 +7,17 @@ Parses the standard JSON ouput to a usable format for plotting.
 */
 function parseJSONdataRickShaw(response){
 
-    //Check if data in memory is empty
-    if(data == null) {
-       data = $.parseJSON(response);
+   // Refresh data with the latest results
+   data = $.parseJSON(response);
 
-       //Instantiate a new color pallette
-       var palette = new Rickshaw.Color.Palette( { interpolatedStopsCount: data.length } );
+   //Instantiate a new color pallette
+   var palette = new Rickshaw.Color.Palette( { interpolatedStopsCount: data.length } );
 
-       //Fill the data array
-       for (var i=0;i<data.length;i++){
-           //Add an color
-           data[i].color = palette.color();
-       }
-    }
+   //Fill the data array
+   for (var i=0;i<data.length;i++){
+       //Add an color
+       data[i].color = palette.color();
+   }
 
     return data;
 }

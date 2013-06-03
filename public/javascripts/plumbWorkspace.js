@@ -61,7 +61,6 @@ function openProteinModal(connection){
 }
 
 function setProtein() {
-
     //TODO Protein selectie en controle
     if(selectedProtein == ""){
         alertError("Invalid protein selection!");
@@ -107,6 +106,7 @@ function addEndPoints(inputs, outputs, element) {
                 paintStyle:{ fillStyle:"#558822",radius:9 },
                 hoverPaintStyle: endpointHoverStyle,
                 isTarget:true,
+                maxConnections: element.id.search("Output")==0 ? -1 : 1,
                 anchor: [0, (1 / (inputs+1)) * (i + 1), -1, 0],
                 beforeDrop: makeConnection,
                 dropOptions: dropOptions
@@ -125,8 +125,9 @@ function addEndPoints(inputs, outputs, element) {
                 connectorStyle: connectorPaintStyle,
                 hoverPaintStyle: endpointHoverStyle,
                 connectorHoverStyle: connectorHoverStyle,
-                //maxConnections:-1,
-                anchor: [1, (1 / (outputs+1)) * (i + 1), 1, 0]
+                maxConnections: element.id.search("Input")==0 ? -1 : 1,
+                anchor: [1, (1 / (outputs+1)) * (i + 1), 1, 0],
+                ConnectionOverlays : [ [ "Label", {label:" ", location: 0.25, cssClass: "aLabel", id:"label"}]],
             }
         );
     }
@@ -240,6 +241,8 @@ Gate constructor
 function Gate(name, inputs, outputs, image,px,py) {
     this.id = name + circuit.length;
     this.type = name;
+    
+    */
     
     var gate = $('<div/>', {
         id: this.id,

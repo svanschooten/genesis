@@ -15,7 +15,7 @@ import play.api.libs.json._
  *  desired. It can also be saved to an external database, and its companion enables
  *  loading back from such a database, as well as removal from it.
  */
-class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String, var stepSize: Double = 1) {
+class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String, stepSize: Double = 1) {
 
     // resets all the ready flags
     private def reset_readies(cs: CodingSeq) {
@@ -97,7 +97,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
             // generate the appropriate ODEPairs and update the concentrations
             val parts = cs.linksTo.collect( {
                 case y@NotGate(_,out,_) if(!out.ready) => y
-                case y@AndGate((in1,in2),out,_) if(((in1.ready && in2==cs) || (in1==cs && in2.ready)) && !out.ready) => y
+                case y@AndGate((in1,in2),out,_) if(((in1.ready && in2==cs) || (in1==cs && in2.ready) || (in1.linkedBy.isEmpty ^ in2.linkedBy.isEmpty)) && !out.ready) => y
             })
 
             val odePairs = mkODEs(parts)
@@ -154,7 +154,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
      *  @param startMRNAConc The concentration to use when an mRNA is 1 (on)
      *  @param limit The maximum time (to figure out how long the final 0 or 1 lasts)
      */
-    def setStartParameters(input: Array[String], startProteinConc: Double, startMRNAConc: Double, limit: Double, stepSize: Double){
+    def setStartParameters(input: Array[String], startProteinConc: Double, startMRNAConc: Double, limit: Double){
       // these are the values that the proteins on their own would stabilize to (generated using MATLAB 2012b)
       // [k2,d1,d2: cds; k1: not]
       val defaultConcs = Map(
@@ -172,8 +172,6 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
         "L"->(58.41,367.73),
         "M"->(37.55,258.82)
       )
-
-      this.stepSize = stepSize
 
       val results:Map[String,List[(Double,Double)]] = Map()
       val firstLine = input(0).split(",")
@@ -212,14 +210,14 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
         if(results contains cs.name) cs.concentration = results(cs.name).reverse
       }
     }
-    
+
     /**
      * Delete this network from the database.
      */
     def delete {
       Network.delete(userid,networkname)
     }
-    
+
     /**
      * Return the networkID that belongs to this network in the database.
      */
@@ -385,6 +383,8 @@ object Network {
             else
                 m + (dest -> csName)
         })
+        // list of inputs for the network
+        val inputs = (json \ "inputs").as[String].split("\n")
 
         jsVertices.foreach(v => {
             val id = (v \ "id").as[String]
