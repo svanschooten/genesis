@@ -34,7 +34,7 @@ object Projects extends Controller with Secured {
           val concInput = Array("t,A,B","0,0,0","70,1,0","100,0,1","140,1,1")
           curNetwork = new Network(List(pa,pb),-1,"")
           l::="Concentrations:"
-          val setConcs = curNetwork.setStartParameters(concInput, 200, 1, 150)
+          val setConcs = curNetwork.setStartParameters(concInput, 150)
           /*for(str <- setConcs){
             if(str==null) l::="null"
             else l::=str.toString

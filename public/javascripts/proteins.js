@@ -12,10 +12,14 @@ var selectedProtein = "";
 var selectedLibrary = -1;
 
 function makeProteinList(connection){
+	//if(connection == undefined) return;
 	$("#proteinListDiv").empty();
-	//if(connection.hasAnotherInput){
-	if(false){
-		var o = "A"; //connection.otherInput;
+	//console.log(connection);
+	var o = connTargetHasOther(connection);
+	console.log(o);
+	console.log(connection);
+	console.log(connection.protein);
+	if(o!=""){
 		var ind = 0;
 		for(var key in andMap[o]) {
 	        var oddClass = (ind % 2) == 0 ? "" : " odd";

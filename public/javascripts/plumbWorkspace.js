@@ -58,6 +58,7 @@ function findElement(array, elementId) {
 function openProteinModal(connection){
     currentConnection = connection;
     proteinModal.modal("show");
+    makeProteinList(connection);
 }
 
 function setProtein() {
@@ -265,8 +266,9 @@ function notGate(posx,posy) {
 };
 
 
-function connSourceHasOther(connection){
-    return jsPlumb.getConnections({
+function connTargetHasOther(connection){
+	if(connection == undefined) return "";
+    else return jsPlumb.getConnections({
             target: connection.target.selector.replace("#","")
     });
 }

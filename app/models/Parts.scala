@@ -11,6 +11,8 @@ import anorm.SqlParser._
 abstract class Part
 abstract class Gate extends Part {
     val output: CodingSeq
+    var x : Double = 0
+    var y : Double = 0
 }
 
 /**

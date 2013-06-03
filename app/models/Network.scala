@@ -154,9 +154,10 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
      *  @param startMRNAConc The concentration to use when an mRNA is 1 (on)
      *  @param limit The maximum time (to figure out how long the final 0 or 1 lasts)
      */
-    def setStartParameters(input: Array[String], startProteinConc: Double, startMRNAConc: Double, limit: Double){
+    def setStartParameters(input: Array[String], limit: Double){
       // these are the values that the proteins on their own would stabilize to (generated using MATLAB 2012b)
       // [k2,d1,d2: cds; k1: not]
+      
       val defaultConcs = Map(
         "A"->(30.36,175.11),
         "B"->(66.80,297.16),
@@ -172,6 +173,11 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
         "L"->(58.41,367.73),
         "M"->(37.55,258.82)
       )
+      
+      def getDefaultConc(protein: String) : (Double,Double) = {
+        if(defaultConcs.contains(protein)) defaultConcs(protein)
+        else (30,200)
+      }
 
       val results:Map[String,List[(Double,Double)]] = Map()
       val firstLine = input(0).split(",")
@@ -183,7 +189,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
       }
       val secLine = input(1).split(",")
       for(j <- 1 to secLine.length-1){
-	      if(secLine(j).toInt==1) curConcs(j) = defaultConcs(TFInd(j))
+	      if(secLine(j).toInt==1) curConcs(j) = getDefaultConc(TFInd(j))
 	      else curConcs(j) = (0.0,0.0)
 	    }
       var t = 0.0
@@ -196,7 +202,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
           t += stepSize
         }
         for(j <- 1 to curLine.length-1){
-	      if(curLine(j).toInt==1) curConcs(j) = defaultConcs(TFInd(j))
+	      if(curLine(j).toInt==1) curConcs(j) = getDefaultConc(TFInd(j))
 	      else curConcs(j) = (0.0,0.0)
 	    }
       }
@@ -404,7 +410,7 @@ object Network {
         val time = (json \ "time").as[String].toDouble
         val steps = (json \ "steps").as[String].toInt
         val net = new Network(csMap.values.filter(_.isInput).toList,-1,net_name)
-        net.setStartParameters(inputs, 100.0, 10.0, steps)
+        net.setStartParameters(inputs, steps)
         net.simJson(steps-1)
     }
 }
