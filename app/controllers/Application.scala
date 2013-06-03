@@ -87,7 +87,7 @@ object Application extends Controller {
       case Some(email) => {
         User.findByEmail(email) match{
           case Some(u) => {
-            val userNetworks = Network.getNetworks(u.id)
+            val userNetworks = Network.getNetworks(u.id)   //TODO ANTOOOON!!
             Ok("test").as("text/plain")
           }
           case _ => BadRequest("No user found")

@@ -261,7 +261,7 @@ function Gate(name, inputs, outputs, image,px,py) {
         }).appendTo(gate);
     }
 
-
+    //TODO size bij groot aantal inputs vergroten
     this.x = gate.position().left;
     this.y = gate.position().top;
 
@@ -366,7 +366,7 @@ function makeOutput(){
 }
 
 function resetWorkspace(){
-    var confirmedReset = confirm("Are you sure you want to reset?\n Make sure you saved first.");
+    var confirmedReset = confirm("Are you sure you want to reset?\nMake sure you saved first.");
     if(confirmedReset) {
         circuit = new Array();
         currentConnection = null;
