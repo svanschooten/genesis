@@ -365,5 +365,18 @@ function makeOutput(){
     });
 }
 
+function resetWorkspace(){
+    var confirmedReset = confirm("Are you sure you want to reset?\n Make sure you saved first.");
+    if(confirmedReset) {
+        circuit = new Array();
+        currentConnection = null;
+        jsPlumb.detachEveryConnection();
+        jsPlumb.deleteEveryEndpoint();
+        $("#plumbArea").empty();
+        makeInput();
+        makeOutput();
+    }
+}
+
 
 
