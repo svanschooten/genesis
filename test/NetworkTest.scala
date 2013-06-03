@@ -192,6 +192,33 @@ class NetworkTest extends Specification {
 			    }
 			  }
 			}
+			
+			"correctly insert the concentrations at the correct times from a csv file" in {
+				running(FakeApplication()){
+					val fileInput = Array("t,A,B","0,0,0","30,0,1","70,1,1")
+					complexNetworkSave.setStartParameters(fileInput, 100)
+					val net = complexNetworkSave
+					val seen : Set[String] = Set()
+					for(cs <- net.inputs){
+					  if(cs.name=="A"){
+					    cs.concentration(69)._1 must equalTo(0)
+					    cs.concentration(69)._2 must equalTo(0)
+					    cs.concentration(70)._1 must equalTo(30.36)
+					    cs.concentration(70)._2 must equalTo(175.11)
+					  }
+					  else if(cs.name=="B"){
+					    cs.concentration(29)._1 must equalTo(0)
+					    cs.concentration(29)._2 must equalTo(0)
+					    cs.concentration(30)._1 must equalTo(66.80)
+					    cs.concentration(30)._2 must equalTo(297.16)
+					  }
+					  else throw new AssertionError("Wrong inputs")
+					}
+					
+					//"A"->(30.36,175.11),
+					//"B"->(66.80,297.16),
+				}		    
+			}
 		}
 	}
 }
