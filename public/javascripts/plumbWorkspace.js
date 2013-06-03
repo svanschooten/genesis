@@ -91,7 +91,7 @@ function makeConnection(params) {
             jsPlumb.detach(connection);
         }
         return false;
-        });
+        });    
     return true;
 }
 
@@ -360,10 +360,21 @@ function makeOutput(){
     jsPlumb.makeTarget(gout, {
         deleteEndpointsOnDetach: false,
         anchor:[ "Perimeter", { shape:"Rectangle"} ],
-        beforeDrop: makeConnection,
-        dropOptions: dropOptions
+        dropOptions: $.extend(dropOptions, 
+        	{drop: function(event, ui){
+	        	
+	        	connections = jsPlumb.getConnections({target: 'output'});
+	        	
+	        	connections.foreach(function(connection){
+					connection.bind("click", function(connection){ openProteinModal(connection) });
+				    connection.bind("contextmenu", function(connection){ 
+				        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
+				            jsPlumb.detach(connection);
+				        }
+				        return false;
+				    });
+				)}}
+	        }
+	    })
     });
 }
-
-
-
