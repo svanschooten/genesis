@@ -271,12 +271,14 @@ linked to the other input if it exists, or "" otherwise
 */
 function connSourceHasOther(connection){
     var targetId = connection.target.selector.replace("#","");
+    var sourceId = connection.source.selector.replace("#","");
     var other = jsPlumb.getConnections({
             target: targetId
     });
     for(i = 0; i <  other.length; i++){
-        var otherId = other[i].target.selector.replace("#","");
-        if(otherId == targetId){
+        var otherTarget= other[i].target.selector.replace("#","");
+        var otherSource = other[i].source.selector.replace("#","");
+        if(otherTarget == targetId && otherSource != sourceId){
             return other[i].protein;
         }
     }
