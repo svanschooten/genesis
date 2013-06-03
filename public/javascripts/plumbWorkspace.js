@@ -379,5 +379,38 @@ function resetWorkspace(){
     }
 }
 
+function saveCircuit(){
+    var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, time: timeSpan, steps: numSteps, library: selectedLibrary};
+    jsRoutes.controllers.Application.savecircuit().ajax({
+        data: JSON.stringify(simulateData),
+        method: "POST",
+        contentType: "application/json",
+        success: function(response) {
+            drawGraph(parseJSONdataRickShaw(response));
+            signalModal.modal("hide");
+            resultModal.modal("show");
+        },
+        error: function(response) { alertError(response)}
+    });
+}
+
+function getAllCircuits(){
+    jsRoutes.controllers.Application.getallcircuits().ajax({
+        success: function(response) {
+            displayCircuits(response);
+        },
+        error: function(response) { alertError(response)}
+    });
+}
+
+function displayCircuits(json){
+    var circuits = $.parseJSON(json);
+
+}
+
+function loadCircuit(circuitId){
+
+}
+
 
 

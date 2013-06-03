@@ -411,4 +411,18 @@ object Network {
         net.setStartParameters(inputs, 100.0, 10.0, time)
         net.simJson(time)
     }
+
+    def getNetworks(userId: Int) = {
+      DB.withConnection { implicit connection =>
+        val networks = SQL(
+          """
+	          select networkname from networkownedby
+	          where userid={userid} or userid=-1
+          """
+        ).on(
+          'userid -> userId
+        ).apply()
+        networks //TODO hier een lijstje maken en teruggeven in JSON
+      }
+    }
 }
