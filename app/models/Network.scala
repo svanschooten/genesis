@@ -15,7 +15,7 @@ import play.api.libs.json._
  *  desired. It can also be saved to an external database, and its companion enables
  *  loading back from such a database, as well as removal from it.
  */
-class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String, stepSize: Double = 1) {
+class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String, var stepSize: Double = 1) {
 
     println("look at me, I have inputs: ")
     inputs.foreach(println _)
@@ -157,7 +157,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
      *  @param startMRNAConc The concentration to use when an mRNA is 1 (on)
      *  @param limit The maximum time (to figure out how long the final 0 or 1 lasts)
      */
-    def setStartParameters(input: Array[String], startProteinConc: Double, startMRNAConc: Double, limit: Double){
+    def setStartParameters(input: Array[String], startProteinConc: Double, startMRNAConc: Double, limit: Double, stepSize: Double){
       // these are the values that the proteins on their own would stabilize to (generated using MATLAB 2012b)
       // [k2,d1,d2: cds; k1: not]
       val defaultConcs = Map(
@@ -175,6 +175,8 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
         "L"->(58.41,367.73),
         "M"->(37.55,258.82)
       )
+
+      this.stepSize = stepSize
 
       val results:Map[String,List[(Double,Double)]] = Map()
       val firstLine = input(0).split(",")
@@ -387,8 +389,6 @@ object Network {
             else
                 m + (dest -> csName)
         })
-        // list of inputs for the network
-        val inputs = (json \ "inputs").as[String].split("\n")
 
         jsVertices.foreach(v => {
             val id = (v \ "id").as[String]
@@ -405,11 +405,17 @@ object Network {
                 AndGate((inCS1,inCS2),outCS,libraryID)
             }
         })
-        val time = (json \ "time").as[String].toDouble
-        val steps = (json \ "steps").as[String].toInt
-        val net = new Network(csMap.values.filter(_.isInput).toList,-1,net_name,time/steps)
-        net.setStartParameters(inputs, 100.0, 10.0, time)
-        net.simJson(time)
+
+        new Network(csMap.values.filter(_.isInput).toList,-1,net_name)
+    }
+
+    def simulate(json: JsValue): JsValue = {
+      val network = fromJSON(json)
+      val inputs = (json \ "inputs").as[String].split("\n")
+      val time = (json \ "time").as[String].toDouble
+      val steps = (json \ "steps").as[String].toInt
+      network.setStartParameters(inputs, 100.0, 10.0, time, time/steps)
+      network.simJson(time)
     }
 
     def getNetworks(userId: Int) = {

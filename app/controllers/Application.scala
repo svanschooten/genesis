@@ -101,10 +101,6 @@ object Application extends Controller {
     //Ok(Network.saveCircuit(request.body))  TODO eerst parsen en simulatie scheiden.
     Ok("Placeholder")
   }
-
-  def loadnetwork = Action(parse.json) { implicit request =>
-    //Ok(Network.loadCircuit(request.body.as[String].toInt))  TODO eerst parsen en simulatie scheiden.
-  }
   
   def rk = Action {
     Ok(views.html.rungekutte("good ol' runge kutta test",rkt))
@@ -135,8 +131,7 @@ object Application extends Controller {
   }
 
   def getCooking = Action(parse.json) { implicit request =>
-    Ok(Network.fromJSON(request.body)).as("text/plain")
-    //Parsen en simulatie moeten nog gescheiden worden.
+    Ok(Network.simulate(request.body)).as("text/plain")
   }
 }
 
