@@ -97,7 +97,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
             // generate the appropriate ODEPairs and update the concentrations
             val parts = cs.linksTo.collect( {
                 case y@NotGate(_,out,_) if(!out.ready) => y
-                case y@AndGate((in1,in2),out,_) if(((in1.ready && in2==cs) || (in1==cs && in2.ready)) && !out.ready) => y
+                case y@AndGate((in1,in2),out,_) if(((in1.ready && in2==cs) || (in1==cs && in2.ready) || (in1.linkedBy.isEmpty ^ in2.linkedBy.isEmpty)) && !out.ready) => y
             })
 
             val odePairs = mkODEs(parts)
@@ -401,6 +401,8 @@ object Network {
                 AndGate((inCS1,inCS2),outCS,libraryID)
             }
         })
+        println("csMap: "+csMap.size)
+        csMap.values.foreach(v=>println(v.name+":"+v.linksTo))
         val time = (json \ "time").as[String].toDouble
         val steps = (json \ "steps").as[String].toInt
         val net = new Network(csMap.values.filter(_.isInput).toList,-1,net_name)
