@@ -4,60 +4,31 @@ authors:
 - Stijn van Schooten
 */
 
-var inputs = "";//TODO hier het inputsignaal zetten
+var inputs = "";
 
-var cdsMap = {};
-var andMap = {};
+var proteinLibrary = new Array();
 var selectedProtein = "";
 var selectedLibrary = -1;
 
-function makeProteinList(connection){
-	$("#proteinListDiv").empty();
-	//if(connection.hasAnotherInput){
-	if(false){
-		var o = "A"; //connection.otherInput;
-		var ind = 0;
-		for(var key in andMap[o]) {
-	        var oddClass = (ind % 2) == 0 ? "" : " odd";
-	        ind += 1;
-	        var span = $("<span></span>")
-	        .addClass(oddClass + " spanProtein")
-	        .text(key)
-	        .appendTo($("#proteinListDiv"));
-	        $("<input>", {
-	            type: "radio",
-	            name: "proteinSelector",
-	            class: "proteinSelector",
-	            input1: key,
-	            input2: o
-	        })
-	        .prependTo(span);
-	        $("<br>").appendTo($("#proteinListDiv"));
-	    }
-	}
-	else{
-		var ind = 0;
-	    for(var key in cdsMap) {
-	        var oddClass = (ind % 2) == 0 ? "" : " odd";
-	        ind += 1;
-	        var span = $("<span></span>", {
-	            class: oddClass + " spanProtein"
-	        })
-	        .text(key)
-	        .appendTo($("#proteinListDiv"));
-	        $("<input>", {
-	            type: "radio",
-	            name: "proteinSelector",
-	            class: "proteinSelector",
-	            input1: key,
-	            input2: -1
-	        })
-	        .prependTo(span);
-	        $("<br>").appendTo($("#proteinListDiv"));
-	    }
-	}
+function makeProteinList(){
+    for(i = 0; i < proteinLibrary.length; i++) {
+        var oddClass = (i % 2) == 0 ? "" : " odd";
+        var span = $("<span></span>", {
+            class: oddClass + " spanProtein"
+        })
+        .text(proteinLibrary[i].name)
+        .appendTo($("#proteinListDiv"));
+        $("<input>", {
+            type: "radio",
+            name: "proteinSelector",
+            class: "proteinSelector",
+            value: proteinLibrary[i].name
+        })
+        .prependTo(span);
+        $("<br>").appendTo($("#proteinListDiv"));
+    }
     $(".proteinSelector").click(function(){
-        selectedProtein = {input1:$(this)[0].getAttribute("input1"), input2:$(this)[0].getAttribute("input2")};
+        selectedProtein = $(this)[0].value;
         updateParameters();
     })
 }
@@ -65,29 +36,41 @@ function makeProteinList(connection){
 function parseLibrary(json) {
 	var obj = $.parseJSON(json);
 	var cds = obj.cds;
+	proteinLibrary = [];
+	var cdsMap = {};
+	var andMap = {};
 	for(i = 0; i < cds.length; i++){
 		for(var key in cds[i]){
 			cdsMap[key] = {name:key, pd1:cds[i][key]["d1"], pd2:cds[i][key]["d2"], pk2:cds[i][key]["k2"]}
 		}
 	}
-	var nots = obj.not;
-	for(i = 0; i < nots.length; i++){
-		for(var key in nots[i]){
-			cdsMap[key]["pk1"] = nots[i][key]["k1"];
-			cdsMap[key]["pkm"] = nots[i][key]["km"];
-			cdsMap[key]["pn"] = nots[i][key]["n"];
+	if(true){ //if this connection is input of a NOT gate
+		var nots = obj.not;
+		for(i = 0; i < nots.length; i++){
+			for(var key in nots[i]){
+				cdsMap[key]["pk1"] = nots[i][key]["k1"];
+				cdsMap[key]["pkm"] = nots[i][key]["km"];
+				cdsMap[key]["pn"] = nots[i][key]["n"];
+				proteinLibrary.push(cdsMap[key]);
+			}
+		}		
+	}
+	else if(true){ //if this connection is input of an AND gate
+		var ands = obj.and;
+		for(i = 0; i < ands.length; i++){
+			var andObj = {in1:ands[i]["input1"], in2:ands[i]["input2"],
+						  pk1:ands[i]["k1"], pkm:ands[i]["km"], pn:ands[i]["n"]}
+			if(!andMap.hasOwnProperty(ands[i]["input1"])) andMap[ands[i]["input1"]] = {};
+			//if(!andMap.hasOwnProperty(ands[i]["input2"])) andMap[ands[i]["input2"]] = {};
+			andMap[ands[i]["input1"]][ands[i]["input2"]] = andObj;
+			//andMap[ands[i]["input2"]][ands[i]["input1"]] = andObj;
+			
+			//proteinLibrary.push(andMap[ands[i]["input1"]][ands[i]["input2"]]);
 		}
 	}
-	var ands = obj.and;
-	for(i = 0; i < ands.length; i++){
-		var obj1 = {name:ands[i]["input2"],pk1:ands[i]["k1"],pkm:ands[i]["km"],pn:ands[i]["n"]};
-		if(!andMap.hasOwnProperty(ands[i]["input1"])) andMap[ands[i]["input1"]] = {};
-		andMap[ands[i]["input1"]][ands[i]["input2"]] = obj1;
-		
-		var obj2 = {name:ands[i]["input1"],pk1:ands[i]["k1"],pkm:ands[i]["km"], pn:ands[i]["n"]}
-		if(!andMap.hasOwnProperty(ands[i]["input2"])) andMap[ands[i]["input2"]] = {};
-		andMap[ands[i]["input2"]][ands[i]["input1"]] = obj2;
-	}
+	console.log(cdsMap);
+	console.log(andMap);
+    console.log(proteinLibrary)
 }
 
 function findProtein(name) {
@@ -101,20 +84,12 @@ function findProtein(name) {
 }
 
 function updateParameters(){
-	var prot = {};
-	if(selectedProtein["input2"]!=-1){
-		prot = andMap[selectedProtein["input1"]][selectedProtein["input2"]];
-		prot["pd1"] = cdsMap[selectedProtein["input1"]]["pd1"];
-		prot["pd2"] = cdsMap[selectedProtein["input1"]]["pd2"];
-		prot["pk2"] = cdsMap[selectedProtein["input1"]]["pk2"];
-	}
-	else prot = cdsMap[selectedProtein["input1"]];
-    $("#pk1").text(prot["pk1"]);
-    $("#pkm").text(prot["pkm"]);
-    $("#pn").text(prot["pn"]);
-    $("#pd1").text(prot["pd1"]);
-    $("#pd2").text(prot["pd2"]);
-    $("#pk2").text(prot["pk2"]);
+    $("#pk1").text(selectedProtein.pk1);
+    $("#pkm").text(selectedProtein.pkm);
+    $("#pn").text(selectedProtein.pn);
+    $("#pd1").text(selectedProtein.pd1);
+    $("#pd2").text(selectedProtein.pd2);
+    $("#pk2").text(selectedProtein.pk2);
 }
 
 function getLibrary(libraryId){
@@ -151,4 +126,8 @@ function setupLibrarySelector(libraries) {
         .appendTo(selector);
     }
     showSetup();
+}
+
+function resetInputs() {
+    inputs = "";
 }

@@ -171,7 +171,6 @@ function completeSimulation(){
     } else {
         signalModal.modal("hide");
         var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, time: timeSpan, steps: numSteps, library: selectedLibrary};
-        // jsRoutes.controllers.Application.simulate().ajax({
         jsRoutes.controllers.Application.getCooking().ajax({
             data: JSON.stringify(simulateData),
             method: "POST",
@@ -203,12 +202,9 @@ function applySetup(){
         circuitName = name;
         timeSpan = $("#simTimeSpan")[0].value;
         numSteps = $("#simSteps")[0].value;
+        makeInput();
+        makeOutput();
         setupModal.modal("hide");
-        
-		var gin = new Gate("Input", 0, 1, null, 30, 30);
-        var gout = new Gate("Output", 1, 0, null, 130, 130);
-        
-        // TODO: When setup is newly applied, remove old in- and output gates
+       // TODO: When setup is newly applied, remove old in- and output gates
     }
-
 }
