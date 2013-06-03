@@ -4,13 +4,9 @@ authors:
 - Stijn van Schooten
 */
 
-var inputs = "";//TODO hier het inputsignaal zetten
+var inputs = "";
 
-var proteinLibrary = [
-    {name:"henk", pk1:0.145, pkm:2.14, pn:0.0124},
-    {name:"klaas", pk1:1.5421, pkm:1.544, pn:0.0476},
-    {name:"piet", pk1:0.846, pkm:0.9954, pn:0.1457},
-    {name:"kees", pk1:1.024, pkm:2.476, pn:0.0864}];//new Array();
+var proteinLibrary = new Array();
 var selectedProtein = "";
 var selectedLibrary = -1;
 
@@ -38,9 +34,7 @@ function makeProteinList(){
 }
 
 function parseLibrary(json) {
-	//console.log(json)
 	var obj = $.parseJSON(json);
-	console.log(obj)
 	var cds = obj.cds;
 	proteinLibrary = [];
 	var cdsMap = {};
@@ -132,4 +126,8 @@ function setupLibrarySelector(libraries) {
         .appendTo(selector);
     }
     showSetup();
+}
+
+function resetInputs() {
+    inputs = "";
 }

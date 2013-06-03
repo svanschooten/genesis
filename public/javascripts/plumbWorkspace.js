@@ -370,6 +370,7 @@ function resetWorkspace(){
     if(confirmedReset) {
         circuit = new Array();
         currentConnection = null;
+        resetInputs();
         jsPlumb.detachEveryConnection();
         jsPlumb.deleteEveryEndpoint();
         $("#plumbArea").empty();
