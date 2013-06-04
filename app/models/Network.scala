@@ -401,8 +401,6 @@ object Network {
                 AndGate((inCS1,inCS2),outCS,libraryID)
             }
         })
-        println("csMap: "+csMap.size)
-        csMap.values.foreach(v=>println(v.name+":"+v.linksTo))
         val time = (json \ "time").as[String].toDouble
         val steps = (json \ "steps").as[String].toInt
         val net = new Network(csMap.values.filter(_.isInput).toList,-1,net_name)
