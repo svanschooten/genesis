@@ -93,7 +93,6 @@ object ProteinJSONFactory {
         Json.obj(data._1 ->
             Json.obj("k2"-> data._2,"d1"-> data._3,"d2"-> data._4))
       }))
-      println(res)
       res
     }
   }

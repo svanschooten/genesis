@@ -4,10 +4,9 @@ authors:
 - Stijn van Schooten
 */
 
-var inputs = "";//TODO hier het inputsignaal zetten
+var inputs = "";
 
-var cdsMap = {};
-var andMap = {};
+var proteinLibrary = new Array();
 var selectedProtein = "";
 var selectedLibrary = -1;
 
@@ -70,29 +69,41 @@ function makeProteinList(connection){
 function parseLibrary(json) {
 	var obj = $.parseJSON(json);
 	var cds = obj.cds;
+	proteinLibrary = [];
+	var cdsMap = {};
+	var andMap = {};
 	for(i = 0; i < cds.length; i++){
 		for(var key in cds[i]){
 			cdsMap[key] = {name:key, pd1:cds[i][key]["d1"], pd2:cds[i][key]["d2"], pk2:cds[i][key]["k2"]}
 		}
 	}
-	var nots = obj.not;
-	for(i = 0; i < nots.length; i++){
-		for(var key in nots[i]){
-			cdsMap[key]["pk1"] = nots[i][key]["k1"];
-			cdsMap[key]["pkm"] = nots[i][key]["km"];
-			cdsMap[key]["pn"] = nots[i][key]["n"];
+	if(true){ //if this connection is input of a NOT gate
+		var nots = obj.not;
+		for(i = 0; i < nots.length; i++){
+			for(var key in nots[i]){
+				cdsMap[key]["pk1"] = nots[i][key]["k1"];
+				cdsMap[key]["pkm"] = nots[i][key]["km"];
+				cdsMap[key]["pn"] = nots[i][key]["n"];
+				proteinLibrary.push(cdsMap[key]);
+			}
+		}		
+	}
+	else if(true){ //if this connection is input of an AND gate
+		var ands = obj.and;
+		for(i = 0; i < ands.length; i++){
+			var andObj = {in1:ands[i]["input1"], in2:ands[i]["input2"],
+						  pk1:ands[i]["k1"], pkm:ands[i]["km"], pn:ands[i]["n"]}
+			if(!andMap.hasOwnProperty(ands[i]["input1"])) andMap[ands[i]["input1"]] = {};
+			//if(!andMap.hasOwnProperty(ands[i]["input2"])) andMap[ands[i]["input2"]] = {};
+			andMap[ands[i]["input1"]][ands[i]["input2"]] = andObj;
+			//andMap[ands[i]["input2"]][ands[i]["input1"]] = andObj;
+			
+			//proteinLibrary.push(andMap[ands[i]["input1"]][ands[i]["input2"]]);
 		}
 	}
-	var ands = obj.and;
-	for(i = 0; i < ands.length; i++){
-		var obj1 = {name:ands[i]["input2"],pk1:ands[i]["k1"],pkm:ands[i]["km"],pn:ands[i]["n"]};
-		if(!andMap.hasOwnProperty(ands[i]["input1"])) andMap[ands[i]["input1"]] = {};
-		andMap[ands[i]["input1"]][ands[i]["input2"]] = obj1;
-		
-		var obj2 = {name:ands[i]["input1"],pk1:ands[i]["k1"],pkm:ands[i]["km"], pn:ands[i]["n"]}
-		if(!andMap.hasOwnProperty(ands[i]["input2"])) andMap[ands[i]["input2"]] = {};
-		andMap[ands[i]["input2"]][ands[i]["input1"]] = obj2;
-	}
+	console.log(cdsMap);
+	console.log(andMap);
+    console.log(proteinLibrary)
 }
 
 function findProtein(name) {
@@ -184,4 +195,8 @@ function setupLibrarySelector(libraries) {
         .appendTo(selector);
     }
     showSetup();
+}
+
+function resetInputs() {
+    inputs = "";
 }

@@ -23,7 +23,7 @@ var dropOptions = {
     activeClass:"dragActive"
 };
 
-var jsp;
+var jsp, gin, gout;
 var currentConnection = null;
 var gateHeight = 80, gateWith = 80;
 
@@ -40,9 +40,9 @@ jsPlumb.ready(function(){
     });
     jsp.Defaults.Container = "plumbArea";
     jsp.importDefaults({
-        DragOptions : { cursor: "pointer", zIndex:2000 },
+        DragOptions : { cursor: "pointer", zIndex:-2 },
         HoverClass: connectorHoverStyle,
-        ConnectionOverlays : [[ "Arrow", { location:-40 } ]],
+        ConnectionOverlays : [[ "Arrow", { width:15, location: 0.6,height:10, id:"arrow" }]],
     });
 });
 
@@ -67,9 +67,9 @@ function setProtein() {
         alertError("Invalid protein selection!");
         return;
     }
-    currentConnection.protein = selectedProtein["input1"];
+    currentConnection.protein = selectedProtein;
     currentConnection.removeOverlay("label");
-    currentConnection.addOverlay([ "Label", {label: selectedProtein["input1"], location: 0.3, cssClass: "aLabel", id:"label"}]);
+    currentConnection.addOverlay([ "Label", {label: selectedProtein, location: 0.7, cssClass: "aLabel", id:"label"}]);
     proteinModal.modal("hide");
 }
 
@@ -84,7 +84,7 @@ function makeConnection(params) {
         return false;
     }
     params.connection.protein = "";
-    params.connection.addOverlay([ "Arrow", { width:15, location: 0.7,height:10, id:"arrow" }]);
+    params.connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
     params.connection.bind("click", function(connection){ openProteinModal(connection) });
     params.connection.bind("contextmenu", function(connection){ 
         if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
@@ -180,19 +180,68 @@ function makeDraggable(div, gate) {
     });
 }
 
+function InputGate() {
+	this.id = "input";
+	this.type = "input";
+	
+	var gate = $('<div>', {
+		id: this.id
+		//class: "gateElement",
+	});
+	$('#plumbArea').append(gate);
+	
+	var text = $('<p>').appendTo(gate);
+	text.css('margin', "15px 30px");
+	gate.css({
+	    border: "2px dashed black",
+	    position: "absolute",
+	    left: 0,
+	    height: "100%",
+	    width: "80px"
+	});
+	text.text(this.id);
+	
+	this.x = gate.position().left;
+	this.y = gate.position().top;
+	circuit.push(this);
+	
+	return gate;
+}
+
+function OutputGate() {
+	this.id = "output";
+	this.type = "output";
+	
+	var gate = $('<div>', {
+		id: this.id
+		//class: "gateElement",
+	});
+	$('#plumbArea').append(gate);
+	
+	var text = $('<p>').appendTo(gate);
+	text.css('margin', "15px 30px");
+	gate.css({
+		border: '2px dashed brown',
+		position: "absolute",
+        right: 0,
+        height: "100%",
+        width: "80px"
+	});
+	text.text(this.id);
+	
+	this.x = gate.position().left;
+	this.y = gate.position().top;
+	circuit.push(this);
+	
+	return gate;
+}
+
 /**
 Gate constructor
 */
 function Gate(name, inputs, outputs, image,px,py) {
     this.id = name + circuit.length;
     this.type = name;
-	/*
-	var gate = $('<div style="left:' + positionx + ';top:'+ positiony +'"></div>', {
-            id: this.id,
-        class: "gateElement",
-    })
-    .appendTo($('#plumbArea'));
-    );
     
     */
     
@@ -201,9 +250,7 @@ function Gate(name, inputs, outputs, image,px,py) {
         class: "gateElement",
     })
     gate.offset({ top: py, left: px });
-    //var gate = $("<div class = 'gateElement', id='this.id'></div>");
     $("#plumbArea").append(gate);
-    //.appendTo($('#plumbArea'));
     
     if(image == null) {
         var text = $("<p>").appendTo(gate);
@@ -218,7 +265,7 @@ function Gate(name, inputs, outputs, image,px,py) {
         }).appendTo(gate);
     }
 
-
+    //TODO size bij groot aantal inputs vergroten
     this.x = gate.position().left;
     this.y = gate.position().top;
 
@@ -227,18 +274,21 @@ function Gate(name, inputs, outputs, image,px,py) {
     makeDraggable(gate, this);
     circuit.push(this);
     
-    $('#'+	this.id).bind('contextmenu', {gate: this}, function(event){
+    makeDeletable(this);
+}
+
+function makeDeletable(gate){
+    $('#' +	gate.id).bind('contextmenu', {gate: gate}, function(event){
 		if(confirm("Delete this gate?")){
-			
-			gate = event.data.gate
+			gate = event.data.gate;
 			i = circuit.indexOf(gate);
 			if(~i){
 				circuit[i] = null; // Replace instead of remove because the ids depend on circuit.length...
 			}
-			
-			jsPlumb.detachAllConnections(this);
-			jsPlumb.removeAllEndpoints(this);
-			$(this).remove();
+
+			jsPlumb.detachAllConnections(gate);
+			jsPlumb.removeAllEndpoints(gate);
+			$("#" + gate.id).remove();
 		}
 		return false;
 	});
@@ -308,3 +358,79 @@ $(function() {
 	            }
         });         
 });
+
+function makeInput(){
+    if(gin != null){
+        $("#input").remove();
+    }
+    gin = new InputGate();
+    jsPlumb.makeSource(gin, {
+        anchor:[ "Perimeter", { shape:"Rectangle"} ],
+        connector:[ "Flowchart", { cornerRadius:5 } ],
+        connectorStyle: connectorPaintStyle,
+        connectorHoverStyle: connectorHoverStyle
+    });
+}
+
+function makeOutput(){
+    if(gout != null){
+        $("#output").remove();
+    }
+    gout = new OutputGate();
+    jsPlumb.makeTarget(gout, {
+        deleteEndpointsOnDetach: false,
+        anchor:[ "Perimeter", { shape:"Rectangle"} ],
+        beforeDrop: makeConnection,
+        dropOptions: dropOptions
+    });
+}
+
+function resetWorkspace(){
+    var confirmedReset = confirm("Are you sure you want to reset?\nMake sure you saved first.");
+    if(confirmedReset) {
+        circuit = new Array();
+        currentConnection = null;
+        resetInputs();
+        jsPlumb.detachEveryConnection();
+        jsPlumb.deleteEveryEndpoint();
+        $("#plumbArea").empty();
+        makeInput();
+        makeOutput();
+    }
+}
+
+function saveCircuit(){
+    var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, time: timeSpan, steps: numSteps, library: selectedLibrary};
+    jsRoutes.controllers.Application.savecircuit().ajax({
+        data: JSON.stringify(simulateData),
+        method: "POST",
+        contentType: "application/json",
+        success: function(response) {
+            drawGraph(parseJSONdataRickShaw(response));
+            signalModal.modal("hide");
+            resultModal.modal("show");
+        },
+        error: function(response) { alertError(response)}
+    });
+}
+
+function getAllCircuits(){
+    jsRoutes.controllers.Application.getallcircuits().ajax({
+        success: function(response) {
+            displayCircuits(response);
+        },
+        error: function(response) { alertError(response)}
+    });
+}
+
+function displayCircuits(json){
+    var circuits = $.parseJSON(json);
+
+}
+
+function loadCircuit(circuitId){
+
+}
+
+
+

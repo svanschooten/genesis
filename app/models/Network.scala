@@ -97,7 +97,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
             // generate the appropriate ODEPairs and update the concentrations
             val parts = cs.linksTo.collect( {
                 case y@NotGate(_,out,_) if(!out.ready) => y
-                case y@AndGate((in1,in2),out,_) if(((in1.ready && in2==cs) || (in1==cs && in2.ready)) && !out.ready) => y
+                case y@AndGate((in1,in2),out,_) if(((in1.ready && in2==cs) || (in1==cs && in2.ready) || (in1.linkedBy.isEmpty ^ in2.linkedBy.isEmpty)) && !out.ready) => y
             })
 
             val odePairs = mkODEs(parts)
@@ -424,7 +424,7 @@ object Network {
         })
         new Network(csMap.values.filter(_.isInput).toList,-1,net_name)
     }
-	
+
     def simulate(json: JsValue): JsValue = {
       val network = fromJSON(json)
       val inputs = (json \ "inputs").as[String].split("\n")

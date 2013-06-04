@@ -5,7 +5,6 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc.BodyParsers.parse
-import models.Rungekuttatest
 import libs.json.{Json, __}
 
 import models._
@@ -14,8 +13,6 @@ import factories._
 
 /** The Application object handles everything related to authentication. */
 object Application extends Controller {
-
-  val rkt = Rungekuttatest()
 
   /** Form used for authenticating a user. */
   val loginForm = Form(
@@ -51,9 +48,9 @@ object Application extends Controller {
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-        routes.javascript.Application.jsontest,
         routes.javascript.Application.getlibrary,
         routes.javascript.Application.getCooking,
+        routes.javascript.Application.getallcircuits,
         routes.javascript.Application.getalllibraries
       )
     ).as("text/javascript")
@@ -80,37 +77,30 @@ object Application extends Controller {
       "cds"->ProteinJSONFactory.proteinCDSParamsJSON(id))
     Ok(jsonObject).as("plain/text")
   }
-  
-  def rk = Action {
-    Ok(views.html.rungekutte("good ol' runge kutta test",rkt))
+
+  def getallcircuits = Action { implicit request =>
+    request.session.get("user") match{
+      case Some(email) => {
+        User.findByEmail(email) match{
+          case Some(u) => {
+            val userNetworks = Network.getNetworks(u.id)   //TODO ANTOOOON!!
+            Ok("test").as("text/plain")
+          }
+          case _ => BadRequest("No user found")
+        }
+      }
+      case _ => BadRequest("No email found")
+    }
   }
 
-  def jsontest = Action {
-    Ok(Rungekuttatest().genJson).as("text/plain")
-  }
-
-  def canvastest = Action {
-    Ok(views.html.canvastest("just a quick test with a canvas"))
-  }
-
-  def morefun = Action {
-    Ok(views.html.mofu("another test with the lastest and greatest model"))
-  }
-
-  def plumbtest = Action {
-    Ok(views.html.plumbtest("Testing jsPlumb"))
-  }
-  
-    def dndtest = Action {
-    Ok(views.html.dndtest("Testing jsPlumb"))
-  }
-
-  def rungekutta = Action {
-    Ok(views.html.rungekutte("Testing the plot and rungeKutta", rkt))
+  def savecircuit = Action(parse.json) { implicit request =>
+    //Ok(Network.saveCircuit(request.body))  TODO eerst parsen en simulatie scheiden.
+    Ok("Placeholder")
   }
 
   def getCooking = Action(parse.json) { implicit request =>
     Ok(Network.simulate(request.body)).as("text/plain")
+<<<<<<< HEAD
   }
   
   def save = Action(parse.json) { implicit request =>
@@ -121,6 +111,8 @@ object Application extends Controller {
     Ok("")
 	//val id = Integer.parseInt((request.body \ "id").as[String])
 	//////Ok(Network.load(id,"",0)).as("text/plain")
+=======
+>>>>>>> 9dd3411d5a7a4975b699cc005319aea43ef4446c
   }
 }
 
