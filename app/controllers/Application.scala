@@ -5,7 +5,6 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc.BodyParsers.parse
-import models.Rungekuttatest
 import libs.json.{Json, __}
 
 import models._
@@ -14,8 +13,6 @@ import factories._
 
 /** The Application object handles everything related to authentication. */
 object Application extends Controller {
-
-  val rkt = Rungekuttatest()
 
   /** Form used for authenticating a user. */
   val loginForm = Form(
@@ -51,7 +48,6 @@ object Application extends Controller {
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-        routes.javascript.Application.jsontest,
         routes.javascript.Application.getlibrary,
         routes.javascript.Application.getCooking,
         routes.javascript.Application.getallcircuits,
@@ -100,14 +96,6 @@ object Application extends Controller {
   def savecircuit = Action(parse.json) { implicit request =>
     //Ok(Network.saveCircuit(request.body))  TODO eerst parsen en simulatie scheiden.
     Ok("Placeholder")
-  }
-
-  def plumbtest = Action {
-    Ok(views.html.plumbtest("Testing jsPlumb"))
-  }
-  
-    def dndtest = Action {
-    Ok(views.html.dndtest("Testing jsPlumb"))
   }
 
   def getCooking = Action(parse.json) { implicit request =>

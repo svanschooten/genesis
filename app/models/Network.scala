@@ -410,7 +410,7 @@ object Network {
       val inputs = (json \ "inputs").as[String].split("\n")
       val time = (json \ "time").as[String].toDouble
       val steps = (json \ "steps").as[String].toInt
-      network.setStartParameters(inputs, 100.0, 10.0, time, time/steps)
+      network.setStartParameters(inputs, 100.0, 10.0, time)
       network.simJson(time)
     }
 
