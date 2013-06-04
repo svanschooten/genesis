@@ -401,10 +401,30 @@ object Network {
                 AndGate((inCS1,inCS2),outCS,libraryID)
             }
         })
-        val time = (json \ "time").as[String].toDouble
-        val steps = (json \ "steps").as[String].toInt
-        val net = new Network(csMap.values.filter(_.isInput).toList,-1,net_name)
-        net.setStartParameters(inputs, 100.0, 10.0, steps)
-        net.simJson(steps-1)
+
+        new Network(csMap.values.filter(_.isInput).toList,-1,net_name)
+    }
+
+    def simulate(json: JsValue): JsValue = {
+      val network = fromJSON(json)
+      val inputs = (json \ "inputs").as[String].split("\n")
+      val time = (json \ "time").as[String].toDouble
+      val steps = (json \ "steps").as[String].toInt
+      network.setStartParameters(inputs, 100.0, 10.0, time, time/steps)
+      network.simJson(time)
+    }
+
+    def getNetworks(userId: Int) = {
+      DB.withConnection { implicit connection =>
+        val networks = SQL(
+          """
+	          select networkname from networkownedby
+	          where userid={userid} or userid=-1
+          """
+        ).on(
+          'userid -> userId
+        ).apply()
+        networks //TODO hier een lijstje maken en teruggeven in JSON
+      }
     }
 }
