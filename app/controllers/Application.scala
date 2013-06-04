@@ -110,7 +110,17 @@ object Application extends Controller {
   }
 
   def getCooking = Action(parse.json) { implicit request =>
-    Ok(Network.fromJSON(request.body)).as("text/plain")
+    Ok(Network.simulate(request.body)).as("text/plain")
+  }
+  
+  def save = Action(parse.json) { implicit request =>
+    Ok(Network.saveFromJson(request.body)).as("text/plain")
+  }
+  
+  def load = Action { implicit request =>
+    Ok("")
+	//val id = Integer.parseInt((request.body \ "id").as[String])
+	//////Ok(Network.load(id,"",0)).as("text/plain")
   }
 }
 

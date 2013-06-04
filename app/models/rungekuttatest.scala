@@ -3,7 +3,6 @@ package models
 import play.api.libs.json._
 import scalation.{VectorD, RungeKutta}
 import scalation.Derivatives.DerivativeV
-import controllers.Projects
 import factories.FileParser
 
 /**
@@ -96,7 +95,7 @@ case class Rungekuttatest (){
 	val NotM = NotGate(M,I,2)
 	val NotA = NotGate(A,K,2)
 	val net = new Network(List(B,F,K,I),-1,"")
-    net.setStartParameters(srlatchInput, 600)
+    net.setStartParameters(srlatchInput, 100, 10, 600)
     net.simJson(599)
   }
 

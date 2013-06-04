@@ -11,8 +11,8 @@ import anorm.SqlParser._
 abstract class Part
 abstract class Gate extends Part {
     val output: CodingSeq
-    var x : Double = 0
-    var y : Double = 0
+	var x : Double = 0
+	var y : Double = 0
 }
 
 /**
@@ -85,6 +85,18 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
 		        'isInput -> isInput
 		      ).executeUpdate()
           }
+		  
+		  linkedBy match {
+			case Some(gate) => {
+			  SQL("insert into gates values({id},{output},{x},{y})")
+				  .on(
+					'id -> id,
+					'output -> name,
+					'x -> gate.x,
+					'y -> gate.y)
+				  .executeUpdate()
+			}
+		  }
 	      
 	      val concs = concentration.toArray
 	      for(i <- 0 to concs.length-1){
@@ -99,7 +111,7 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
 	      }
 	      
 	      for(l <- linksTo){
-		      l match{
+			  l match{
 		        case x: Gate => x.output.save(id,x.output.isInput,false)
 		        case _ =>
 		      }

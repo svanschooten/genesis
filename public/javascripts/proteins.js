@@ -12,13 +12,14 @@ var selectedProtein = "";
 var selectedLibrary = -1;
 
 function makeProteinList(connection){
-	//if(connection == undefined) return;
 	$("#proteinListDiv").empty();
-	//console.log(connection);
+	clearParameters();
+	var fromSource = connection.sourceId.toLowerCase().indexOf("input")!=-1;
+	var toSink = connection.targetId.toLowerCase().indexOf("output")!=-1;
+	var toAndGate = connection.targetId.toLowerCase().indexOf("and")!=-1;
 	var o = connTargetHasOther(connection);
 	console.log(o);
 	console.log(connection);
-	console.log(connection.protein);
 	if(o!=""){
 		var ind = 0;
 		for(var key in andMap[o]) {
@@ -62,7 +63,7 @@ function makeProteinList(connection){
 	}
     $(".proteinSelector").click(function(){
         selectedProtein = {input1:$(this)[0].getAttribute("input1"), input2:$(this)[0].getAttribute("input2")};
-        updateParameters();
+        updateParameters(fromSource, toSink, toAndGate&&o=="");
     })
 }
 
@@ -104,7 +105,7 @@ function findProtein(name) {
     return res;
 }
 
-function updateParameters(){
+function updateParameters(fromSource, toSink, toAndGate){
 	var prot = {};
 	if(selectedProtein["input2"]!=-1){
 		prot = andMap[selectedProtein["input1"]][selectedProtein["input2"]];
@@ -113,12 +114,41 @@ function updateParameters(){
 		prot["pk2"] = cdsMap[selectedProtein["input1"]]["pk2"];
 	}
 	else prot = cdsMap[selectedProtein["input1"]];
-    $("#pk1").text(prot["pk1"]);
-    $("#pkm").text(prot["pkm"]);
-    $("#pn").text(prot["pn"]);
-    $("#pd1").text(prot["pd1"]);
-    $("#pd2").text(prot["pd2"]);
-    $("#pk2").text(prot["pk2"]);
+	if(fromSource){
+		$("#pd1").text("n/a");
+	    $("#pd2").text("n/a");
+	    $("#pk2").text("n/a");
+	}
+	else{
+		$("#pd1").text(prot["pd1"]);
+	    $("#pd2").text(prot["pd2"]);
+	    $("#pk2").text(prot["pk2"]);
+    }
+    if(toSink){
+	    $("#pk1").text("n/a");
+	    $("#pkm").text("n/a");
+	    $("#pn").text("n/a");
+    }
+    else if(toAndGate){
+    	var txt = "Please connect the gate's other input.";
+    	$("#pk1").text(txt);
+    	$("#pkm").text(txt);
+    	$("#pn").text(txt);
+    }
+    else{
+        $("#pk1").text(prot["pk1"]);
+    	$("#pkm").text(prot["pkm"]);
+    	$("#pn").text(prot["pn"]);
+    }
+}
+
+function clearParameters(){
+	$("#pd1").text("");
+	$("#pd2").text("");
+    $("#pk2").text("");
+    $("#pk1").text("");
+    $("#pkm").text("");
+    $("#pn").text("");
 }
 
 function getLibrary(libraryId){
@@ -129,7 +159,6 @@ function getLibrary(libraryId){
         success: function(response) {
             selectedLibrary = libraryId;
             parseLibrary(response);
-            makeProteinList();
             notify("Protein library successfully loaded!", "success");
         },
         error: function(response) { alertError(response)}

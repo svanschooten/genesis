@@ -154,10 +154,9 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
      *  @param startMRNAConc The concentration to use when an mRNA is 1 (on)
      *  @param limit The maximum time (to figure out how long the final 0 or 1 lasts)
      */
-    def setStartParameters(input: Array[String], limit: Double){
+    def setStartParameters(input: Array[String], startProteinConc: Double, startMRNAConc: Double, limit: Double){
       // these are the values that the proteins on their own would stabilize to (generated using MATLAB 2012b)
       // [k2,d1,d2: cds; k1: not]
-      
       val defaultConcs = Map(
         "A"->(30.36,175.11),
         "B"->(66.80,297.16),
@@ -173,11 +172,6 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
         "L"->(58.41,367.73),
         "M"->(37.55,258.82)
       )
-      
-      def getDefaultConc(protein: String) : (Double,Double) = {
-        if(defaultConcs.contains(protein)) defaultConcs(protein)
-        else (30,200)
-      }
 
       val results:Map[String,List[(Double,Double)]] = Map()
       val firstLine = input(0).split(",")
@@ -189,7 +183,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
       }
       val secLine = input(1).split(",")
       for(j <- 1 to secLine.length-1){
-	      if(secLine(j).toInt==1) curConcs(j) = getDefaultConc(TFInd(j))
+	      if(secLine(j).toInt==1) curConcs(j) = defaultConcs(TFInd(j))
 	      else curConcs(j) = (0.0,0.0)
 	    }
       var t = 0.0
@@ -202,7 +196,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
           t += stepSize
         }
         for(j <- 1 to curLine.length-1){
-	      if(curLine(j).toInt==1) curConcs(j) = getDefaultConc(TFInd(j))
+	      if(curLine(j).toInt==1) curConcs(j) = defaultConcs(TFInd(j))
 	      else curConcs(j) = (0.0,0.0)
 	    }
       }
@@ -237,7 +231,7 @@ object Network {
     /**
      * Return the Network object with name 'networkname' that belongs to 'user'
      */
-    def load(userid: Int, networkname: String, libraryID: Int): Network = {
+    def load(userid: Int, networkname: String, libraryID: Int) = {
       DB.withConnection{ implicit connection =>
       	  val id = getID(userid, networkname)
       	  val tempconcs = SQL(
@@ -280,6 +274,20 @@ object Network {
 	      	  		  case name~next~isInput => (name,next,isInput)
 	      	  		} *
 	      	}
+		  val gates : List[(String,Double,Double)] = SQL("select * from gates where networkid = {id}")
+				  .on('id -> id)
+			      .as {
+	      	  		get[String]("name")~get[Double]("x")~get[Double]("y") map{
+	      	  		  case name~x~y => (name,x,y)
+	      	  		} *
+	      	}
+		  val CDSJson = Json.toJson(allCDS.map(data => {
+			  Json.obj("name"->data._1,"next"->data._2,"isInput"->data._3)
+			}))
+		  val gatesJson = Json.toJson(gates.map(data => {
+			  Json.obj("name"->data._1,"x"->data._2,"y"->data._3)
+			}))
+		  /*val positions = gates.map(x => x._1 -> (x._2,x._3))
 		  var startCDS: List[CodingSeq] = Nil
 		  for(cs <- allCDS){
 		    val newCDS = new CodingSeq(cs._1,libraryID,concentrations(cs._2),cs._3)
@@ -295,12 +303,19 @@ object Network {
 	      for(str: String <- inputs1.keys){
 	        if(inputs2 contains str){
 	        	val g = new AndGate((seqs(inputs1(str)),seqs(inputs2(str))),seqs(str),libraryID)
+				g.x = positions.get(str)._1
+				g.y = positions.get(str)._2
 	        }
 	        else{
 	        	val g = new NotGate(seqs(inputs1(str)),seqs(str),libraryID)
+				g.x = positions.get(str)._1
+				g.y = positions.get(str)._2
 	        }
 	      }
-      	new Network(startCDS,userid,networkname)
+      	new Network(startCDS,userid,networkname)*/
+		println(CDSJson)
+		println(gatesJson)
+		(CDSJson,gatesJson)
       }
     }
 
@@ -407,10 +422,41 @@ object Network {
                 AndGate((inCS1,inCS2),outCS,libraryID)
             }
         })
-        val time = (json \ "time").as[String].toDouble
-        val steps = (json \ "steps").as[String].toInt
-        val net = new Network(csMap.values.filter(_.isInput).toList,-1,net_name)
-        net.setStartParameters(inputs, steps)
-        net.simJson(steps-1)
+        new Network(csMap.values.filter(_.isInput).toList,-1,net_name)
+    }
+	
+    def simulate(json: JsValue): JsValue = {
+      val network = fromJSON(json)
+      val inputs = (json \ "inputs").as[String].split("\n")
+      val time = (json \ "time").as[String].toDouble
+      val steps = (json \ "steps").as[String].toInt
+      network.setStartParameters(inputs, 100.0, 10.0, time)
+      network.simJson(time)
+    }
+	
+	def saveFromJson(json: JsValue) = {
+		fromJSON(json).save
+		Json.toJson("A")
+	}
+	
+    def getNetworks(userId: Int) = {
+      DB.withConnection { implicit connection =>
+        val networks = SQL(
+          """
+	          select networkname,networkid from networkownedby
+	          where userid={userid} or userid=-1
+          """
+        ).on(
+          'userid -> userId
+        ).as {
+  	  		get[Int]("networkid")~get[String]("networkname") map{
+  	  		  case id~name => (id,name)
+  	  		} *
+      	}
+        //TODO hier een lijstje maken en teruggeven in JSON
+        Json.toJson(networks.map(data => {
+    	  Json.obj(data._1 -> )
+      	}))
+      }
     }
 }
