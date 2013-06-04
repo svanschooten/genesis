@@ -243,8 +243,6 @@ function Gate(name, inputs, outputs, image,px,py) {
     this.id = name + circuit.length;
     this.type = name;
     
-    */
-    
     var gate = $('<div/>', {
         id: this.id,
         class: "gateElement",

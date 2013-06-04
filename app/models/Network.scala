@@ -125,20 +125,19 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
     /**
      * Save this network to the database.
      */
-    def save = {
+    def save(libraryid : Int) = {
     	Network.delete(userid,networkname)
 	    DB.withConnection { implicit connection =>
 	      SQL(
 	        """
-	         insert into networkownedby(userid,networkname) values({user},{networkname})
+	         insert into networkownedby(userid,networkname) values({user},{networkname},{libraryid})
 	        """
 	      ).on(
 	        'user -> userid,
-	        'networkname -> networkname
+	        'networkname -> networkname,
+	        'libraryid -> libraryid
 	      ).executeUpdate()
-
 	      val id = getID
-
 		  for(cs:CodingSeq <- inputs) {
 		    cs.save(id,true,true)
 		  }
@@ -231,10 +230,12 @@ object Network {
     /**
      * Return the Network object with name 'networkname' that belongs to 'user'
      */
-    def load(userid: Int, networkname: String, libraryID: Int) = {
+    def load(userid: Int, networkname: String) = {
       DB.withConnection{ implicit connection =>
       	  val id = getID(userid, networkname)
-      	  val tempconcs = SQL(
+      	  val libraryid = SQL("select libraryid from networkownedby where networkid={id})")
+      	  				.on('id -> id)().head[Int]("libraryid")
+      	  /*val tempconcs = SQL(
 			      """
 			      select * from concentrations
 	    		  where networkid = {id}
@@ -262,7 +263,7 @@ object Network {
 
 		  var inputs1:Map[String,String] = Map()
 	      var inputs2:Map[String,String] = Map()
-	      var seqs:Map[String,CodingSeq] = Map()
+	      var seqs:Map[String,CodingSeq] = Map()*/
 	      val allCDS = SQL(
 			      """
 			      select * from cds
@@ -315,7 +316,7 @@ object Network {
       	new Network(startCDS,userid,networkname)*/
 		println(CDSJson)
 		println(gatesJson)
-		(CDSJson,gatesJson)
+		(libraryid,CDSJson,gatesJson)
       }
     }
 
@@ -435,28 +436,25 @@ object Network {
     }
 	
 	def saveFromJson(json: JsValue) = {
-		fromJSON(json).save
-		Json.toJson("A")
+    	val libraryID = (json \ "library").as[String].toInt
+		fromJSON(json).save(libraryID)
 	}
 	
     def getNetworks(userId: Int) = {
       DB.withConnection { implicit connection =>
         val networks = SQL(
           """
-	          select networkname,networkid from networkownedby
+	          select networkname from networkownedby
 	          where userid={userid} or userid=-1
           """
         ).on(
           'userid -> userId
-        ).as {
-  	  		get[Int]("networkid")~get[String]("networkname") map{
-  	  		  case id~name => (id,name)
-  	  		} *
-      	}
-        //TODO hier een lijstje maken en teruggeven in JSON
-        Json.toJson(networks.map(data => {
-    	  Json.obj(data._1 -> )
-      	}))
+        ).as { get[String]("networkname")* }
+        val resMap = Map(networks map {s => (s, Network.load(userId,s))} : _*)
+        println(resMap)
+        Json.toJson(networks.map(x => {
+	        Json.obj(x -> Json.obj("libraryid"->resMap(x)._1, "CDS"->resMap(x)._2, "gates"->resMap(x)._3) )
+	    }))
       }
     }
 }

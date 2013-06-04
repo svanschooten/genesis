@@ -83,8 +83,8 @@ object Application extends Controller {
       case Some(email) => {
         User.findByEmail(email) match{
           case Some(u) => {
-            val userNetworks = Network.getNetworks(u.id)   //TODO ANTOOOON!!
-            Ok("test").as("text/plain")
+            val userNetworks = Network.getNetworks(u.id)
+            Ok(userNetworks).as("text/plain")
           }
           case _ => BadRequest("No user found")
         }
@@ -100,19 +100,16 @@ object Application extends Controller {
 
   def getCooking = Action(parse.json) { implicit request =>
     Ok(Network.simulate(request.body)).as("text/plain")
-<<<<<<< HEAD
   }
   
   def save = Action(parse.json) { implicit request =>
-    Ok(Network.saveFromJson(request.body)).as("text/plain")
+    Ok(Network.saveFromJson(request.body))
   }
   
   def load = Action { implicit request =>
     Ok("")
 	//val id = Integer.parseInt((request.body \ "id").as[String])
 	//////Ok(Network.load(id,"",0)).as("text/plain")
-=======
->>>>>>> 9dd3411d5a7a4975b699cc005319aea43ef4446c
   }
 }
 

@@ -122,7 +122,7 @@ class NetworkTest extends Specification {
 				
 			"correctly load a simple network" in {
 			  running(FakeApplication()){
-			    val simpleNetworkLoad = Network.load(-1,"simpleNetworkLoadTest",0)
+			    val simpleNetworkLoad = Network.load(-1,"simpleNetworkLoadTest")
 			    val start = simpleNetworkLoad.inputs
 			    start.size must equalTo(2)
 			    
@@ -155,7 +155,7 @@ class NetworkTest extends Specification {
 			
 			"correctly load a more complex network" in {
 			  running(FakeApplication()){
-			    val complexNetworkLoad = Network.load(-1,"complexNetworkLoadTest",0)
+			    val complexNetworkLoad = Network.load(-1,"complexNetworkLoadTest")
 			    val start = complexNetworkLoad.inputs
 			    start.size must equalTo(2)
 			    val seen:Set[String] = Set()
