@@ -27,9 +27,6 @@ POST	/newuser							controllers.Admin.saveUser
 # JSON to model to simulation to JSON call
 POST    /getcooking                         controllers.Application.getCooking
 
-#Forms
-GET		/formTest							controllers.Projects.formFunction
-
 # Javascript routing
 GET    /assets/javascripts/routes      		controllers.Application.javascriptRoutes
 POST    /getlibrary                         controllers.Application.getlibrary
@@ -39,19 +36,3 @@ POST    /getalllibraries                    controllers.Application.getalllibrar
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               		controllers.Assets.at(path="/public", file)
-
-# Test pages
-# test pages for the ODE solver
-GET     /canvastest                 		controllers.Application.canvastest
-GET     /jsontest                   		controllers.Application.jsontest
-GET     /rk                   		        controllers.Application.rungekutta
-GET     /index                              controllers.Projects.index
-GET		/test-home							controllers.Home.hometest
-GET     /mofu                       controllers.Application.morefun
-
-#tests for Forms
-#GET		/formTest							controllers.Projects.formFunction
-
-#tests for the jsPlumb usage
-GET     /plumbtest                          controllers.Application.plumbtest
-GET 	/dndtest							controllers.Application.dndtest

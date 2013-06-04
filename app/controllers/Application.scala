@@ -101,22 +101,6 @@ object Application extends Controller {
     //Ok(Network.saveCircuit(request.body))  TODO eerst parsen en simulatie scheiden.
     Ok("Placeholder")
   }
-  
-  def rk = Action {
-    Ok(views.html.rungekutte("good ol' runge kutta test",rkt))
-  }
-
-  def jsontest = Action {
-    Ok(Rungekuttatest().genJson).as("text/plain")
-  }
-
-  def canvastest = Action {
-    Ok(views.html.canvastest("just a quick test with a canvas"))
-  }
-
-  def morefun = Action {
-    Ok(views.html.mofu("another test with the lastest and greatest model"))
-  }
 
   def plumbtest = Action {
     Ok(views.html.plumbtest("Testing jsPlumb"))
@@ -124,10 +108,6 @@ object Application extends Controller {
   
     def dndtest = Action {
     Ok(views.html.dndtest("Testing jsPlumb"))
-  }
-
-  def rungekutta = Action {
-    Ok(views.html.rungekutte("Testing the plot and rungeKutta", rkt))
   }
 
   def getCooking = Action(parse.json) { implicit request =>
