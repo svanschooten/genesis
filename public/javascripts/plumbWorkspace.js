@@ -68,7 +68,8 @@ function setProtein() {
     }
     currentConnection.protein = selectedProtein;
     currentConnection.removeOverlay("label");
-    currentConnection.addOverlay([ "Label", {label: selectedProtein, location: 0.7, cssClass: "aLabel", id:"label"}]);
+    var location = (currentConnection.targetId == "Output")? 0.4 : 0.7;
+    currentConnection.addOverlay([ "Label", {label: selectedProtein, location: location, cssClass: "aLabel", id:"label"}]);
     proteinModal.modal("hide");
 }
 

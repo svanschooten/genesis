@@ -28,7 +28,7 @@ $(document).ready(function(){
         loadArrayScripts("lib/", libraries,
             loadPageScript()));
 
-    getCustomGates();
+    //getCustomGates();
     setTimeout(wrapModals, 1000);
 });
 
