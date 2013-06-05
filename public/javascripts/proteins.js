@@ -11,6 +11,7 @@ var selectedProtein = "";
 var selectedLibrary = -1;
 
 function makeProteinList(){
+    $("#proteinListDiv").empty();
     for(i = 0; i < proteinLibrary.length; i++) {
         var oddClass = (i % 2) == 0 ? "" : " odd";
         var span = $("<span></span>", {
@@ -28,7 +29,7 @@ function makeProteinList(){
         $("<br>").appendTo($("#proteinListDiv"));
     }
     $(".proteinSelector").click(function(){
-        selectedProtein = $(this)[0].value;
+        selectedProtein = this.value;
         updateParameters();
     })
 }
@@ -81,12 +82,13 @@ function findProtein(name) {
 }
 
 function updateParameters(){
-    $("#pk1").text(selectedProtein.pk1);
-    $("#pkm").text(selectedProtein.pkm);
-    $("#pn").text(selectedProtein.pn);
-    $("#pd1").text(selectedProtein.pd1);
-    $("#pd2").text(selectedProtein.pd2);
-    $("#pk2").text(selectedProtein.pk2);
+    var selection = proteinLibrary.filter(function(x){return x.name==selectedProtein})[0];
+    $("#pk1").text(selection.pk1);
+    $("#pkm").text(selection.pkm);
+    $("#pn").text(selection.pn);
+    $("#pd1").text(selection.pd1);
+    $("#pd2").text(selection.pd2);
+    $("#pk2").text(selection.pk2);
 }
 
 function getLibrary(libraryId){

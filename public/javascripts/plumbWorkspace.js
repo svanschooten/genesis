@@ -91,7 +91,7 @@ function makeConnection(params) {
             jsPlumb.detach(connection);
         }
         return false;
-        });
+        });    
     return true;
 }
 
@@ -107,7 +107,7 @@ function addEndPoints(inputs, outputs, element) {
                 paintStyle:{ fillStyle:"#558822",radius:9 },
                 hoverPaintStyle: endpointHoverStyle,
                 isTarget:true,
-                maxConnections: element.id == "Output" ? -1 : 1,
+                maxConnections: -1,
                 anchor: [0, (1 / (inputs+1)) * (i + 1), -1, 0],
                 beforeDrop: makeConnection,
                 dropOptions: dropOptions
@@ -126,7 +126,7 @@ function addEndPoints(inputs, outputs, element) {
                 connectorStyle: connectorPaintStyle,
                 hoverPaintStyle: endpointHoverStyle,
                 connectorHoverStyle: connectorHoverStyle,
-                maxConnections: element.id == "Input" ? -1 : 1,
+                maxConnections: -1,
                 anchor: [1, (1 / (outputs+1)) * (i + 1), 1, 0],
                 ConnectionOverlays : [ [ "Label", {label:" ", location: 0.25, cssClass: "aLabel", id:"label"}]],
             }
@@ -345,7 +345,26 @@ function makeOutput(){
         $("#Output").remove();
     }
     gout = new OutputGate();
-    addEndPoints(1, 0, gout);
+    jsPlumb.makeTarget(gout, {
+        deleteEndpointsOnDetach: false,
+        anchor:[ "Perimeter", { shape:"Rectangle"} ],
+        dropOptions: $.extend(dropOptions, 
+        	{drop: function(event, ui){
+	        	
+	        	connections = jsPlumb.getConnections({target: 'output'});
+	        	
+	        	connections.foreach(function(connection){
+					connection.bind("click", function(connection){ openProteinModal(connection) });
+				    connection.bind("contextmenu", function(connection){ 
+				        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
+				            jsPlumb.detach(connection);
+				        }
+				        return false;
+				    });
+				)}}
+	        }
+	    })
+    });
 }
 
 function resetWorkspace(){
@@ -394,6 +413,3 @@ function displayCircuits(json){
 function loadCircuit(){
 
 }
-
-
-
