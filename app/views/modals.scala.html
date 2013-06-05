@@ -76,10 +76,22 @@
     </div>
     <div class="modal-body" id="signalModalBody">
         <div id="signalErrorDiv" style="color: red;"></div>
-        <textarea rows="25" cols="70" id="signalArea"></textarea>
+        <textarea rows="20" cols="100" id="signalArea"></textarea>
     </div>
     <div id="signalModalFooter" class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
         <button class="btn btn-primary" onclick="completeSimulation()">Apply</button>
+    </div>
+</div>
+<div id="loadModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="loadModalHeader">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        <h3 id="loadModalHeader" accesskey="">Load a circuit.</h3>
+    </div>
+    <div class="modal-body" id="loadModalBody">
+    </div>
+    <div id="loadModalFooter" class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" onclick="loadCircuit()">Load</button>
     </div>
 </div>

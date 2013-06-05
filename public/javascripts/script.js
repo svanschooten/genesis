@@ -28,6 +28,7 @@ $(document).ready(function(){
         loadArrayScripts("lib/", libraries,
             loadPageScript()));
 
+    getCustomGates();
     setTimeout(wrapModals, 1000);
 });
 
@@ -165,7 +166,6 @@ function beginSimulation(){
 function completeSimulation(){
     //TODO Checken van inputsignalen
     inputs = $("#signalArea")[0].value;
-    //TODO Checken van inputsignalen
     if(inputs == ""){
         $("#signalErrorDiv").text("No input signal given.")
     } else {
@@ -189,6 +189,10 @@ function showSetup(){
     setupModal.modal("show");
 }
 
+function showLoad(){
+    $("#loadModal").modal("show");
+}
+
 function applySetup(){
     var lib = $("#setupLibrarySelector option:selected")[0].value;
     var name = $("#circuitName")[0].value;
@@ -205,6 +209,49 @@ function applySetup(){
         makeInput();
         makeOutput();
         setupModal.modal("hide");
-       // TODO: When setup is newly applied, remove old in- and output gates
+    }
+}
+
+function getCustomGates(){
+    jsRoutes.controllers.Application.getallcircuits().ajax({
+        success: function(response) {
+            showGates(parseGates(response));
+        },
+        error: function(response) { alertError(response)}
+    });
+}
+
+function parseGates(json){
+    var data = $.parseJSON(json);
+    //TODO In memory zetten om makkelijk te laden
+
+    return data;
+}
+
+function showGates(data) {
+    var customDiv = $("#customGates");
+    for(i = 0; i < data.length; i++){
+        var gate = $("<div></div>",{
+            id: data.name + circuit.length,
+            class: "product",
+            'data-inputs': data.inputs,
+            'data-outputs': data.outputs,
+            'data-image': data.image,
+            'data-posx': data.posx,
+            'data-posy': data.posy
+        })
+        if(data.image == null){
+            $("<p></p>")
+            .text(data.name)
+            .appendTo(gate);
+        } else {
+            var img = $("<img></img>",{
+                height: "80px;",
+                width: "80px",
+                src: data.image
+            })
+            .appendTo(gate);
+        }
+        gate.appendTo(customDiv);
     }
 }

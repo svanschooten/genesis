@@ -106,7 +106,8 @@ function addEndPoints(inputs, outputs, element) {
                 paintStyle:{ fillStyle:"#558822",radius:9 },
                 hoverPaintStyle: endpointHoverStyle,
                 isTarget:true,
-                maxConnections: 1,
+                maxConnections: -1,
+                maxConnections: element.id == "Output" ? -1 : 1,
                 anchor: [0, (1 / (inputs+1)) * (i + 1), -1, 0],
                 beforeDrop: makeConnection,
                 dropOptions: dropOptions
@@ -180,12 +181,12 @@ function makeDraggable(div, gate) {
 }
 
 function InputGate() {
-	this.id = "input";
+	this.id = "Input";
 	this.type = "input";
 	
 	var gate = $('<div>', {
-		id: this.id
-		//class: "gateElement",
+		id: this.id,
+		class: "gateElement"
 	});
 	$('#plumbArea').append(gate);
 	
@@ -193,27 +194,22 @@ function InputGate() {
 	text.css('margin', "15px 30px");
 	gate.css({
 	    border: "2px dashed black",
-	    position: "absolute",
-	    left: 0,
-	    height: "100%",
-	    width: "80px"
+        position: "absolute"
 	});
 	text.text(this.id);
-	
+	makeDraggable(gate, this);
 	this.x = gate.position().left;
 	this.y = gate.position().top;
 	circuit.push(this);
-	
-	return gate;
 }
 
 function OutputGate() {
-	this.id = "output";
+	this.id = "Output";
 	this.type = "output";
 	
 	var gate = $('<div>', {
-		id: this.id
-		//class: "gateElement",
+		id: this.id,
+		class: "gateElement"
 	});
 	$('#plumbArea').append(gate);
 	
@@ -221,18 +217,13 @@ function OutputGate() {
 	text.css('margin', "15px 30px");
 	gate.css({
 		border: '2px dashed brown',
-		position: "absolute",
-        right: 0,
-        height: "100%",
-        width: "80px"
+        position: "absolute"
 	});
 	text.text(this.id);
-	
+	makeDraggable(gate, this);
 	this.x = gate.position().left;
 	this.y = gate.position().top;
 	circuit.push(this);
-	
-	return gate;
 }
 
 /**
@@ -265,7 +256,6 @@ function Gate(name, inputs, outputs, image,px,py) {
     //TODO size bij groot aantal inputs vergroten
     this.x = gate.position().left;
     this.y = gate.position().top;
-
 	
     addEndPoints(inputs, outputs, this);
     makeDraggable(gate, this);
@@ -303,14 +293,14 @@ function Protein(id, data) {
 Wrapper for simple creation of AND gates
 */
 function andGate(posx,posy) {
-    var gate = new Gate("and", 2, 1, "assets/images/AND_gate.png",posx,posy);
+    return new Gate("and", 2, 1, "assets/images/AND_gate.png",posx,posy);
 };
 
 /**
 Wrapper for simple creation of NOT gates
 */
 function notGate(posx,posy) {
-    var gate = new Gate("not", 1, 1, "assets/images/NOT_gate.png",posx,posy);
+    return new Gate("not", 1, 1, "assets/images/NOT_gate.png",posx,posy);
 };
 
 
@@ -332,38 +322,30 @@ $(function() {
 	        		var id = ui.draggable.attr("id");
 	        		if(id == "ng") { 
 	        			notGate(posx,posy);
-	        		}
-	        		if(id == "ag") {
+	        		} else if(id == "ag") {
 	        			andGate(posx,posy);
+	        		} else {
+	        		    new Gate(id, getData(id, inputs), getData(id, outputs), getData(id, image), getData(id, posx), getData(id, posy));
 	        		}
+
 	            }
         });         
 });
 
 function makeInput(){
     if(gin != null){
-        $("#input").remove();
+        $("#Input").remove();
     }
     gin = new InputGate();
-    jsPlumb.makeSource(gin, {
-        anchor:[ "Perimeter", { shape:"Rectangle"} ],
-        connector:[ "Flowchart", { cornerRadius:5 } ],
-        connectorStyle: connectorPaintStyle,
-        connectorHoverStyle: connectorHoverStyle
-    });
+    addEndPoints(0, 1, gin);
 }
 
 function makeOutput(){
     if(gout != null){
-        $("#output").remove();
+        $("#Output").remove();
     }
     gout = new OutputGate();
-    jsPlumb.makeTarget(gout, {
-        deleteEndpointsOnDetach: false,
-        anchor:[ "Perimeter", { shape:"Rectangle"} ],
-        beforeDrop: makeConnection,
-        dropOptions: dropOptions
-    });
+    addEndPoints(1, 0, gout);
 }
 
 function resetWorkspace(){
@@ -409,7 +391,7 @@ function displayCircuits(json){
 
 }
 
-function loadCircuit(circuitId){
+function loadCircuit(){
 
 }
 
