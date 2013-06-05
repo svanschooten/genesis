@@ -205,6 +205,5 @@ function applySetup(){
         makeInput();
         makeOutput();
         setupModal.modal("hide");
-       // TODO: When setup is newly applied, remove old in- and output gates
     }
 }

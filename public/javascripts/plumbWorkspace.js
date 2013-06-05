@@ -106,7 +106,7 @@ function addEndPoints(inputs, outputs, element) {
                 paintStyle:{ fillStyle:"#558822",radius:9 },
                 hoverPaintStyle: endpointHoverStyle,
                 isTarget:true,
-                maxConnections: element.id.search("Output")==0 ? -1 : 1,
+                maxConnections: element.id == "Output" ? -1 : 1,
                 anchor: [0, (1 / (inputs+1)) * (i + 1), -1, 0],
                 beforeDrop: makeConnection,
                 dropOptions: dropOptions
@@ -125,7 +125,7 @@ function addEndPoints(inputs, outputs, element) {
                 connectorStyle: connectorPaintStyle,
                 hoverPaintStyle: endpointHoverStyle,
                 connectorHoverStyle: connectorHoverStyle,
-                maxConnections: element.id.search("Input")==0 ? -1 : 1,
+                maxConnections: element.id == "Input" ? -1 : 1,
                 anchor: [1, (1 / (outputs+1)) * (i + 1), 1, 0],
                 ConnectionOverlays : [ [ "Label", {label:" ", location: 0.25, cssClass: "aLabel", id:"label"}]],
             }
@@ -180,12 +180,12 @@ function makeDraggable(div, gate) {
 }
 
 function InputGate() {
-	this.id = "input";
+	this.id = "Input";
 	this.type = "input";
 	
 	var gate = $('<div>', {
-		id: this.id
-		//class: "gateElement",
+		id: this.id,
+		class: "gateElement"
 	});
 	$('#plumbArea').append(gate);
 	
@@ -193,27 +193,22 @@ function InputGate() {
 	text.css('margin', "15px 30px");
 	gate.css({
 	    border: "2px dashed black",
-	    position: "absolute",
-	    left: 0,
-	    height: "100%",
-	    width: "80px"
+        position: "absolute"
 	});
 	text.text(this.id);
-	
+	makeDraggable(gate, this);
 	this.x = gate.position().left;
 	this.y = gate.position().top;
 	circuit.push(this);
-	
-	return gate;
 }
 
 function OutputGate() {
-	this.id = "output";
+	this.id = "Output";
 	this.type = "output";
 	
 	var gate = $('<div>', {
-		id: this.id
-		//class: "gateElement",
+		id: this.id,
+		class: "gateElement"
 	});
 	$('#plumbArea').append(gate);
 	
@@ -221,18 +216,13 @@ function OutputGate() {
 	text.css('margin', "15px 30px");
 	gate.css({
 		border: '2px dashed brown',
-		position: "absolute",
-        right: 0,
-        height: "100%",
-        width: "80px"
+        position: "absolute"
 	});
 	text.text(this.id);
-	
+	makeDraggable(gate, this);
 	this.x = gate.position().left;
 	this.y = gate.position().top;
 	circuit.push(this);
-	
-	return gate;
 }
 
 /**
@@ -241,8 +231,6 @@ Gate constructor
 function Gate(name, inputs, outputs, image,px,py) {
     this.id = name + circuit.length;
     this.type = name;
-    
-    */
     
     var gate = $('<div/>', {
         id: this.id,
@@ -267,7 +255,6 @@ function Gate(name, inputs, outputs, image,px,py) {
     //TODO size bij groot aantal inputs vergroten
     this.x = gate.position().left;
     this.y = gate.position().top;
-
 	
     addEndPoints(inputs, outputs, this);
     makeDraggable(gate, this);
@@ -344,28 +331,20 @@ $(function() {
 
 function makeInput(){
     if(gin != null){
-        $("#input").remove();
+        $("#Input").remove();
     }
     gin = new InputGate();
-    jsPlumb.makeSource(gin, {
-        anchor:[ "Perimeter", { shape:"Rectangle"} ],
-        connector:[ "Flowchart", { cornerRadius:5 } ],
-        connectorStyle: connectorPaintStyle,
-        connectorHoverStyle: connectorHoverStyle
-    });
+    console.log("Gin is created: " + gin);
+    addEndPoints(0, 1, gin);
 }
 
 function makeOutput(){
     if(gout != null){
-        $("#output").remove();
+        $("#Output").remove();
     }
     gout = new OutputGate();
-    jsPlumb.makeTarget(gout, {
-        deleteEndpointsOnDetach: false,
-        anchor:[ "Perimeter", { shape:"Rectangle"} ],
-        beforeDrop: makeConnection,
-        dropOptions: dropOptions
-    });
+    console.log("Gout is created: " + gout);
+    addEndPoints(1, 0, gout);
 }
 
 function resetWorkspace(){
