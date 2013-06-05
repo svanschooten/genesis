@@ -193,6 +193,17 @@ function showLoad(){
     $("#loadModal").modal("show");
 }
 
+function saveCircuit() {
+	console.log("script.saveCircuit");
+    jsRoutes.controllers.Application.saveCircuit().ajax({
+        data: parseJsPlumb(),
+        method: "POST",
+        contentType: "application/json",
+        success: function(response) { alertError(response) },
+        error: function(response) { alertError(response)}
+    });
+}
+
 function applySetup(){
     var lib = $("#setupLibrarySelector option:selected")[0].value;
     var name = $("#circuitName")[0].value;

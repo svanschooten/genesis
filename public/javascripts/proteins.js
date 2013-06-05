@@ -18,8 +18,6 @@ function makeProteinList(connection){
 	var toSink = connection.targetId.toLowerCase().indexOf("output")!=-1;
 	var toAndGate = connection.targetId.toLowerCase().indexOf("and")!=-1;
 	var o = connTargetHasOther(connection);
-	console.log(o);
-	console.log(connection);
 	if(o!=""){
 		var ind = 0;
 		for(var key in andMap[o]) {

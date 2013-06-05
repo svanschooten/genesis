@@ -146,6 +146,7 @@ function repaintElement(elementId) {
 }
 
 function parseJsPlumb() {
+	console.log("parseJsPlumb");
     var network = new Object();
     var plumb = jsPlumb.getConnections();
     network.vertices = new Array();

@@ -233,8 +233,8 @@ object Network {
     def load(userid: Int, networkname: String) = {
       DB.withConnection{ implicit connection =>
       	  val id = getID(userid, networkname)
-      	  val libraryid = SQL("select libraryid from networkownedby where networkid={id})")
-      	  				.on('id -> id)().head[Int]("libraryid")
+      	  val libraryid = SQL("select libraryid from networkownedby where networkid={id}")
+      	  				.on('id -> id).apply().head[Int]("libraryid")
       	  /*val tempconcs = SQL(
 			      """
 			      select * from concentrations
@@ -357,7 +357,8 @@ object Network {
       	  val idResult = SQL(
 	          """
 	          select networkid from networkownedby
-	          where userid={userid} AND networkname={networkname}
+	          where (userid={userid} or userid=-1)
+      	      and networkname={networkname}
 	          """
 	          ).on(
 		        'userid -> userid,
@@ -437,11 +438,14 @@ object Network {
     }
 	
 	def saveFromJson(json: JsValue) = {
+    	println("Network.saveFromJson")
     	val libraryID = (json \ "library").as[String].toInt
 		fromJSON(json).save(libraryID)
+		Json.toJson("Circuit correctly saved.")
 	}
 	
     def getNetworks(userId: Int) = {
+      println("GETNETWORKS")
       DB.withConnection { implicit connection =>
         val networks = SQL(
           """
@@ -451,6 +455,7 @@ object Network {
         ).on(
           'userid -> userId
         ).as { get[String]("networkname")* }
+        println(networks)
         val resMap = Map(networks map {s => (s, Network.load(userId,s))} : _*)
         println(resMap)
         Json.toJson(networks.map(x => {

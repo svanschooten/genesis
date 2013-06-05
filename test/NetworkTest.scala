@@ -45,7 +45,7 @@ class NetworkTest extends Specification {
 		val pds = CodingSeq("D", List((0.4, 0.3)), false)
 		val g1s = AndGate((pas, pbs), pcs)
 		val g2s = NotGate(pcs, pds)
-		val simpleNetworkSave = new Network(List(pas, pbs), -1, "simpleNetworkSaveTest")
+		val simpleNetworkSave = new Network(List(pas, pbs), -2, "simpleNetworkSaveTest")
 		
 		val pac = CodingSeq("A", List((2.1, 3.4)), true)
 		val pbc = CodingSeq("B", List((1.2, 1.3)), true)
@@ -55,7 +55,7 @@ class NetworkTest extends Specification {
 		val g2c = NotGate(pcc, pdc)
 		val g3c = NotGate(pcc, pac)
 		val g4c = AndGate((pcc,pdc),pbc)
-		val complexNetworkSave = new Network(List(pac, pbc), -1, "complexNetworkSaveTest")
+		val complexNetworkSave = new Network(List(pac, pbc), -2, "complexNetworkSaveTest")
 	
 		"Network" should {
 			"correctly save a simple network" in {
@@ -123,7 +123,7 @@ class NetworkTest extends Specification {
 				
 			/*"correctly load a simple network" in {
 			  running(FakeApplication()){
-			    val simpleNetworkLoad = Network.load(-1,"simpleNetworkLoadTest")
+			    val simpleNetworkLoad = Network.load(-2,"simpleNetworkLoadTest")
 			    val start = simpleNetworkLoad.inputs
 			    start.size must equalTo(2)
 			    
@@ -156,7 +156,7 @@ class NetworkTest extends Specification {
 			
 			"correctly load a more complex network" in {
 			  running(FakeApplication()){
-			    val complexNetworkLoad = Network.load(-1,"complexNetworkLoadTest")
+			    val complexNetworkLoad = Network.load(-2,"complexNetworkLoadTest")
 			    val start = complexNetworkLoad.inputs
 			    start.size must equalTo(2)
 			    val seen:Set[String] = Set()

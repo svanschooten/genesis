@@ -75,7 +75,8 @@ object Application extends Controller {
     val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(id),
       "not"->ProteinJSONFactory.proteinNotParamsJSON(id),
       "cds"->ProteinJSONFactory.proteinCDSParamsJSON(id))
-    Ok(jsonObject).as("plain/text")
+    //println(Network.getNetworks(-2))
+    Ok(jsonObject).as("text/plain")
   }
 
   def getallcircuits = Action { implicit request =>
@@ -93,18 +94,13 @@ object Application extends Controller {
     }
   }
 
-  def savecircuit = Action(parse.json) { implicit request =>
-    //Ok(Network.saveCircuit(request.body))  TODO eerst parsen en simulatie scheiden.
-    Ok("Placeholder")
-  }
-
   def getCooking = Action(parse.json) { implicit request =>
     Ok(Network.simulate(request.body)).as("text/plain")
   }
   
-  def save = Action(parse.json) { implicit request =>
-    //Ok(Network.saveFromJson(request.body))
-    Ok("")
+  def saveCircuit = Action(parse.json) { implicit request =>
+    println("Application.saveCircuit")
+    Ok(Network.saveFromJson(request.body)).as("text/plain")
   }
   
   def load = Action { implicit request =>
