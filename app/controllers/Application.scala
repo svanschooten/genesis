@@ -103,7 +103,8 @@ object Application extends Controller {
   }
   
   def save = Action(parse.json) { implicit request =>
-    Ok(Network.saveFromJson(request.body))
+    //Ok(Network.saveFromJson(request.body))
+    Ok("")
   }
   
   def load = Action { implicit request =>

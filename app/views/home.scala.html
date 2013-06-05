@@ -37,7 +37,7 @@
 								<a onclick="saveCircuit()"> Save </a>
 							</li>
 							<li>
-								<a onclick="getAllCircuits()"> Load </a>
+								<a onclick="showLoad()"> Load </a>
 							</li>
 							<!-- <li>  //TODO Pas invoegen als we het daadwerkelijk gaan doen. Opschonen voor SIG!
 								<a href="#">Import...</a>
@@ -64,17 +64,17 @@
 			</header>
 		</div>
 		<div id="application-main-row" class="row-fluid">	
-			<div id="plumbArea" class="application-canvas span9">
+			<div id="plumbArea" class="application-canvas span10 well well-small">
 			</div>
-			<div class="application-sidebar span3">
-					<br></br>
+			<div class="application-sidebar span2 well">
 					<div>
 					<div id="ag" class="product"><img height="80px" width="80px" src=@routes.Assets.at("images/AND_gate.png")></div>
 					<div id="ng" class="product"><img height="80px" width="80px" src=@routes.Assets.at("images/NOT_gate.png")></div>
 					</div>
-					<br></br>
+                    <hr>
 					<div>Modified gates :</div>
-					<div>
+                    <hr>
+					<div id="customGates">
 					</div>
 			</div>
 		</div>

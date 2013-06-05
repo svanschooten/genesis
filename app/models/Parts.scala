@@ -1,6 +1,6 @@
 package models
 
-import play.api.db._
+import play.api.db.DB
 import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
@@ -96,6 +96,7 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
 					'y -> gate.y)
 				  .executeUpdate()
 			}
+			case _ =>
 		  }
 	      
 	      val concs = concentration.toArray

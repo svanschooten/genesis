@@ -130,7 +130,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
 	    DB.withConnection { implicit connection =>
 	      SQL(
 	        """
-	         insert into networkownedby(userid,networkname) values({user},{networkname},{libraryid})
+	         insert into networkownedby(userid,networkname,libraryid) values({user},{networkname},{libraryid})
 	        """
 	      ).on(
 	        'user -> userid,
@@ -341,6 +341,7 @@ object Network {
 	         DELETE FROM networkownedby WHERE networkid={id};
 	         DELETE FROM concentrations WHERE networkid={id};
 	         DELETE FROM cds WHERE networkid={id};
+	         DELETE FROM gates WHERE networkID={id};
 	        """
 	      ).on(
 	        'id -> id
