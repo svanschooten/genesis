@@ -57,7 +57,7 @@ object Application extends Controller {
   }
   
   def getalllibraries = Action { implicit request =>
-    request.session.get("user") match{
+    request.session.get("email") match{
       case Some(email) => {
         User.findByEmail(email) match{
           case Some(u) => {
@@ -79,7 +79,7 @@ object Application extends Controller {
   }
 
   def getallcircuits = Action { implicit request =>
-    request.session.get("user") match{
+    request.session.get("email") match{
       case Some(email) => {
         User.findByEmail(email) match{
           case Some(u) => {
