@@ -334,7 +334,6 @@ function makeInput(){
         $("#Input").remove();
     }
     gin = new InputGate();
-    console.log("Gin is created: " + gin);
     addEndPoints(0, 1, gin);
 }
 
@@ -343,7 +342,6 @@ function makeOutput(){
         $("#Output").remove();
     }
     gout = new OutputGate();
-    console.log("Gout is created: " + gout);
     addEndPoints(1, 0, gout);
 }
 

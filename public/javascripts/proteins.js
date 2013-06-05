@@ -68,9 +68,6 @@ function parseLibrary(json) {
 			//proteinLibrary.push(andMap[ands[i]["input1"]][ands[i]["input2"]]);
 		}
 	}
-	console.log(cdsMap);
-	console.log(andMap);
-    console.log(proteinLibrary)
 }
 
 function findProtein(name) {
