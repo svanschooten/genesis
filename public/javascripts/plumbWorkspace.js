@@ -107,7 +107,6 @@ function addEndPoints(inputs, outputs, element) {
                 hoverPaintStyle: endpointHoverStyle,
                 isTarget:true,
                 maxConnections: -1,
-                maxConnections: element.id == "Output" ? -1 : 1,
                 anchor: [0, (1 / (inputs+1)) * (i + 1), -1, 0],
                 beforeDrop: makeConnection,
                 dropOptions: dropOptions
