@@ -292,14 +292,14 @@ function Protein(id, data) {
 Wrapper for simple creation of AND gates
 */
 function andGate(posx,posy) {
-    var gate = new Gate("and", 2, 1, "assets/images/AND_gate.png",posx,posy);
+    return new Gate("and", 2, 1, "assets/images/AND_gate.png",posx,posy);
 };
 
 /**
 Wrapper for simple creation of NOT gates
 */
 function notGate(posx,posy) {
-    var gate = new Gate("not", 1, 1, "assets/images/NOT_gate.png",posx,posy);
+    return new Gate("not", 1, 1, "assets/images/NOT_gate.png",posx,posy);
 };
 
 
@@ -321,10 +321,12 @@ $(function() {
 	        		var id = ui.draggable.attr("id");
 	        		if(id == "ng") { 
 	        			notGate(posx,posy);
-	        		}
-	        		if(id == "ag") {
+	        		} else if(id == "ag") {
 	        			andGate(posx,posy);
+	        		} else {
+	        		    new Gate(id, getData(id, inputs), getData(id, outputs), getData(id, image), getData(id, posx), getData(id, posy));
 	        		}
+
 	            }
         });         
 });
@@ -388,7 +390,7 @@ function displayCircuits(json){
 
 }
 
-function loadCircuit(circuitId){
+function loadCircuit(){
 
 }
 
