@@ -91,7 +91,7 @@ function makeConnection(params) {
             jsPlumb.detach(connection);
         }
         return false;
-        });    
+        });
     return true;
 }
 
@@ -107,7 +107,7 @@ function addEndPoints(inputs, outputs, element) {
                 paintStyle:{ fillStyle:"#558822",radius:9 },
                 hoverPaintStyle: endpointHoverStyle,
                 isTarget:true,
-                maxConnections: -1,
+                maxConnections: element.id == "Output" ? -1 : 1,
                 anchor: [0, (1 / (inputs+1)) * (i + 1), -1, 0],
                 beforeDrop: makeConnection,
                 dropOptions: dropOptions
@@ -126,7 +126,7 @@ function addEndPoints(inputs, outputs, element) {
                 connectorStyle: connectorPaintStyle,
                 hoverPaintStyle: endpointHoverStyle,
                 connectorHoverStyle: connectorHoverStyle,
-                maxConnections: -1,
+                maxConnections: element.id == "Input" ? -1 : 1,
                 anchor: [1, (1 / (outputs+1)) * (i + 1), 1, 0],
                 ConnectionOverlays : [ [ "Label", {label:" ", location: 0.25, cssClass: "aLabel", id:"label"}]],
             }
@@ -183,13 +183,13 @@ function makeDraggable(div, gate) {
 function InputGate() {
 	this.id = "Input";
 	this.type = "input";
-	
+
 	var gate = $('<div>', {
 		id: this.id,
 		class: "gateElement"
 	});
 	$('#plumbArea').append(gate);
-	
+
 	var text = $('<p>').appendTo(gate);
 	text.css('margin', "15px 30px");
 	gate.css({
@@ -206,13 +206,13 @@ function InputGate() {
 function OutputGate() {
 	this.id = "Output";
 	this.type = "output";
-	
+
 	var gate = $('<div>', {
 		id: this.id,
 		class: "gateElement"
 	});
 	$('#plumbArea').append(gate);
-	
+
 	var text = $('<p>').appendTo(gate);
 	text.css('margin', "15px 30px");
 	gate.css({
@@ -232,14 +232,14 @@ Gate constructor
 function Gate(name, inputs, outputs, image,px,py) {
     this.id = name + circuit.length;
     this.type = name;
-    
+
     var gate = $('<div/>', {
         id: this.id,
         class: "gateElement",
     })
     gate.offset({ top: py, left: px });
     $("#plumbArea").append(gate);
-    
+
     if(image == null) {
         var text = $("<p>").appendTo(gate);
         text.css("padding", "15px 30px");
@@ -256,11 +256,11 @@ function Gate(name, inputs, outputs, image,px,py) {
     //TODO size bij groot aantal inputs vergroten
     this.x = gate.position().left;
     this.y = gate.position().top;
-	
+
     addEndPoints(inputs, outputs, this);
     makeDraggable(gate, this);
     circuit.push(this);
-    
+
     makeDeletable(this);
 }
 
@@ -311,16 +311,16 @@ $(function() {
     $('.product').draggable({
         revert: "invalid",
 		helper: "clone",
-		
+
     });
 
-    $('#plumbArea').droppable({                   
+    $('#plumbArea').droppable({
 		accept: '.product',
                 drop: function(event, ui) {
 	                var posx = ui.offset.left - $(this).offset().left;
 	        		var posy = ui.offset.top - $(this).offset().top;
 	        		var id = ui.draggable.attr("id");
-	        		if(id == "ng") { 
+	        		if(id == "ng") {
 	        			notGate(posx,posy);
 	        		} else if(id == "ag") {
 	        			andGate(posx,posy);
@@ -329,7 +329,7 @@ $(function() {
 	        		}
 
 	            }
-        });         
+        });
 });
 
 function makeInput(){
@@ -345,26 +345,7 @@ function makeOutput(){
         $("#Output").remove();
     }
     gout = new OutputGate();
-    jsPlumb.makeTarget(gout, {
-        deleteEndpointsOnDetach: false,
-        anchor:[ "Perimeter", { shape:"Rectangle"} ],
-        dropOptions: $.extend(dropOptions, 
-        	{drop: function(event, ui){
-	        	
-	        	connections = jsPlumb.getConnections({target: 'output'});
-	        	
-	        	connections.foreach(function(connection){
-					connection.bind("click", function(connection){ openProteinModal(connection) });
-				    connection.bind("contextmenu", function(connection){ 
-				        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
-				            jsPlumb.detach(connection);
-				        }
-				        return false;
-				    });
-				)}}
-	        }
-	    })
-    });
+    addEndPoints(1, 0, gout);
 }
 
 function resetWorkspace(){
@@ -413,3 +394,6 @@ function displayCircuits(json){
 function loadCircuit(){
 
 }
+
+
+
