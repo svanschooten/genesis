@@ -67,10 +67,10 @@ function setProtein() {
         alertError("Invalid protein selection!");
         return;
     }
-    currentConnection.protein = selectedProtein;
+    currentConnection.protein = selectedProtein.input1;
     currentConnection.removeOverlay("label");
     var location = (currentConnection.targetId == "Output")? 0.4 : 0.7;
-    currentConnection.addOverlay([ "Label", {label: selectedProtein, location: location, cssClass: "aLabel", id:"label"}]);
+    currentConnection.addOverlay([ "Label", {label: selectedProtein.input1, location: location, cssClass: "aLabel", id:"label"}]);
     proteinModal.modal("hide");
 }
 
