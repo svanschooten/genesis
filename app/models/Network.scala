@@ -362,7 +362,6 @@ object Network {
 	          select networkid from networkownedby
 	          where (userid={userid} or userid=-1)
       	      and networkname={networkname}
-	          where (userid={userid} OR userid=-1) AND networkname={networkname}
 	          """
 	          ).on(
 		        'userid -> userid,

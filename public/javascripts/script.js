@@ -258,7 +258,7 @@ function parseCircuits(json) {
 	    	if(outputs[key]==undefined){
 	    		network.edges.push({
 		            source: gateID[key],
-		            target: "Output",
+		            target: "output",
 		            protein: key
 		        });
 	    	}
@@ -266,7 +266,7 @@ function parseCircuits(json) {
 	    for(key in inputs){
 	    	for(var j=0;j<inputs[key].length;j++){
 	    		network.edges.push({
-		            source: (gateID[inputs[key][j]]==undefined ? "Input" : gateID[inputs[key][j]]),
+		            source: (gateID[inputs[key][j]]==undefined ? "input" : gateID[inputs[key][j]]),
 		            target: gateID[key],
 		            protein: inputs[key][j]
 		        });
@@ -304,7 +304,7 @@ function loadCircuit() {
 	for(var i=0;i<network.edges.length;i++){
 		var cur = network.edges[i];
 		//console.log(jsPlumb.getEndpoints(cur.target)[0]);
-		console.log(jsPlumb.getEndpoints(cur.source)[0]);
+		//console.log(jsPlumb.getEndpoints(cur.source)[0]);
 		var connection = jsPlumb.connect({source : cur.source, 
 			target : cur.target, paintStyle: connectorPaintStyle,
 			hoverPaintStyle: endpointHoverStyle, connectorHoverStyle: connectorHoverStyle
@@ -312,7 +312,7 @@ function loadCircuit() {
         });
         //jsPlumb.getEndpoints(cur.source)[0].addConnection(connection);
 		
-		var location = (cur.target == "Output")? 0.4 : 0.7;
+		var location = (cur.target == "output")? 0.4 : 0.7;
     	connection.addOverlay([ "Label", {label: cur.protein, location: location, cssClass: "aLabel", id:"label"}]);
 		//
 	}
