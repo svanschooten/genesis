@@ -1,66 +1,110 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
 
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print"/>
 
-    <title>Genesis by svanschooten</title>
-  </head>
+    <title>Welcome to Genesis</title>
+</head>
 
-  <body>
+<body>
 
-    <header>
-      <div class="container">
+<header>
+    <div class="container">
         <h1>Genesis</h1>
-        <h2></h2>
+
+        <h2>By team JAMES</h2>
 
         <section id="downloads">
-          <a href="https://github.com/svanschooten/genesis/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/svanschooten/genesis/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/svanschooten/genesis" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+            <a href="https://github.com/svanschooten/genesis/zipball/master" class="btn">Download as .zip</a>
+            <a href="https://github.com/svanschooten/genesis/tarball/master" class="btn">Download as .tar.gz</a>
+            <a href="https://github.com/svanschooten/genesis" class="btn btn-github"><span class="icon"></span>View on
+                GitHub</a>
         </section>
-      </div>
-    </header>
-
-    <div class="container">
-      <section id="main_content">
-        <h1>
-<a name="welcome-to-project-genesis" class="anchor" href="#welcome-to-project-genesis"><span class="octicon octicon-link"></span></a>Welcome to project GENESIS.</h1>
-
-<p>This piece of software is currently under development and will increase in size, quality and functionality!</p>
-
-<p>We are team JAMES, which is an acronym for our names. But what's more important is what we are developing: A piece of software that will enable biologists, or actually everyone, to design and simulate protein chain models. So now you can design your own micro-processes using proteins!</p>
-
-<p>The idea behind this is that proteins could somewhat behave like electrical circuits, but inside a cell! Certain combinations of proteins behave like AND gates, while other proteins behave like NOT gates. This enables the creation of logical circuits that also can be simulated.</p>
-
-<p>However, since this is an abstraction of the mechanics behind proteins, this model is not very representative for a real-life application. Though purely scientific, it's also fun to play around with!</p>
-
-<p>Here's a step-by-step guide to the GENESIS system:</p>
-
-<ol>
-<li>Make sure you have credentials!</li>
-  <li>Log into the login page, check the remember me checkbox if necessary.</li>
-  <li>Now you will be confronted with a setup modal. Pick the library you want to use. These are bound to your account or public.</li>
-  <li>Next you will have to name your circuit. No need to think of very complex names, these names only have to be unique within your account</li>
-  <li>You also need a timespan to simulate along. This is in seconds.</li>
-  <li>And finally give in the number of steps you want to simulate over, the more steps, the more detailed but also simulation will take longer. Click "Apply setup" to finish the setup and close the modal.</li>
-  <li>Now you will see an input and an output gate. These will act as your inpout and output! Drag and drop the corresponding elements on the right into the workspace to create a new gate instance.</li>
-  <li>When you create a new instance, endpoints are added to the gate. Use these to connect your gates, but remember, gates have inputs and ouputs, and they can only be dragged in one way!</li>
-  <li>When two gates are linked up, you can click that connection to select the protein that should be used in that connection. Be carefull not to chose the same protein multiple times.</li>
-  <li>When you are content with your circuit, you can click on "Simulation" and then "Run circuit" to start the simulation process.</li>
-  <li>But first you must input the input vectors, more will be explained in section <strong>Inputs</strong>
-</li>
-  <li>Finally you click "Apply" and the simulation will start. When done you will be presented with a graph and a button to download a .csv with the results.</li>
-  <li>Click on "Circuit" and then "Save" to save yor circuit.</li>
-  <li>Or, if you want to load a circuit, click "Circuit" and then "Load". You will be presented with a list of your (or public) circuits you can load, and then edit or simulate.</li>
-</ol>
-      </section>
     </div>
+</header>
 
-    
-  </body>
+<div class="container">
+    <section id="main_content">
+        <div class="inline-block"><h1 class="inline">
+            <a name="welcome-to-project-genesis" class="anchor" href="#welcome-to-project-genesis"><span
+                    class="octicon octicon-link"></span></a>Welcome to project GENESIS.<img class="inline"
+                                                                                            src="/images/teamJamesLogoSmall32x32.png">
+        </h1></div>
+
+        <p>This piece of software is currently under development and will increase in size, quality and
+            functionality!</p>
+
+        <p>We are team JAMES, which is an acronym for our names. But what's more important is what we are developing: A
+            piece of software that will enable biologists, or actually everyone, to design and simulate protein chain
+            models. So now you can design your own micro-processes using proteins!</p>
+
+        <p>The idea behind this is that proteins could somewhat behave like electrical circuits, but inside a cell!
+            Certain combinations of proteins behave like AND gates, while other proteins behave like NOT gates. This
+            enables the creation of logical circuits that also can be simulated.</p>
+
+        <p>However, since this is an abstraction of the mechanics behind proteins, this model is not very representative
+            for a real-life application. Though purely scientific, it's also fun to play around with!</p>
+
+        <ul class="contentNav">
+            <li>
+                <a href="#startup">Step-by-step guide for simple circuits.</a>
+            </li>
+            <li>
+                <a href="#advanced">Guide for more advanced circuits.</a>
+            </li>
+            <li>
+                <a href="#aboutJames">About team JAMES</a>
+            </li>
+            <li>
+                <a href="#functionality">Core functionality</a>
+            </li>
+        </ul>
+
+        <p id="startup">Here's a step-by-step guide to the GENESIS system:</p>
+
+        <ol>
+            <li>Make sure you have credentials!</li>
+            <li>Log into the login page, check the remember me checkbox if necessary.</li>
+            <li>Now you will be confronted with a setup modal. Pick the library you want to use. These are bound to your
+                account or public.
+            </li>
+            <li>Next you will have to name your circuit. No need to think of very complex names, these names only have
+                to be unique within your account
+            </li>
+            <li>You also need a timespan to simulate along. This is in seconds.</li>
+            <li>And finally give in the number of steps you want to simulate over, the more steps, the more detailed but
+                also simulation will take longer. Click "Apply setup" to finish the setup and close the modal.
+            </li>
+            <li>Now you will see an input and an output gate. These will act as your inpout and output! Drag and drop
+                the corresponding elements on the right into the workspace to create a new gate instance.
+            </li>
+            <li>When you create a new instance, endpoints are added to the gate. Use these to connect your gates, but
+                remember, gates have inputs and ouputs, and they can only be dragged in one way!
+            </li>
+            <li>When two gates are linked up, you can click that connection to select the protein that should be used in
+                that connection. Be carefull not to chose the same protein multiple times.
+            </li>
+            <li>When you are content with your circuit, you can click on "Simulation" and then "Run circuit" to start
+                the simulation process.
+            </li>
+            <li>But first you must input the input vectors, more will be explained in section <strong>Inputs</strong>
+            </li>
+            <li>Finally you click "Apply" and the simulation will start. When done you will be presented with a graph
+                and a button to download a .csv with the results.
+            </li>
+            <li>Click on "Circuit" and then "Save" to save yor circuit.</li>
+            <li>Or, if you want to load a circuit, click "Circuit" and then "Load". You will be presented with a list of
+                your (or public) circuits you can load, and then edit or simulate.
+            </li>
+        </ol>
+    </section>
+</div>
+
+
+</body>
 </html>

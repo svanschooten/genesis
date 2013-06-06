@@ -245,3 +245,20 @@ a {
 .cf {
   zoom:1;
 }
+
+.inline-block{
+    display: inline-block;
+}
+
+.inline{
+    display: inline;
+}
+
+.contentNav{
+    list-style-type: none;
+}
+
+.small{
+    color: #b2aeab;
+    font-size: 11px;
+}
