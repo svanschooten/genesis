@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="SBT: org.yaml:snakeyaml:1.10">
-    <CLASSES>
-      <root url="jar://D:/Projects/Play/repository/local/org.yaml/snakeyaml/1.10/bundles/snakeyaml.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

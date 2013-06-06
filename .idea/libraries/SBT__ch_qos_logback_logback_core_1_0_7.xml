@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="SBT: ch.qos.logback:logback-core:1.0.7">
-    <CLASSES>
-      <root url="jar://D:/Projects/Play/repository/local/ch.qos.logback/logback-core/1.0.7/jars/logback-core.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
