@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2e7cfbb3-b3ac-460c-b2b2-1fe1810ed7a3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/genesis-logo.png" afterPath="$PROJECT_DIR$/images/genesis-logo.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/humans.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javascripts/jquery-1.10.1.min.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/stylesheets/stylesheet.css" afterPath="$PROJECT_DIR$/stylesheets/stylesheet.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/javascripts/main.js" afterPath="$PROJECT_DIR$/javascripts/main.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="genesis.iws" />
@@ -35,7 +36,9 @@
     <file path="/rickShawPlot.js" changelist="2e7cfbb3-b3ac-460c-b2b2-1fe1810ed7a3" time="1370511618757" ignored="false" />
     <file path="/ProteinJsonFactorySpec.scala" changelist="2e7cfbb3-b3ac-460c-b2b2-1fe1810ed7a3" time="1370514120185" ignored="false" />
     <file path="/stylesheet.css" changelist="2e7cfbb3-b3ac-460c-b2b2-1fe1810ed7a3" time="1370524658073" ignored="false" />
-    <file path="/index.html" changelist="2e7cfbb3-b3ac-460c-b2b2-1fe1810ed7a3" time="1370528005540" ignored="false" />
+    <file path="/index.html" changelist="2e7cfbb3-b3ac-460c-b2b2-1fe1810ed7a3" time="1370530226052" ignored="false" />
+    <file path="/main.js" changelist="2e7cfbb3-b3ac-460c-b2b2-1fe1810ed7a3" time="1370529337945" ignored="false" />
+    <file path="/humans.txt" changelist="2e7cfbb3-b3ac-460c-b2b2-1fe1810ed7a3" time="1370529273586" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,16 +110,7 @@
       <file leaf-file-name="index.html" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="95" selection-start="341" selection-end="341" vertical-scroll-proportion="0.12042503">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="main.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/javascripts/main.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="306" column="22" selection-start="14311" selection-end="14311" vertical-scroll-proportion="0.87957495">
               <folding />
             </state>
           </provider>
@@ -140,8 +134,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/views/login.scala.html" />
-        <option value="$PROJECT_DIR$/public/stylesheets/main.css" />
         <option value="$PROJECT_DIR$/app/views/main.scala.html" />
         <option value="$PROJECT_DIR$/public/javascripts/plumbWorkspace.js" />
         <option value="$PROJECT_DIR$/test/NetworkSpec.scala" />
@@ -155,6 +147,8 @@
         <option value="$PROJECT_DIR$/test/ProteinJsonFactorySpec.scala" />
         <option value="$PROJECT_DIR$/project/plugins.sbt" />
         <option value="$PROJECT_DIR$/stylesheets/stylesheet.css" />
+        <option value="$PROJECT_DIR$/humans.txt" />
+        <option value="$PROJECT_DIR$/javascripts/main.js" />
         <option value="$PROJECT_DIR$/index.html" />
       </list>
     </option>
@@ -557,9 +551,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/humans.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="358" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="95" selection-start="341" selection-end="341" vertical-scroll-proportion="0.12042503">
+        <state line="306" column="22" selection-start="14311" selection-end="14311" vertical-scroll-proportion="0.87957495">
           <folding />
         </state>
       </provider>

@@ -1,0 +1,21 @@
+/* Team JAMES */
+
+Developer: Michael The
+Site: http://stackoverblog.wordpress.com
+Twitter: @ReturnFalse
+Location: The Netherlands, Rotterdam
+
+Developer: Stijn van Schooten
+Site: http://svanschooten.nl
+Twitter: @SSchooten
+Location: The Netherlands, Delft
+
+Developer: Edward
+
+Developer: Jeroen
+
+Developer: Anton
+
+/* Thanks to: */
+Delft University of Technology
+
