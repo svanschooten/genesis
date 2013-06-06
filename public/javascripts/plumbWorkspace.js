@@ -182,12 +182,11 @@ function makeDraggable(div, gate) {
 }
 
 function InputGate() {
-	this.id = "Input";
+	this.id = "input";
 	this.type = "input";
 
 	var gate = $('<div>', {
-		id: this.id,
-		class: "gateElement"
+		id: this.id
 	});
 	$('#plumbArea').append(gate);
 
@@ -195,22 +194,26 @@ function InputGate() {
 	text.css('margin', "15px 30px");
 	gate.css({
 	    border: "2px dashed black",
-        position: "absolute"
+	    position: "absolute",
+	    left: 0,
+	    height: "50%",
+	    width: "80px"
 	});
 	text.text(this.id);
-	makeDraggable(gate, this);
+
 	this.x = gate.position().left;
 	this.y = gate.position().top;
 	circuit.push(this);
+
+	return gate;
 }
 
 function OutputGate() {
-	this.id = "Output";
+	this.id = "output";
 	this.type = "output";
 
 	var gate = $('<div>', {
-		id: this.id,
-		class: "gateElement"
+		id: this.id
 	});
 	$('#plumbArea').append(gate);
 
@@ -218,15 +221,21 @@ function OutputGate() {
 	text.css('margin', "15px 30px");
 	gate.css({
 		border: '2px dashed brown',
-        position: "absolute"
+		position: "absolute",
+        right: 0,
+        height: "50%",
+        width: "80px"
 	});
 	text.text(this.id);
-	makeDraggable(gate, this);
+
 	this.x = gate.position().left;
 	this.y = gate.position().top;
 	circuit.push(this);
-}
+	
+	makeDraggable(gate, this);
 
+	return gate;
+}
 /**
 Gate constructor
 */
@@ -333,8 +342,9 @@ $(function() {
     $('#plumbArea').droppable({
 		accept: '.product',
                 drop: function(event, ui) {
-	                var posx = ui.offset.left - $(this).offset().left;
-	        		var posy = ui.offset.top - $(this).offset().top;
+	                var posx = event.pageX + $('#plumbArea').scrollLeft() - $('#plumbArea').offset().left - 30;
+	        		var posy = event.pageY + $('#plumbArea').scrollTop() - $('#plumbArea').offset().top - 30;
+	        		console.log("posx: " + posx + ", posy: " + posy)
 	        		var id = ui.draggable.attr("id");
 	        		if(id == "ng") {
 	        			notGate(posx,posy);
@@ -350,18 +360,40 @@ $(function() {
 
 function makeInput(){
     if(gin != null){
-        $("#Input").remove();
+        $("#input").remove();
     }
     gin = new InputGate();
-    addEndPoints(0, 1, gin);
+    jsPlumb.makeSource(gin, {
+        anchor:[ "Perimeter", { shape:"Rectangle"} ],
+        connector:[ "Flowchart", { cornerRadius:5 } ],
+        connectorStyle: connectorPaintStyle,
+        connectorHoverStyle: connectorHoverStyle
+    });
 }
 
 function makeOutput(){
     if(gout != null){
-        $("#Output").remove();
+        $("#output").remove();
     }
     gout = new OutputGate();
-    addEndPoints(1, 0, gout);
+    jsPlumb.makeTarget(gout, {
+        deleteEndpointsOnDetach: false,
+        anchor:[ "Perimeter", { shape:"Rectangle"} ],
+        dropOptions: $.extend(dropOptions, 
+        	{drop: function(event, ui){
+	        	connections = jsPlumb.getConnections({target: 'output'});
+	        	connections.forEach(function(connection){
+					connection.bind("click", function(connection){ openProteinModal(connection) });
+				    connection.bind("contextmenu", function(connection){ 
+				        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
+				            jsPlumb.detach(connection);
+				        }
+				        return false;
+				    });
+				});
+	        }}
+        )
+    });
 }
 
 function resetWorkspace(){
