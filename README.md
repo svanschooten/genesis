@@ -9,7 +9,7 @@
     <img height="192px"
          width="192px"
          class="inline"
-         src="images/genesis.png">
+         src="public/images/genesis.png">
 </div>
 <p>
     This piece of software is currently under development and will increase in size, quality and
@@ -148,7 +148,7 @@
         should be all the protein names as described in the library.<br>
         Here is an example (though it's a cropped version better viewing of this page.):
     </p>
-    <img src="images/inputs.png" alt="cropped inputs">
+    <img src="public/images/inputs.png" alt="cropped inputs">
 
     <p>
         This is a simple input method so we could focus on getting the primary functionality working. In the
