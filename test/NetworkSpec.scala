@@ -95,7 +95,7 @@ class NetworkSpec extends Specification {
     	   val concs = List.fill(3)(1.0)
            val A = CodingSeq("A",concs.zip(concs),isInput=true)
            val net = new Network(List(A),-1,"")
-    	   val json = net.simJson(1.0)
+    	   val json = net.simJson(1.0)._1
     	   val jsonName = (json \\ "name").map(_.as[String])
     	   jsonName must equalTo(listName)
        }

@@ -44,6 +44,10 @@ server.pid
 # ignore scalation
 scalation*
 
+# ignore rendered files
+public/files/*
+
 #Ignore 
 build.sbt
+project/plugins.sbt
 #For play version incompatibility.

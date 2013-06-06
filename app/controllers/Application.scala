@@ -14,6 +14,8 @@ import factories._
 /** The Application object handles everything related to authentication. */
 object Application extends Controller {
 
+  private var sessionHelper: String = ""
+
   /** Form used for authenticating a user. */
   val loginForm = Form(
     tuple(
@@ -58,7 +60,7 @@ object Application extends Controller {
   }
   
   def getalllibraries = Action { implicit request =>
-    request.session.get("user") match{
+    request.session.get("email") match{
       case Some(email) => {
         User.findByEmail(email) match{
           case Some(u) => {
@@ -80,7 +82,7 @@ object Application extends Controller {
   }
 
   def getallcircuits = Action { implicit request =>
-    request.session.get("user") match{
+    request.session.get("email") match{
       case Some(email) => {
         User.findByEmail(email) match{
           case Some(u) => {
@@ -101,6 +103,14 @@ object Application extends Controller {
   
   def savecircuit = Action(parse.json) { implicit request =>
     Ok(Network.saveFromJson(request.body)).as("text/plain")
+  }
+
+  def setSessionHelper(sh: String) = {
+    sessionHelper = sh
+  }
+
+  def getSessionHelper(): String = {
+    sessionHelper
   }
 }
 

@@ -6,6 +6,7 @@ Authors:
 //Globals
 var gateid = 0
 var circuit = new Array();
+var customGates = new Array();
 var endpointOptions = { isTarget:true, isSource:true };
 var connectorPaintStyle = {
     lineWidth:4,
@@ -109,7 +110,7 @@ function addEndPoints(inputs, outputs, element) {
                 paintStyle:{ fillStyle:"#558822",radius:9 },
                 hoverPaintStyle: endpointHoverStyle,
                 isTarget:true,
-                maxConnections: element.id == "Output" ? -1 : 1,
+                maxConnections: -1,
                 anchor: [0, (1 / (inputs+1)) * (i + 1), -1, 0],
                 beforeDrop: makeConnection,
                 dropOptions: dropOptions
@@ -128,7 +129,7 @@ function addEndPoints(inputs, outputs, element) {
                 connectorStyle: connectorPaintStyle,
                 hoverPaintStyle: endpointHoverStyle,
                 connectorHoverStyle: connectorHoverStyle,
-                maxConnections: element.id == "Input" ? -1 : 1,
+                maxConnections: -1,
                 anchor: [1, (1 / (outputs+1)) * (i + 1), 1, 0],
                 ConnectionOverlays : [ [ "Label", {label:" ", location: 0.25, cssClass: "aLabel", id:"label"}]],
             }
@@ -183,12 +184,11 @@ function makeDraggable(div, gate) {
 }
 
 function InputGate() {
-	this.id = "Input";
+	this.id = "input";
 	this.type = "input";
 
 	var gate = $('<div>', {
-		id: this.id,
-		class: "gateElement"
+		id: this.id
 	});
 	$('#plumbArea').append(gate);
 
@@ -196,22 +196,26 @@ function InputGate() {
 	text.css('margin', "15px 30px");
 	gate.css({
 	    border: "2px dashed black",
-        position: "absolute"
+	    position: "absolute",
+	    left: 0,
+	    height: "50%",
+	    width: "80px"
 	});
 	text.text(this.id);
-	makeDraggable(gate, this);
+
 	this.x = gate.position().left;
 	this.y = gate.position().top;
 	circuit.push(this);
+
+	return gate;
 }
 
 function OutputGate() {
-	this.id = "Output";
+	this.id = "output";
 	this.type = "output";
 
 	var gate = $('<div>', {
-		id: this.id,
-		class: "gateElement"
+		id: this.id
 	});
 	$('#plumbArea').append(gate);
 
@@ -219,15 +223,21 @@ function OutputGate() {
 	text.css('margin', "15px 30px");
 	gate.css({
 		border: '2px dashed brown',
-        position: "absolute"
+		position: "absolute",
+        right: 0,
+        height: "50%",
+        width: "80px"
 	});
 	text.text(this.id);
-	makeDraggable(gate, this);
+
 	this.x = gate.position().left;
 	this.y = gate.position().top;
 	circuit.push(this);
-}
+	
+	makeDraggable(gate, this);
 
+	return gate;
+}
 /**
 Gate constructor
 */
@@ -321,6 +331,34 @@ function connTargetHasOther(connection){
     return "";
 }
 
+function makeCustomGate(id,posx,posy) {
+    /* make normal gates and connections that are contained in the custom gate, then hide them all
+    todo: figure out after that how to connect them up (hint: jsPlumb.connect)
+    */
+    var data;
+    for(var i = 0; i < customGates.length; i++)
+        if(customGates[i].name == id)
+            data = customGates[i];
+    if(data === undefined)
+        return false;
+    new Gate(id, data.inputs.length, data.outputs.length, $("#"+id+" img").src, posx, posy);
+    circuit.pop();
+    // create dummy divs with connections to represent the contents of the custom gate (needed for the simulation)
+    var divmap = {};
+    for(var i = 0; i < data.nodes.length; i++) {
+        var name = data.nodes[i].name;
+        divmap[name] = $("<div></div>", {
+            "id": id+"_"+name,
+            "type": id,
+            "x": 0,
+            "y": 0
+        });
+    }
+    for(var i = 0; i < data.edges.length; i++) {
+        jsPlumb.connect({"source": data.edges[i].source, "target": data.edges[i].target});
+    }
+}
+
 /**
 Testing drag and drop
 */
@@ -334,15 +372,16 @@ $(function() {
     $('#plumbArea').droppable({
 		accept: '.product',
                 drop: function(event, ui) {
-	                var posx = ui.offset.left - $(this).offset().left;
-	        		var posy = ui.offset.top - $(this).offset().top;
+	                var posx = event.pageX + $('#plumbArea').scrollLeft() - $('#plumbArea').offset().left - 30;
+	        		var posy = event.pageY + $('#plumbArea').scrollTop() - $('#plumbArea').offset().top - 30;
+	        		console.log("posx: " + posx + ", posy: " + posy)
 	        		var id = ui.draggable.attr("id");
 	        		if(id == "ng") {
 	        			notGate(posx,posy);
 	        		} else if(id == "ag") {
 	        			andGate(posx,posy);
 	        		} else {
-	        		    new Gate(id, getData(id, inputs), getData(id, outputs), getData(id, image), getData(id, posx), getData(id, posy));
+                        makeCustomGate(id,posx,posy);
 	        		}
 
 	            }
@@ -351,18 +390,40 @@ $(function() {
 
 function makeInput(){
     if(gin != null){
-        $("#Input").remove();
+        $("#input").remove();
     }
     gin = new InputGate();
-    addEndPoints(0, 1, gin);
+    jsPlumb.makeSource(gin, {
+        anchor:[ "Perimeter", { shape:"Rectangle"} ],
+        connector:[ "Flowchart", { cornerRadius:5 } ],
+        connectorStyle: connectorPaintStyle,
+        connectorHoverStyle: connectorHoverStyle
+    });
 }
 
 function makeOutput(){
     if(gout != null){
-        $("#Output").remove();
+        $("#output").remove();
     }
     gout = new OutputGate();
-    addEndPoints(1, 0, gout);
+    jsPlumb.makeTarget(gout, {
+        deleteEndpointsOnDetach: false,
+        anchor:[ "Perimeter", { shape:"Rectangle"} ],
+        dropOptions: $.extend(dropOptions, 
+        	{drop: function(event, ui){
+	        	connections = jsPlumb.getConnections({target: 'output'});
+	        	connections.forEach(function(connection){
+					connection.bind("click", function(connection){ openProteinModal(connection) });
+				    connection.bind("contextmenu", function(connection){ 
+				        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
+				            jsPlumb.detach(connection);
+				        }
+				        return false;
+				    });
+				});
+	        }}
+        )
+    });
 }
 
 function resetWorkspace(){
