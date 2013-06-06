@@ -34,31 +34,31 @@
 </p>
 <ul class="contentNav">
     <li>
-        <a href="#startup">Step-by-step guide for simple circuits.</a>
+        <a href="#step-by-step-guide-to-the-genesis-system">Step-by-step guide for simple circuits.</a>
     </li>
     <li>
-        <a href="#inputs">More info about inputs.</a>
+        <a href="#specifying-the-inputs">More info about inputs.</a>
     </li>
     <li>
-        <a href="#outputs">What is the output.</a>
+        <a href="#what-is-shown-in-the-output">What is the output.</a>
     </li>
     <li>
-        <a href="#inner">How does GENESIS work.</a>
+        <a href="#how-does-genesis-work">How does GENESIS work.</a>
     </li>
     <li>
-        <a href="#advanced">Guide for more advanced circuits.</a>
+        <a href="#more-advanced-genesis-functions">Guide for more advanced circuits.</a>
     </li>
     <li>
-        <a href="#functionality">Core functionality.</a>
+        <a href="#implemented-functionality">Core functionality.</a>
     </li>
     <li>
-        <a href="#wanted">Wanted extra functionality.</a>
+        <a href="#wanted-functionality-for-further-development">Wanted extra functionality.</a>
     </li>
     <li>
-        <a href="#aboutJames">About team JAMES.</a>
+        <a href="#about-our-team-james">About team JAMES.</a>
     </li>
     <li>
-        <a href="#libraries">Used libraries.</a>
+        <a href="#what-libraries-were-used-for-genesis">Used libraries.</a>
     </li>
 </ul>
 
@@ -67,7 +67,7 @@
 
     <p>
         Below is a small guide to design your first small circuit. This is a basic guide, for more information
-        you should refer to the <a href="#advanced">advanced documentation</a> or contact <a href="#aboutJames">the
+        you should refer to the <a href="#more-advanced-genesis-functions">advanced documentation</a> or contact <a href="#about-our-team-james">the
         team.</a><br>
         The simple guide:
     </p>
@@ -123,13 +123,13 @@
         </li>
         <li>
             But first you must input the input vectors, more will be explained in section <a
-                href="#inputs"><strong>Inputs</strong></a>
+                href="#specifying-the-inputs"><strong>Inputs</strong></a>
         </li>
         <li>
             Finally you click "Apply" and the simulation will start. When done you will be presented with a
             graph
             and a button to download a .csv with the results. More info about the output in the <a
-                href="#outputs"><strong>Outputs</strong></a> section.
+                href="#what-is-shown-in-the-output"><strong>Outputs</strong></a> section.
         </li>
     </ol>
     <a class="small" href="#welcome-to-project-genesis">Back to top!</a>
@@ -163,10 +163,10 @@
     <p>
         The output is specified by the circuit you designed, proteins you used, the library and the input signal. This
         is then sent to the back-end to be parsed into a full memory model, but more on that in the section about the
-        <a href="#inner">inner workings</a>. The output is then given back is the form of series data, for each input
+        <a href="#how-does-genesis-work">inner workings</a>. The output is then given back is the form of series data, for each input
         protein you get both the MRNA and protein levels as result. These levels are plotted in an interactive graph,
         meaning you can zoom horizontally for better insight in the change of levels. Also a .csv can be downloaded that
-        will have the same form as the <a href="#inputs">input signal</a>. This can be used for further analysis and
+        will have the same form as the <a href="#specifying-the-inputs">input signal</a>. This can be used for further analysis and
         plotting outside of the GENESIS environment.
     </p>
     <a class="small" href="#welcome-to-project-genesis">Back to top!</a>
