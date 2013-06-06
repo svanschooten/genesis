@@ -14,6 +14,8 @@ import factories._
 /** The Application object handles everything related to authentication. */
 object Application extends Controller {
 
+  private var sessionHelper: String = ""
+
   /** Form used for authenticating a user. */
   val loginForm = Form(
     tuple(
@@ -111,6 +113,14 @@ object Application extends Controller {
     Ok("")
 	//val id = Integer.parseInt((request.body \ "id").as[String])
 	//////Ok(Network.load(id,"",0)).as("text/plain")
+  }
+
+  def setSessionHelper(sh: String) = {
+    sessionHelper = sh
+  }
+
+  def getSessionHelper(): String = {
+    sessionHelper
   }
 }
 

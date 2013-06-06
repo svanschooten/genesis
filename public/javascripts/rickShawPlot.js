@@ -8,7 +8,9 @@ Parses the standard JSON ouput to a usable format for plotting.
 function parseJSONdataRickShaw(response){
 
    // Refresh data with the latest results
-   data = $.parseJSON(response);
+   var parsed = $.parseJSON(response);
+   data = parsed[0];
+   $("#csvDownload").attr("href", "/assets/files/" + parsed[1]);
 
    //Instantiate a new color pallette
    var palette = new Rickshaw.Color.Palette( { interpolatedStopsCount: data.length } );

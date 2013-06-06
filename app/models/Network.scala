@@ -7,6 +7,7 @@ import anorm._
 import anorm.SqlParser._
 import scala.collection.mutable.Map
 import play.api.libs.json._
+import factories.FileFactory
 
 /**
  *  Class to represent a network of coding sequences and transcription factors.
@@ -27,7 +28,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
     }
 
     /**
-     *  Perform the simulation that will show how the concentrations of the checmicals
+     *  Perform the simulation that will show how the concentrations of the chemicals
      *  in the system will evolve and return these concentrations as follows:
      *  Each time step a list of triplets is generated, with name, mRNA and protein concentration,
      *  and these time steps form a list as well.
@@ -59,18 +60,20 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
      */
     def simJson(finish: Double) = {
         val results = simulate(finish)
+        val file: String = FileFactory.makeFile(results)
         val flipped = new scala.collection.mutable.ListMap[String, scala.collection.mutable.ListBuffer[(String, Double, Double)]]()
         results(0).foreach( triple => flipped += triple._1 -> new scala.collection.mutable.ListBuffer[(String,Double,Double)]())
         results.foreach( li => {
             li.foreach( triple => flipped(triple._1) += triple)
         })
-        Json.toJson(flipped.values.flatMap( dataset => {
+        val json = Json.toJson(flipped.values.flatMap( dataset => {
             var x = 0.0-stepSize; var y = 0.0-stepSize
             List(Json.obj( "name" -> Json.toJson("mRNA_"+dataset(0)._1), "data" ->
                 dataset.map(_._2).map(conc => {x+=stepSize; Json.obj("x" -> x, "y" -> conc)})),
                 Json.obj("name" -> Json.toJson("protein_"+dataset(0)._1), "data" ->
                 dataset.map(_._3).map(conc => {y+=stepSize; Json.obj("x" -> y, "y" -> conc)}))
                 )}))
+        (json, file)
     }
 
     /**
@@ -432,8 +435,9 @@ object Network {
       val inputs = (json \ "inputs").as[String].split("\n")
       val time = (json \ "time").as[String].toDouble
       val steps = (json \ "steps").as[String].toInt
-      network.setStartParameters(inputs, 100.0, 10.0, time)
-      network.simJson(time)
+      network.setStartParameters(inputs, 100.0, 10.0, steps)
+      val res = network.simJson(steps - 1)
+      Json.arr(res._1, res._2)
     }
 	
 	def saveFromJson(json: JsValue) = {
