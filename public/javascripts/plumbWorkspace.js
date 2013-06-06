@@ -108,7 +108,7 @@ function addEndPoints(inputs, outputs, element) {
                 paintStyle:{ fillStyle:"#558822",radius:9 },
                 hoverPaintStyle: endpointHoverStyle,
                 isTarget:true,
-                maxConnections: element.id == "Output" ? -1 : 1,
+                maxConnections: -1,
                 anchor: [0, (1 / (inputs+1)) * (i + 1), -1, 0],
                 beforeDrop: makeConnection,
                 dropOptions: dropOptions
@@ -127,7 +127,7 @@ function addEndPoints(inputs, outputs, element) {
                 connectorStyle: connectorPaintStyle,
                 hoverPaintStyle: endpointHoverStyle,
                 connectorHoverStyle: connectorHoverStyle,
-                maxConnections: element.id == "Input" ? -1 : 1,
+                maxConnections: -1,
                 anchor: [1, (1 / (outputs+1)) * (i + 1), 1, 0],
                 ConnectionOverlays : [ [ "Label", {label:" ", location: 0.25, cssClass: "aLabel", id:"label"}]],
             }
