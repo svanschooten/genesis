@@ -1,0 +1,38 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# The home page
+GET		/									controllers.Home.home
+
+# The about page
+GET		/about								controllers.About.about
+
+# The settings page
+GET		/settings							controllers.Settings.settings
+POST	/settings							controllers.Settings.saveSettings
+
+# The help page
+GET		/help								controllers.Help.help
+
+# Authentication
+GET     /login                              controllers.Application.login
+POST    /login                              controllers.Application.authenticate
+GET     /logout                             controllers.Application.logout
+
+# Admination
+GET		/newuser							controllers.Admin.createUser
+POST	/newuser							controllers.Admin.saveUser
+
+# JSON to model to simulation to JSON call
+POST    /getcooking                         controllers.Application.getCooking
+
+# Javascript routing
+GET    /assets/javascripts/routes      		controllers.Application.javascriptRoutes
+POST    /getlibrary                         controllers.Application.getlibrary
+POST    /savecircuit                        controllers.Application.savecircuit
+POST    /getallcircuits                     controllers.Application.getallcircuits
+POST    /getalllibraries                    controllers.Application.getalllibraries
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               		controllers.Assets.at(path="/public", file)

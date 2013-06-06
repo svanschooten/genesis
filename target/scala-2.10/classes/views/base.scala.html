@@ -1,0 +1,33 @@
+@(title : String)(head : Html)(body : Html)
+
+<!DOCTYPE html>
+<html lang="en">
+	
+	<head>
+		<title>@title</title>
+		
+		<!-- Here be humans -->
+		<link type="text/plain" rel="author" href="@routes.Assets.at("humans.txt")"/>
+
+		<!-- bootstrap -->
+		<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/genesis-logo64x64.png")">
+		<!-- jQuery -->
+		<script src="@routes.Assets.at("javascripts/lib/jquery-1.9.1.min.js")" type="text/javascript"></script>
+
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/jquery-ui-1.10.2.min.css")">
+		
+		<!-- CSS -->
+		<link rel="stylesheet" href="@routes.Assets.at("stylesheets/base.css")">
+		
+	
+		@head
+		
+	</head>
+	
+	<body>
+		@body
+
+	</body>
+	
+</html>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SBT: org.apache.httpcomponents:httpcore:4.2.1">
+    <CLASSES>
+      <root url="jar://D:/Projects/Play/repository/cache/org.apache.httpcomponents/httpcore/jars/httpcore-4.2.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

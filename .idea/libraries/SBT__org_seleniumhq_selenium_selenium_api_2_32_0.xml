@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SBT: org.seleniumhq.selenium:selenium-api:2.32.0">
+    <CLASSES>
+      <root url="jar://D:/Projects/Play/repository/cache/org.seleniumhq.selenium/selenium-api/jars/selenium-api-2.32.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

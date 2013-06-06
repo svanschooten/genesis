@@ -1,0 +1,3 @@
+<test.ProteinJsonFactorySpec-results timestamp="1370514295867"><result location="test.ProteinJsonFactorySpec (ProteinJsonFactorySpec.scala:106)" id="250180427"><stats time="368" expectations="1" failures="1" examples="1"></stats></result>
+</test.ProteinJsonFactorySpec-results>
+<test.ProteinJsonFactorySpec-stats timestamp="1370514295878"><stats time="3901" expectations="8" failures="1" successes="7" examples="8"></stats></test.ProteinJsonFactorySpec-stats>

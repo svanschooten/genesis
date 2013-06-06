@@ -1,0 +1,65 @@
+[info] ProteinJsonFactorySpec
+[info] 
+[info] LibraryListJson should
+[info] + return correct value
+[info]  
+[info] ProteinCDSParamJSON should
+[info] + return correct value
+[info]  
+[info] ProteinAndParamJSON should
+[info] + return correct value
+[info]  
+[info] ProteinAllAndParamJSON should
+[error] x return correct value
+[error]    List(A, B, C, D, E, F, G, H, I, TESTA) is not equal to List(A, B, C, D, E, F, G, H, I) (ProteinJsonFactorySpec.scala:112)
+[error] Expected: ... H, I[])
+[error] Actual:   ... H, I[, TESTA])
+[info] 
+[info]  
+[info] ProteinAndParamJSON should
+[info] + return correct value
+[info]  
+[info] ProteinAndParamJSON should
+[info] + return correct value
+[info]  
+[info] ProteinNotParamJSON should
+[info] + return correct value
+[info]  
+[info] ProteinCDSParamJSON should
+[info] + return correct value
+[info]  
+[info]  
+[info] Total for specification ProteinJsonFactorySpec
+[info] Finished in 3 seconds, 901 ms
+[info] 8 examples, 1 failure, 0 error
+[info] 
+[error] Failed: : Total 8, Failed 1, Errors 0, Passed 7, Skipped 0
+[error] Failed tests:
+[error] 	test.ProteinJsonFactorySpec
+java.lang.RuntimeException: Tests unsuccessful
+	at scala.sys.package$.error(package.scala:27)
+	at scala.Predef$.error(Predef.scala:123)
+	at sbt.Tests$.showResults(Tests.scala:192)
+	at sbt.Defaults$$anonfun$inputTests$2$$anonfun$apply$18$$anonfun$apply$19.apply(Defaults.scala:373)
+	at sbt.Defaults$$anonfun$inputTests$2$$anonfun$apply$18$$anonfun$apply$19.apply(Defaults.scala:373)
+	at scala.Function1$$anonfun$compose$1.apply(Function1.scala:49)
+	at scala.Function1$$anonfun$compose$1.apply(Function1.scala:49)
+	at sbt.$tilde$greater$$anonfun$$u2219$1.apply(TypeFunctions.scala:41)
+	at sbt.std.Transform$$anon$5.work(System.scala:71)
+	at sbt.Execute$$anonfun$submit$1$$anonfun$apply$1.apply(Execute.scala:232)
+	at sbt.Execute$$anonfun$submit$1$$anonfun$apply$1.apply(Execute.scala:232)
+	at sbt.ErrorHandling$.wideConvert(ErrorHandling.scala:18)
+	at sbt.Execute.work(Execute.scala:238)
+	at sbt.Execute$$anonfun$submit$1.apply(Execute.scala:232)
+	at sbt.Execute$$anonfun$submit$1.apply(Execute.scala:232)
+	at sbt.ConcurrentRestrictions$$anon$4$$anonfun$1.apply(ConcurrentRestrictions.scala:160)
+	at sbt.CompletionService$$anon$2.call(CompletionService.scala:30)
+	at java.util.concurrent.FutureTask$Sync.innerRun(Unknown Source)
+	at java.util.concurrent.FutureTask.run(Unknown Source)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+	at java.util.concurrent.FutureTask$Sync.innerRun(Unknown Source)
+	at java.util.concurrent.FutureTask.run(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+[error] (test:test-only) Tests unsuccessful
