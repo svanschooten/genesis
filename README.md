@@ -152,7 +152,7 @@
 
     <p>
         This is a simple input method so we could focus on getting the primary functionality working. In the
-        section about <a href="#wanted">wanted functionality</a> you can read more about what our ideas where
+        section about <a href="#wanted-functionality-for-further-development">wanted functionality</a> you can read more about what our ideas where
         about what to implement when we would have had more time.
     </p>
     <a class="small" href="#welcome-to-project-genesis">Back to top!</a>
