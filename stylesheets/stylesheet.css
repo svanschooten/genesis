@@ -262,3 +262,17 @@ a {
     color: #b2aeab;
     font-size: 11px;
 }
+
+.section{
+    display: block;
+    margin-top: 35px;
+}
+
+.center-block{
+    width: 100%;
+}
+
+.center{
+    margin-left:auto;
+    margin-right:auto;
+}
