@@ -28,7 +28,7 @@ $(document).ready(function(){
         loadArrayScripts("lib/", libraries,
             loadPageScript()));
 
-    //getCustomGates();
+    getCustomGates();
     setTimeout(wrapModals, 1000);
 });
 
@@ -221,11 +221,53 @@ function getCustomGates(){
     });
 }
 
+/* store each custom gate as an object with edges and vertices into the customGates array
+ also return a copy needed by showGates */
 function parseGates(json){
     var data = $.parseJSON(json);
-    //TODO In memory zetten om makkelijk te laden
-
-    return data;
+    // copy for showGates
+    data_parsed = new Array();
+    // get it sorted out
+    data.forEach(function(gate) {
+        var nodes = Array();
+        var edges = Array();
+        var inputs = gate.CDS.filter(function(cs){ if(cs.isInput) return true; else return false; });
+        var outputs = gate.CDS.filter(function(cs){ if(cs.next === undefined) return true; else return false; });
+        for(var i = 0; i < gate.gates.length; i++) {
+            nodes.push({"id": gate.name+i, "type": null, "x":0, "y":0, "next": gate.gates[i]});
+        }
+        for(var i = 0; i < nodes.length; i++) {
+            var idx = -1;
+            for(var j = 0; j < gate.CDS.length; j++ ){
+                if(gate.CDS[j].name == nodes[i].next) {
+                    if(idx < 0){
+                        idx1 = j;
+                        break;
+                    }
+                }
+            }
+            for(var j = 0; j < nodes.length; j++){
+                if(nodes[j].next == gate.CDS[idx].name)
+                    edges.push({"source": nodes[i].id, "target": nodes[j].id, "protein": nodes[i].next});
+            }
+        }
+        data_parsed.push({
+            "name": gate.name,
+            "inputs": inputs.length,
+            "outputs": ouputs.length
+            //image: ...
+            // "posx": <what
+            // "posy": <is this?
+        });
+        customGates.push({
+            "name": gate.name,
+            "inputs": inputs,
+            "outputs": outputs,
+            "edges": edges,
+            "nodes": nodes
+        });
+    });
+    return data_parsed;
 }
 
 function showGates(data) {
@@ -241,7 +283,7 @@ function showGates(data) {
             'data-posy': data.posy
         })
         if(data.image == null){
-            $("<p></p>")
+            $("<p>no img</p>")
             .text(data.name)
             .appendTo(gate);
         } else {

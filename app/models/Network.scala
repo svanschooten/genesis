@@ -233,8 +233,8 @@ object Network {
     def load(userid: Int, networkname: String) = {
       DB.withConnection{ implicit connection =>
       	  val id = getID(userid, networkname)
-      	  val libraryid = SQL("select libraryid from networkownedby where networkid={id})")
-      	  				.on('id -> id)().head[Int]("libraryid")
+      	  val libraryid = SQL("select libraryid from networkownedby where networkid={id}")
+      	  				.on('id -> id).apply().head[Int]("libraryid")
       	  /*val tempconcs = SQL(
 			      """
 			      select * from concentrations
@@ -275,10 +275,10 @@ object Network {
 	      	  		  case name~next~isInput => (name,next,isInput)
 	      	  		} *
 	      	}
-		  val gates : List[(String,Double,Double)] = SQL("select * from gates where networkid = {id}")
-				  .on('id -> id)
+		  val gates : List[(String,Double,Double)] = SQL("select * from gates where networkid = {networkid}")
+				  .on('networkid -> id)
 			      .as {
-	      	  		get[String]("name")~get[Double]("x")~get[Double]("y") map{
+	      	  		get[String]("output")~get[Double]("x")~get[Double]("y") map{
 	      	  		  case name~x~y => (name,x,y)
 	      	  		} *
 	      	}
@@ -357,7 +357,7 @@ object Network {
       	  val idResult = SQL(
 	          """
 	          select networkid from networkownedby
-	          where userid={userid} AND networkname={networkname}
+	          where (userid={userid} OR userid=-1) AND networkname={networkname}
 	          """
 	          ).on(
 		        'userid -> userid,
@@ -432,8 +432,8 @@ object Network {
       val inputs = (json \ "inputs").as[String].split("\n")
       val time = (json \ "time").as[String].toDouble
       val steps = (json \ "steps").as[String].toInt
-      network.setStartParameters(inputs, 100.0, 10.0, time)
-      network.simJson(time)
+      network.setStartParameters(inputs, 100.0, 10.0, steps)
+      network.simJson(steps-1)
     }
 	
 	def saveFromJson(json: JsValue) = {
@@ -452,7 +452,7 @@ object Network {
           'userid -> userId
         ).as { get[String]("networkname")* }
         val resMap = Map(networks map {s => (s, Network.load(userId,s))} : _*)
-        println(resMap)
+        println("resmap: "+resMap)
         Json.toJson(networks.map(x => {
 	        Json.obj(x -> Json.obj("libraryid"->resMap(x)._1, "CDS"->resMap(x)._2, "gates"->resMap(x)._3) )
 	    }))

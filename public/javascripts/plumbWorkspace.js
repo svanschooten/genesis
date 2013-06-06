@@ -6,6 +6,7 @@ Authors:
 //Globals
 var gateid = 0
 var circuit = new Array();
+var customGates = new Array();
 var endpointOptions = { isTarget:true, isSource:true };
 var connectorPaintStyle = {
     lineWidth:4,
@@ -320,6 +321,21 @@ function connTargetHasOther(connection){
     return "";
 }
 
+function makeCustomGate(id,posx,posy) {
+    /* make normal gates and connections that are contained in the custom gate, then hide them all
+    todo: figure out after that how to connect them up (hint: jsPlumb.connect)
+    */
+    var data;
+    for(var i = 0; i < customGates.length; i++)
+        if(customGates[i].name == name)
+            data = customGates[i];
+    if(data === undefined)
+        return false;
+    new Gate(id, data.inputs.length, data, outputs.length, $("#"+id+" img").src, px, py);
+    circuit.pop();
+
+}
+
 /**
 Testing drag and drop
 */
@@ -341,7 +357,7 @@ $(function() {
 	        		} else if(id == "ag") {
 	        			andGate(posx,posy);
 	        		} else {
-	        		    new Gate(id, getData(id, inputs), getData(id, outputs), getData(id, image), getData(id, posx), getData(id, posy));
+                        makeCustomGate(id,posx,posy);
 	        		}
 
 	            }
@@ -410,6 +426,3 @@ function displayCircuits(json){
 function loadCircuit(){
 
 }
-
-
-
