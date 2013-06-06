@@ -342,8 +342,9 @@ $(function() {
     $('#plumbArea').droppable({
 		accept: '.product',
                 drop: function(event, ui) {
-	                var posx = ui.offset.left - $(this).offset().left;
-	        		var posy = ui.offset.top - $(this).offset().top;
+	                var posx = event.pageX + $('#plumbArea').scrollLeft() - $('#plumbArea').offset().left - 30;
+	        		var posy = event.pageY + $('#plumbArea').scrollTop() - $('#plumbArea').offset().top - 30;
+	        		console.log("posx: " + posx + ", posy: " + posy)
 	        		var id = ui.draggable.attr("id");
 	        		if(id == "ng") {
 	        			notGate(posx,posy);
