@@ -456,7 +456,6 @@ object Network {
           'userid -> userId
         ).as { get[String]("networkname")* }
         val resMap = Map(networks map {s => (s, Network.load(userId,s))} : _*)
-        println("resmap: "+resMap)
         Json.toJson(networks.map(x => {
 	        Json.obj(x -> Json.obj("libraryid"->resMap(x)._1, "CDS"->resMap(x)._2, "gates"->resMap(x)._3) )
 	    }))

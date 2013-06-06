@@ -336,13 +336,26 @@ function makeCustomGate(id,posx,posy) {
     */
     var data;
     for(var i = 0; i < customGates.length; i++)
-        if(customGates[i].name == name)
+        if(customGates[i].name == id)
             data = customGates[i];
     if(data === undefined)
         return false;
-    new Gate(id, data.inputs.length, data, outputs.length, $("#"+id+" img").src, px, py);
+    new Gate(id, data.inputs.length, data.outputs.length, $("#"+id+" img").src, posx, posy);
     circuit.pop();
-
+    // create dummy divs with connections to represent the contents of the custom gate (needed for the simulation)
+    var divmap = {};
+    for(var i = 0; i < data.nodes.length; i++) {
+        var name = data.nodes[i].name;
+        divmap[name] = $("<div></div>", {
+            "id": id+"_"+name,
+            "type": id,
+            "x": 0,
+            "y": 0
+        });
+    }
+    for(var i = 0; i < data.edges.length; i++) {
+        jsPlumb.connect({"source": data.edges[i].source, "target": data.edges[i].target});
+    }
 }
 
 /**
