@@ -75,6 +75,7 @@ function setProtein() {
 }
 
 function makeConnection(params) {
+	console.log(params);
     if(params.sourceId == params.targetId) {
         notify("Cannot connect to self.", "Warning");
         return false;
@@ -146,7 +147,6 @@ function repaintElement(elementId) {
 }
 
 function parseJsPlumb() {
-	console.log("parseJsPlumb");
     var network = new Object();
     var plumb = jsPlumb.getConnections();
     network.vertices = new Array();
@@ -367,16 +367,18 @@ function makeOutput(){
 
 function resetWorkspace(){
     var confirmedReset = confirm("Are you sure you want to reset?\nMake sure you saved first.");
-    if(confirmedReset) {
-        circuit = new Array();
-        currentConnection = null;
-        resetInputs();
-        jsPlumb.detachEveryConnection();
-        jsPlumb.deleteEveryEndpoint();
-        $("#plumbArea").empty();
-        makeInput();
-        makeOutput();
-    }
+    if(confirmedReset) hardReset();
+}
+
+function hardReset(){
+	circuit = new Array();
+    currentConnection = null;
+    resetInputs();
+    jsPlumb.detachEveryConnection();
+    jsPlumb.deleteEveryEndpoint();
+    $("#plumbArea").empty();
+    makeInput();
+    makeOutput();
 }
 
 function saveCircuit(){
@@ -405,12 +407,4 @@ function getAllCircuits(){
 
 function displayCircuits(json){
     var circuits = $.parseJSON(json);
-
 }
-
-function loadCircuit(){
-
-}
-
-
-

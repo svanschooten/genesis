@@ -33,8 +33,8 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h3 id="proteinModalHeader" accesskey="">Choose your protein.</h3>
     </div>
-    <div class="modal-body" id="proteinModalBody">
-        <div id="proteinListDiv" class="well"></div>
+    <div class="modal-body" id="proteinModalBody" >
+        <div id="proteinListDiv" style="overflow-y: scroll;" class="well"></div>
         <div id="proteinParameters" class="well">
             <span><b>Values that influence the reaction in the subsequent gate:</span><br><br>
             <span>k<sub>1</sub> = <p id="pk1" class="inline"></p></span><br><br>
@@ -89,6 +89,8 @@
         <h3 id="loadModalHeader" accesskey="">Load a circuit.</h3>
     </div>
     <div class="modal-body" id="loadModalBody">
+    <select id="loadNetworkSelector">
+    </select>
     </div>
     <div id="loadModalFooter" class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>

@@ -12,6 +12,7 @@ var selectedProtein = "";
 var selectedLibrary = -1;
 
 function makeProteinList(connection){
+	console.log(connection);
 	$("#proteinListDiv").empty();
 	clearParameters();
 	var fromSource = connection.sourceId.toLowerCase().indexOf("input")!=-1;

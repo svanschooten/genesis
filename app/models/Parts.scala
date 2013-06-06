@@ -88,13 +88,19 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
 		  
 		  linkedBy match {
 			case Some(gate) => {
-			  SQL("insert into gates values({id},{output},{x},{y})")
-				  .on(
-					'id -> id,
-					'output -> name,
-					'x -> gate.x,
-					'y -> gate.y)
-				  .executeUpdate()
+			  val exists = SQL("select * from gates where networkid={id} and output={output}")
+					  		.on('id -> id,
+					  		    'output -> name)
+					  		.apply.size > 0
+			  if(!exists){
+				  SQL("insert into gates values({id},{output},{x},{y})")
+					  .on(
+						'id -> id,
+						'output -> name,
+						'x -> gate.x,
+						'y -> gate.y)
+					  .executeUpdate()
+			  }
 			}
 			case _ =>
 		  }

@@ -30,7 +30,7 @@ POST    /getcooking                         controllers.Application.getCooking
 # Javascript routing
 GET    /assets/javascripts/routes      		controllers.Application.javascriptRoutes
 POST    /getlibrary                         controllers.Application.getlibrary
-POST    /savecircuit                        controllers.Application.saveCircuit
+POST    /savecircuit                        controllers.Application.savecircuit
 POST    /getallcircuits                     controllers.Application.getallcircuits
 POST    /getalllibraries                    controllers.Application.getalllibraries
 

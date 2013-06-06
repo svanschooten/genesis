@@ -51,7 +51,8 @@ object Application extends Controller {
         routes.javascript.Application.getlibrary,
         routes.javascript.Application.getCooking,
         routes.javascript.Application.getallcircuits,
-        routes.javascript.Application.getalllibraries
+        routes.javascript.Application.getalllibraries,
+        routes.javascript.Application.savecircuit
       )
     ).as("text/javascript")
   }
@@ -75,7 +76,6 @@ object Application extends Controller {
     val jsonObject = Json.obj("and"->ProteinJSONFactory.proteinAllAndParamsJSON(id),
       "not"->ProteinJSONFactory.proteinNotParamsJSON(id),
       "cds"->ProteinJSONFactory.proteinCDSParamsJSON(id))
-    //println(Network.getNetworks(-2))
     Ok(jsonObject).as("text/plain")
   }
 
@@ -85,6 +85,7 @@ object Application extends Controller {
         User.findByEmail(email) match{
           case Some(u) => {
             val userNetworks = Network.getNetworks(u.id)
+            println(userNetworks)
             Ok(userNetworks).as("text/plain")
           }
           case _ => BadRequest("No user found")
@@ -98,15 +99,8 @@ object Application extends Controller {
     Ok(Network.simulate(request.body)).as("text/plain")
   }
   
-  def saveCircuit = Action(parse.json) { implicit request =>
-    println("Application.saveCircuit")
+  def savecircuit = Action(parse.json) { implicit request =>
     Ok(Network.saveFromJson(request.body)).as("text/plain")
-  }
-  
-  def load = Action { implicit request =>
-    Ok("")
-	//val id = Integer.parseInt((request.body \ "id").as[String])
-	//////Ok(Network.load(id,"",0)).as("text/plain")
   }
 }
 

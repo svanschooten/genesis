@@ -278,7 +278,7 @@ object Network {
 		  val gates : List[(String,Double,Double)] = SQL("select * from gates where networkid = {id}")
 				  .on('id -> id)
 			      .as {
-	      	  		get[String]("name")~get[Double]("x")~get[Double]("y") map{
+	      	  		get[String]("output")~get[Double]("x")~get[Double]("y") map{
 	      	  		  case name~x~y => (name,x,y)
 	      	  		} *
 	      	}
@@ -341,7 +341,7 @@ object Network {
 	         DELETE FROM networkownedby WHERE networkid={id};
 	         DELETE FROM concentrations WHERE networkid={id};
 	         DELETE FROM cds WHERE networkid={id};
-	         DELETE FROM gates WHERE networkID={id};
+	         DELETE FROM gates WHERE networkid={id};
 	        """
 	      ).on(
 	        'id -> id
@@ -372,6 +372,7 @@ object Network {
      *  Generate a new Network based on JSON input.
      */
     def fromJSON(json: JsValue) = {
+    	println(json)
         val net_name = (json \ "name").as[String]
         val libraryID = (json \ "library").as[String].toInt
 
@@ -416,13 +417,17 @@ object Network {
             if(gateType == "not") {
                 val inCS = csMap(destToCSMap(id))
                 val outCS = csMap(srcToCSMap(id))
-                NotGate(inCS,outCS,libraryID)
+                val not = NotGate(inCS,outCS,libraryID)
+                not.x = (v \ "x").as[Double]
+                not.y = (v \ "y").as[Double]
             }
             if(gateType == "and") {
                 val inCS1 = csMap(destToCSMap(id+"1"))
                 val inCS2 = csMap(destToCSMap(id+"2"))
                 val outCS = csMap(srcToCSMap(id))
-                AndGate((inCS1,inCS2),outCS,libraryID)
+                val and = AndGate((inCS1,inCS2),outCS,libraryID)
+                and.x = (v \ "x").as[Double]
+                and.y = (v \ "y").as[Double]
             }
         })
         new Network(csMap.values.filter(_.isInput).toList,-1,net_name)
