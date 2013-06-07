@@ -194,20 +194,23 @@ function showSetup(){
 function showLoad(){
     loadModal.modal("show");
     $("#loadNetworkSelector").empty();
+    $("<option></option>").text("Loading circuits...").appendTo($("#loadNetworkSelector"));
     getallCircuits();
 }
 
 function getallCircuits() {
 	jsRoutes.controllers.Application.getallcircuits().ajax({
         method: "POST",
-        success: function(response) { parseCircuits(response) },
+        success: function(response) { 
+        	$("#loadNetworkSelector").empty();
+        	parseCircuits(response);
+        },
         error: function(response) { "Unable to load circuits." }
     });
 }
 
 function parseCircuits(json) {
 	var data = JSON.parse(json);
-	console.log(data);
 	var results = {};
 	for(var i=0; i<data.length; i++){
 		var cur = data[i];
@@ -225,7 +228,6 @@ function parseCircuits(json) {
 			outputs[cs.name].push(cs.next)
 			allCDS[cs.next] = true; allCDS[cs.name] = true;
 		}
-		console.log(inputs);
 		
 		var network = new Object();
 	    network.vertices = new Array();
@@ -273,7 +275,6 @@ function parseCircuits(json) {
 	    }
 	    results[name] = network;
 	}
-	console.log(results);
 	circuitList = results;
 	for(key in results){
 	    $("<option></option>").text(results[key].name).appendTo($("#loadNetworkSelector"));
@@ -292,12 +293,11 @@ function saveCircuit() {
 }
 
 function loadCircuit() {
-	hardReset();
 	var selected = $("#loadNetworkSelector").find('option:selected').text();
 	var network = circuitList[selected];
-	console.log(network.libraryid);
+	if(network == undefined) return;
+	hardReset();
     circuitName = network.name;
-	console.log(network);
 	for(var i=0;i<network.vertices.length;i++){
 		var cur = network.vertices[i]
 		if(cur.type=="and") andGate(cur.x, cur.y);
@@ -305,7 +305,6 @@ function loadCircuit() {
 	}
 	for(var i=0;i<network.edges.length;i++){
 		var cur = network.edges[i];
-		console.log(cur);
 		var srcEndP;
 		var trtEndP;
 		if(cur.source == "input") srcEndP = cur.source

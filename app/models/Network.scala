@@ -231,7 +231,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
 object Network {
 
     /**
-     * Return the Network object with name 'networkname' that belongs to 'user'
+     * Return JSON object that represents the Network with name 'networkname' that belongs to 'user'
      */
     def load(userid: Int, networkname: String) = {
       DB.withConnection{ implicit connection =>
