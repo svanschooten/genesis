@@ -303,11 +303,17 @@ function loadCircuit() {
 	
 	for(var i=0;i<network.edges.length;i++){
 		var cur = network.edges[i];
-		//console.log(jsPlumb.getEndpoints(cur.target)[0]);
-		//console.log(jsPlumb.getEndpoints(cur.source)[0]);
-		var connection = jsPlumb.connect({source : cur.source, 
-			target : cur.target, paintStyle: connectorPaintStyle,
-			hoverPaintStyle: endpointHoverStyle, connectorHoverStyle: connectorHoverStyle
+		console.log("target: " + cur.target); console.log(jsPlumb.getEndpoints(cur.target));
+		console.log("source: " + cur.source); console.log(jsPlumb.getEndpoints(cur.source));
+		var srcEndP = (jsPlumb.getEndpoints(cur.source) == null)? cur.source : jsPlumb.getEndpoints(cur.source)[0];
+		var trtEndP = (jsPlumb.getEndpoints(cur.target) == null)? cur.target : jsPlumb.getEndpoints(cur.target)[0];
+
+		var connection = jsPlumb.connect({
+		    source : srcEndP,
+			target : trtEndP,
+            paintStyle: connectorPaintStyle,
+			hoverPaintStyle: endpointHoverStyle,
+			connectorHoverStyle: connectorHoverStyle
             //endpoints: [jsPlumb.getEndpoints(cur.source)[0],jsPlumb.getEndpoints(cur.target)[0]]
         });
         //jsPlumb.getEndpoints(cur.source)[0].addConnection(connection);

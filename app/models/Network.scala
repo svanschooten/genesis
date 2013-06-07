@@ -238,31 +238,6 @@ object Network {
       	  val id = getID(userid, networkname)
       	  val libraryid = SQL("select libraryid from networkownedby where networkid={id}")
       	  				.on('id -> id).apply().head[Int]("libraryid")
-      	  /*val tempconcs = SQL(
-			      """
-			      select * from concentrations
-	    		  where networkid = {id}
-			      """
-			      ).on('id -> id)
-			      .as {
-	      	  		get[String]("name")~get[Int]("time")~get[Double]("conc1")~get[Double]("conc2") map{
-	      	  		  case name~time~conc1~conc2 => (name,time,conc1,conc2)
-	      	  		} *
-	      	}
-      	  var tempconcs2:Map[String,List[(Double,Double,Double)]] = Map()
-      	  for(c <- tempconcs){
-      	    if(tempconcs2 contains c._1){
-      	      tempconcs2(c._1) ::= (c._2,c._3,c._4)
-      	    }
-      	    else{
-      	      tempconcs2 += (c._1 -> List((c._2,c._3,c._4)))
-      	    }
-      	  }
-      	  var concentrations:Map[String,List[(Double,Double)]] = Map()
-      	  for(c <- tempconcs2.keys){
-      	    val list = tempconcs2(c).sortBy(_._1).map(x => (x._2,x._3))
-      	    concentrations += c -> list
-      	  }*/
 	      val allCDS = SQL(
 			      """
 			      select * from cds
