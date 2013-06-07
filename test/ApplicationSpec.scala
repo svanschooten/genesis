@@ -15,7 +15,7 @@ import play.api.libs.concurrent.Promise
  * For more information, consult the wiki.
  */
 class ApplicationSpec extends Specification {
-  
+  sequential
     
   "Application" should {
     
@@ -40,9 +40,9 @@ class ApplicationSpec extends Specification {
      */
      "render the home page" in {
       running(FakeApplication()) {
-        val home = route(FakeRequest(GET, "/").withSession("email"->"sharky@test.com")).get
+        val home = route(FakeRequest(GET, "/").withSession("email"->"hello@world.com","password"->"helloworld")).get
         
-        status(home) must equalTo(303)
+        status(home) must equalTo(200)
         //contentType(home) must beSome.which(_ == "text/html")
         //contentAsString(home) must contain ("Sign in")
       }
@@ -50,9 +50,9 @@ class ApplicationSpec extends Specification {
         
      "render the help page" in {
       running(FakeApplication()) {
-        val help = route(FakeRequest(GET, "/help").withSession(("test@t.com", "tester"))).get
+        val help = route(FakeRequest(GET, "/help").withSession("email"->"hello@world.com","password"->"helloworld")).get
         
-        status(help) must equalTo(303)
+        status(help) must equalTo(200)
         //contentType(help) must beSome.which(_ == "text/html")
         //contentAsString(help) must contain ("Sign in")
       }
@@ -60,9 +60,9 @@ class ApplicationSpec extends Specification {
      
      "render the setting page" in {
       running(FakeApplication()) {
-        val home = route(FakeRequest(GET, "/settings").withSession("email"->"test@t.com","password"->"tester")).get
+        val home = route(FakeRequest(GET, "/settings").withSession("email"->"hello@world.com","password"->"helloworld")).get
         
-        status(home) must equalTo(303)
+        status(home) must equalTo(200)
         //contentType(home) must beSome.which(_ == "text/html")
         //contentAsString(home) must contain ("Sign in")
       }
@@ -70,9 +70,9 @@ class ApplicationSpec extends Specification {
      
      "render the about page" in {
       running(FakeApplication()) {
-        val about = route(FakeRequest(GET, "/about").withSession("email"->"test@t.com","password"->"tester")).get
+        val about = route(FakeRequest(GET, "/about").withSession("email"->"hello@world.com","password"->"helloworld")).get
         
-        status(about) must equalTo(303)
+        status(about) must equalTo(200)
         //contentType(about) must beSome.which(_ == "text/html")
         //contentAsString(about) must contain ("Sign in")
       }
