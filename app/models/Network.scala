@@ -1,4 +1,5 @@
 package models
+
 import scalation.{VectorD, RungeKutta}
 import factories.ODEFactory._
 import play.api.db.DB
@@ -124,6 +125,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
                            } )
         }
     }
+  
 
     /**
      * Save this network to the database.

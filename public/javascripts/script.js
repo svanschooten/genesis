@@ -282,11 +282,12 @@ function parseCircuits(json) {
 }
 
 function saveCircuit() {
+    var saveData = {name: circuitName, circuit: parseJsPlumb(), library: selectedLibrary};
     jsRoutes.controllers.Application.savecircuit().ajax({
-        data: Json.stringify(parseJsPlumb()),
+        data: JSON.stringify(saveData),
         method: "POST",
         contentType: "application/json",
-        success: function(response) { notify(response,"success") },
+        success: function(response) { console.log("success saving");notify(response,"success");},
         error: function(response) { alertError(response)}
     });
 }
@@ -360,33 +361,37 @@ function parseGates(json){
     // copy for showGates
     data_parsed = new Array();
     // get it sorted out
-    data.forEach(function(gate) {
+    data.forEach(function(gate) { // gate: {name: "name", data: {CDS: [...], gates: [...], libID: 1}}
         var nodes = Array();
         var edges = Array();
-        var inputs = gate.CDS.filter(function(cs){ if(cs.isInput) return true; else return false; });
-        var outputs = gate.CDS.filter(function(cs){ if(cs.next === undefined) return true; else return false; });
-        for(var i = 0; i < gate.gates.length; i++) {
-            nodes.push({"id": gate.name+i, "type": null, "x":0, "y":0, "next": gate.gates[i]});
+        var inputs = gate.data.CDS.filter(function(cs){ if(cs.isInput) return true; else return false; });
+        var outputs = Array();
+        for(var i = 0; i < gate.data.gates.length; i++) {
+            nodes.push({"id": gate.name+i, "type": null, "x": gate.data.gates[i].x, "y": gate.data.gates[i].y, "next": gate.data.gates[i].name});
         }
         for(var i = 0; i < nodes.length; i++) {
             var idx = -1;
-            for(var j = 0; j < gate.CDS.length; j++ ){
-                if(gate.CDS[j].name == nodes[i].next) {
+            for(var j = 0; j < gate.data.CDS.length; j++ ){
+                if(gate.data.CDS[j].name == nodes[i].next) {
                     if(idx < 0){
-                        idx1 = j;
+                        idx = j;
                         break;
                     }
                 }
             }
-            for(var j = 0; j < nodes.length; j++){
-                if(nodes[j].next == gate.CDS[idx].name)
-                    edges.push({"source": nodes[i].id, "target": nodes[j].id, "protein": nodes[i].next});
+            if(idx == -1)
+                outputs.push({"name": nodes[i].next, "next": null, "isInput": false});
+            else {
+                for(var j = 0; j < nodes.length; j++){
+                    if(nodes[j].next == gate.data.CDS[idx].name)
+                        edges.push({"source": nodes[i].id, "target": nodes[j].id, "protein": nodes[i].next});
+                }
             }
         }
         data_parsed.push({
             "name": gate.name,
             "inputs": inputs.length,
-            "outputs": ouputs.length
+            "outputs": outputs.length
             //image: ...
             // "posx": <what
             // "posy": <is this?
