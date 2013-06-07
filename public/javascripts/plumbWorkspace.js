@@ -331,10 +331,10 @@ function connTargetHasOther(connection){
     return "";
 }
 
+/**
+ *  make a custom gate by exploding the network it represents inton the workspace
+ */
 function makeCustomGate(id,posx,posy) {
-    /* make normal gates and connections that are contained in the custom gate, then hide them all
-    todo: figure out after that how to connect them up (hint: jsPlumb.connect)
-    */
     var data;
     for(var i = 0; i < customGates.length; i++)
         if(customGates[i].name == id)
