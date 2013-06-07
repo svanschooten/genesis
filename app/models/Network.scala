@@ -1,4 +1,5 @@
 package models
+
 import scalation.{VectorD, RungeKutta}
 import factories.ODEFactory._
 import play.api.db.DB
@@ -124,6 +125,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
                            } )
         }
     }
+  
 
     /**
      * Save this network to the database.
@@ -406,7 +408,7 @@ object Network {
         ).as { get[String]("networkname")* }
         val resMap = Map(networks map {s => (s, Network.load(userId,s))} : _*)
         Json.toJson(networks.map(x => {
-	        Json.obj("name" -> x, "data" -> Json.obj("libraryid"->resMap(x)._1, "CDS"->resMap(x)._2, "gates"->resMap(x)._3) )
+	        Json.obj(x -> Json.obj("libraryid"->resMap(x)._1, "CDS"->resMap(x)._2, "gates"->resMap(x)._3) )
 	    }))
       }
     }

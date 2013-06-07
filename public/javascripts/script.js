@@ -282,11 +282,12 @@ function parseCircuits(json) {
 }
 
 function saveCircuit() {
+    var saveData = {name: circuitName, circuit: parseJsPlumb(), library: selectedLibrary};
     jsRoutes.controllers.Application.savecircuit().ajax({
-        data: Json.stringify(parseJsPlumb()),
+        data: JSON.stringify(saveData),
         method: "POST",
         contentType: "application/json",
-        success: function(response) { notify(response,"success") },
+        success: function(response) { console.log("success saving");notify(response,"success");},
         error: function(response) { alertError(response)}
     });
 }
