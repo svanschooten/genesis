@@ -262,11 +262,7 @@ object Network {
       	  for(c <- tempconcs2.keys){
       	    val list = tempconcs2(c).sortBy(_._1).map(x => (x._2,x._3))
       	    concentrations += c -> list
-      	  }
-
-		  var inputs1:Map[String,String] = Map()
-	      var inputs2:Map[String,String] = Map()
-	      var seqs:Map[String,CodingSeq] = Map()*/
+      	  }*/
 	      val allCDS = SQL(
 			      """
 			      select * from cds
@@ -291,32 +287,6 @@ object Network {
 		  val gatesJson = Json.toJson(gates.map(data => {
 			  Json.obj("name"->data._1,"x"->data._2,"y"->data._3)
 			}))
-		  /*val positions = gates.map(x => x._1 -> (x._2,x._3))
-		  var startCDS: List[CodingSeq] = Nil
-		  for(cs <- allCDS){
-		    val newCDS = new CodingSeq(cs._1,libraryID,concentrations(cs._2),cs._3)
-		    seqs += (cs._1 -> newCDS)
-		    if(cs._3) startCDS ::= newCDS
-		  }
-      	  for(cs <- allCDS){
-      	    if(!(seqs contains cs._2)) seqs += (cs._2 -> new CodingSeq(cs._2,libraryID,concentrations(cs._2),false))
-      	    if(inputs1 contains cs._2) inputs2 += (cs._2 -> cs._1)
-      	    else inputs1 += (cs._2 -> cs._1)
-      	  }
-
-	      for(str: String <- inputs1.keys){
-	        if(inputs2 contains str){
-	        	val g = new AndGate((seqs(inputs1(str)),seqs(inputs2(str))),seqs(str),libraryID)
-				g.x = positions.get(str)._1
-				g.y = positions.get(str)._2
-	        }
-	        else{
-	        	val g = new NotGate(seqs(inputs1(str)),seqs(str),libraryID)
-				g.x = positions.get(str)._1
-				g.y = positions.get(str)._2
-	        }
-	      }
-      	new Network(startCDS,userid,networkname)*/
 		(libraryid,CDSJson,gatesJson)
       }
     }
