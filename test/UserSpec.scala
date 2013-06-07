@@ -10,9 +10,8 @@ import anorm._
 import anorm.SqlParser._
 
 class UserSpec extends Specification{
-  /*
-   * Testing creating new user
-   */
+sequential
+
    "User" should {
      "be created correctly" in {
        running(FakeApplication()) {
@@ -37,9 +36,6 @@ class UserSpec extends Specification{
      }
    }
    
-   /*
-    * Testing find user by email
-    */
 	"Find user by Email" should {
 	  "be correct" in {
 	    running(FakeApplication()) {
@@ -54,7 +50,7 @@ class UserSpec extends Specification{
 	}
 	
 	/*
-	 * Testing authentication
+	 * Testing authentication with different inputs
 	 */
 	"Authentication" should {
 	  "be correct" in {
@@ -95,10 +91,6 @@ class UserSpec extends Specification{
 	  }
 	}
 	
-		
-	/*
-	 * Testing updating email
-	 */
 	"Email" should {
 	  "be updated correctly" in {
 	    running(FakeApplication()) {
@@ -150,9 +142,6 @@ class UserSpec extends Specification{
 	  }
 	}
 	
-	/*
-	 * Testing updating first name
-	 */
 	"First name" should {
 	  "be updated correctly" in {
 	    running(FakeApplication()) {
@@ -176,9 +165,6 @@ class UserSpec extends Specification{
 	  }
 	}
 	
-	/*
-	 * Testing updating last name
-	 */
 	"Last name" should {
 	  "be updated correctly" in {
 	    running(FakeApplication()) {
@@ -201,18 +187,4 @@ class UserSpec extends Specification{
 	    }
 	  }
 	}
-	/*
-	"Testing case class User" should {
-	  "be correct" in {
-	    running(FakeApplication()) {
-	    	val user = User(-1, "test@test.com", "test", Option("first"),Option("last"))
-	    	user.id must equalTo( -1)
-	    	user.email must equalTo("test@test.com")
-	    	user.password must equalTo("test")
-	    	user.fname must equalTo(Some("first"))
-	    	user.lname must equalTo(Some("last"))
-	    }
-	  }
-	}
-	*/
 }

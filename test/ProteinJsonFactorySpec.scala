@@ -13,10 +13,8 @@ import org.json.JSONObject
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsArray
 
-
-
 class ProteinJsonFactorySpec extends Specification{
- 
+ sequential
 	"LibraryListJson" should {
 	  "return correct value" in {
 	    running(FakeApplication()) {
@@ -28,10 +26,7 @@ class ProteinJsonFactorySpec extends Specification{
 	    }
 	  }
 	}
-	
-	
-	
-	
+
 	"ProteinNotParamJSON" should {
 	  "return correct value" in {
 	    running(FakeApplication()) {
@@ -96,12 +91,6 @@ class ProteinJsonFactorySpec extends Specification{
 	  }
 	}
 		
-		
-		
-	
-	
-	
-	
 	"ProteinAllAndParamJSON" should {
 	  "return correct value" in {
 	    running(FakeApplication()) {
@@ -194,7 +183,6 @@ class ProteinJsonFactorySpec extends Specification{
 	      }
 	    }
 	  }
-	}
-	
+	}	
 }
 

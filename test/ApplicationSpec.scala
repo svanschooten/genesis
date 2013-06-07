@@ -8,12 +8,6 @@ import play.api.mvc._
 import play.api.test.FakeApplication
 import play.api.libs.concurrent.Promise
 
-
-/**
- * Add your spec here.
- * You can mock out a whole application including requests, plugins etc.
- * For more information, consult the wiki.
- */
 class ApplicationSpec extends Specification {
   sequential
     
@@ -43,8 +37,6 @@ class ApplicationSpec extends Specification {
         val home = route(FakeRequest(GET, "/").withSession("email"->"hello@world.com","password"->"helloworld")).get
         
         status(home) must equalTo(200)
-        //contentType(home) must beSome.which(_ == "text/html")
-        //contentAsString(home) must contain ("Sign in")
       }
     }
         
@@ -53,8 +45,6 @@ class ApplicationSpec extends Specification {
         val help = route(FakeRequest(GET, "/help").withSession("email"->"hello@world.com","password"->"helloworld")).get
         
         status(help) must equalTo(200)
-        //contentType(help) must beSome.which(_ == "text/html")
-        //contentAsString(help) must contain ("Sign in")
       }
     }
      
@@ -63,8 +53,6 @@ class ApplicationSpec extends Specification {
         val home = route(FakeRequest(GET, "/settings").withSession("email"->"hello@world.com","password"->"helloworld")).get
         
         status(home) must equalTo(200)
-        //contentType(home) must beSome.which(_ == "text/html")
-        //contentAsString(home) must contain ("Sign in")
       }
     }
      
@@ -73,8 +61,6 @@ class ApplicationSpec extends Specification {
         val about = route(FakeRequest(GET, "/about").withSession("email"->"hello@world.com","password"->"helloworld")).get
         
         status(about) must equalTo(200)
-        //contentType(about) must beSome.which(_ == "text/html")
-        //contentAsString(about) must contain ("Sign in")
       }
     }
      

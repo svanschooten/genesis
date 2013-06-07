@@ -53,11 +53,6 @@ class FileParserSpec extends Specification {
 			}
 		}
 		
-		/*
-		* saveParams test (FileParser)
-		* not done
-		* saveParams method is not correct?
-		*/
 		"NewAndParameters" should {
 			"correctly be saved" in {
 				running(FakeApplication()){
@@ -201,20 +196,6 @@ class FileParserSpec extends Specification {
 						.on('name-> "TEST").executeUpdate()
 					}
 				}
-			}
-		}
-				
-		/*
-		* mkTuple test (ODEFactory)
-		* not done
-		*/
-		"mkTuple" should {
-		  //val C = CodingSeq("C",false)
-			"be correct" in {
-			running(FakeApplication()){
-				//val mkCSTuple = ODEFactory.mkTuple(C)
-				}
-				
 			}
 		}
 	}
