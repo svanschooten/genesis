@@ -112,6 +112,10 @@ object Application extends Controller {
 	//val id = Integer.parseInt((request.body \ "id").as[String])
 	//////Ok(Network.load(id,"",0)).as("text/plain")
   }
+  
+  def testresults = Action { implicit request =>
+    Ok(html.testresults(""))
+  }
 }
 
 /** Provide security features */
