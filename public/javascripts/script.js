@@ -196,10 +196,6 @@ function showLoad(){
     getallCircuits();
 }
 
-function showNetworkList(){
-	
-}
-
 function getallCircuits() {
 	jsRoutes.controllers.Application.getallcircuits().ajax({
         method: "POST",
@@ -307,7 +303,8 @@ function loadCircuit() {
 		//console.log(jsPlumb.getEndpoints(cur.source)[0]);
 		var connection = jsPlumb.connect({source : cur.source, 
 			target : cur.target, paintStyle: connectorPaintStyle,
-			hoverPaintStyle: endpointHoverStyle, connectorHoverStyle: connectorHoverStyle
+			hoverPaintStyle: endpointHoverStyle, connectorHoverStyle: connectorHoverStyle,
+            connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5 } ]
             //endpoints: [jsPlumb.getEndpoints(cur.source)[0],jsPlumb.getEndpoints(cur.target)[0]]
         });
         //jsPlumb.getEndpoints(cur.source)[0].addConnection(connection);
