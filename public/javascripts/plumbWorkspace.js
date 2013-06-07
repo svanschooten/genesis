@@ -331,7 +331,7 @@ function connTargetHasOther(connection){
 }
 
 /**
- *  make a custom gate by exploding the network it represents inton the workspace
+ *  make a custom gate by exploding the network it represents into the workspace
  */
 function makeCustomGate(id,posx,posy) {
     var data;
@@ -350,6 +350,13 @@ function makeCustomGate(id,posx,posy) {
                 return prev;
             }
         }
+        var filterFn = function(testProp) {
+            return function(el, idx, arr){
+                if(el[testProp])
+                    return true;
+                return false;
+            }
+        }
         var source = nodes.reduce(reduceFn(data.edges[i].source), undefined);
         if(!source) {
             src = data.nodes.reduce(reduceFn(data.edges[i].source),undefined);
@@ -362,10 +369,16 @@ function makeCustomGate(id,posx,posy) {
             target = tgt.type == "not" ? notGate(posx+(i+1)*100, posy+(i+1)*100) : andGate(posx+(i+1)*100, posy+(i+1)*100);
             nodes.push(target);
         }
-        var conn = jsPlumb.connect({"source": source, "target": target});
+        // thanks to Anton for figuring out it had to be the EPs, not just the DIVs
+        var srcEPs = jsPlumb.getEndpoints(source.id);
+        var tgtEPs = jsPlumb.getEndpoints(target.id);
+        var conn = jsPlumb.connect({
+            "source": srcEPs.filter(filterFn("isSource"))[0],
+            "target": tgtEPs.filter(filterFn("isTarget"))[0]
+        });
         makeConnection({
             "sourceId": source.id,
-            "targedId": target.id,
+			"targetId": target.id,
             "scope": jsPlumb.Defaults.Scope,
             "connection": conn
         });
@@ -374,7 +387,7 @@ function makeCustomGate(id,posx,posy) {
         conn.addOverlay([ "Label", {label: data.edges[i].protein, location: 0.7, cssClass: "aLabel", id:"label"}]);
     }
 }
-//////["sourceId", "targetId", "scope", "connection", "dropEndpoint", removeElem: function]
+
 /**
 Testing drag and drop
 */
