@@ -317,8 +317,6 @@ object Network {
 	        }
 	      }
       	new Network(startCDS,userid,networkname)*/
-		println(CDSJson)
-		println(gatesJson)
 		(libraryid,CDSJson,gatesJson)
       }
     }
@@ -375,7 +373,6 @@ object Network {
      *  Generate a new Network based on JSON input.
      */
     def fromJSON(json: JsValue) = {
-    	println(json)
         val net_name = (json \ "name").as[String]
         val libraryID = (json \ "library").as[String].toInt
 
@@ -392,7 +389,7 @@ object Network {
                 val cs = CodingSeq(csName, libraryID, List((0,0)), false)
                 // startsWith can be replaced by == once the setup only generates
                 // the source and sink "gates" once
-                if(src.startsWith("Input"))
+                if(src.startsWith("input"))
                     cs.isInput=true
                 csMap+= csName -> cs
             }
@@ -445,16 +442,14 @@ object Network {
       val res = network.simJson(steps - 1)
       Json.arr(res._1, res._2)
     }
-	
+
 	def saveFromJson(json: JsValue) = {
-    	println("Network.saveFromJson")
     	val libraryID = (json \ "library").as[String].toInt
 		fromJSON(json).save(libraryID)
 		Json.toJson("Circuit correctly saved.")
 	}
-	
+
     def getNetworks(userId: Int) = {
-      println("GETNETWORKS")
       DB.withConnection { implicit connection =>
         val networks = SQL(
           """
@@ -464,7 +459,6 @@ object Network {
         ).on(
           'userid -> userId
         ).as { get[String]("networkname")* }
-        println(networks)
         val resMap = Map(networks map {s => (s, Network.load(userId,s))} : _*)
         Json.toJson(networks.map(x => {
 	        Json.obj(x -> Json.obj("libraryid"->resMap(x)._1, "CDS"->resMap(x)._2, "gates"->resMap(x)._3) )
