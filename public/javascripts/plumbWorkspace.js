@@ -93,7 +93,7 @@ function makeConnection(params) {
             jsPlumb.detach(connection);
         }
         return false;
-        });
+    });
     return true;
 }
 

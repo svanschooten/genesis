@@ -233,7 +233,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
 object Network {
 
     /**
-     * Return the Network object with name 'networkname' that belongs to 'user'
+     * Return JSON object that represents the Network with name 'networkname' that belongs to 'user'
      */
     def load(userid: Int, networkname: String) = {
       DB.withConnection{ implicit connection =>
@@ -319,7 +319,7 @@ object Network {
     /**
      *  Generate a new Network based on JSON input.
      */
-    def fromJSON(json: JsValue) = {
+    def fromJSON(json: JsValue, userid: Int) = {
         val net_name = (json \ "name").as[String]
         val libraryID = (json \ "library").as[String].toInt
 
@@ -377,11 +377,11 @@ object Network {
                 and.y = (v \ "y").as[Double]
             }
         })
-        new Network(csMap.values.filter(_.isInput).toList,-1,net_name)
+        new Network(csMap.values.filter(_.isInput).toList,userid,net_name)
     }
 
-    def simulate(json: JsValue): JsValue = {
-      val network = fromJSON(json)
+    def simulate(json: JsValue, userID: Int): JsValue = {
+      val network = fromJSON(json, userID)
       val inputs = (json \ "inputs").as[String].split("\n")
       val time = (json \ "time").as[String].toDouble
       val steps = (json \ "steps").as[String].toInt
@@ -390,9 +390,10 @@ object Network {
       Json.arr(res._1, res._2)
     }
 
-	def saveFromJson(json: JsValue) = {
+	def saveFromJson(json: JsValue, userID: Int) = {
     	val libraryID = (json \ "library").as[String].toInt
-		fromJSON(json).save(libraryID)
+    	val network = fromJSON(json, userID)
+		network.save(libraryID)
 		Json.toJson("Circuit correctly saved.")
 	}
 

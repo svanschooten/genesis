@@ -1,11 +1,13 @@
 package test
 
 import org.specs2.mutable._
-
 import play.api.test._
 import play.api.test.Helpers._
-
 import models._
+import play.api.libs.json.Json
+import play.api.libs.json.JsValue
+import play.api.libs.json.JsObject
+import play.api.libs.json.JsArray
 
 class NetworkSpec extends Specification {
 
@@ -15,10 +17,10 @@ class NetworkSpec extends Specification {
             val concs = List.fill(1503)(1.0)
             val A = CodingSeq("A",concs.zip(concs),true)
             val B = CodingSeq("B",concs.zip(concs),true)
-            val C = CodingSeq("C",false)
-            val D = CodingSeq("D",false)
+            val C = CodingSeq("C",0,false)
+            val D = CodingSeq("D")
             val E = CodingSeq("E",concs.zip(concs),true)
-            val F = CodingSeq("F",false)
+            val F = CodingSeq("F",0)
             val notA = NotGate(A,C)
             val notAandB = AndGate((C,B),D)
             val notAandBandE = AndGate((D,E),F)
@@ -95,8 +97,8 @@ class NetworkSpec extends Specification {
     	   val concs = List.fill(3)(1.0)
            val A = CodingSeq("A",concs.zip(concs),isInput=true)
            val net = new Network(List(A),-1,"")
-    	   val json = net.simJson(1.0)._1
-    	   val jsonName = (json \\ "name").map(_.as[String])
+    	   val json = net.simJson(1.0)
+    	   val jsonName = (json._1 \\ "name").map(_.as[String])
     	   jsonName must equalTo(listName)
        }
      }
@@ -116,7 +118,7 @@ class NetworkSpec extends Specification {
      }
      
      //testing the parameters of orgate
-     "Orgate parameters" should {
+     "Notgate parameters" should {
 
 		"return correct results" in {
 			running(FakeApplication()) {
@@ -128,4 +130,63 @@ class NetworkSpec extends Specification {
 			}
 		}
 	}
+     
+     /*
+      * I do not know how to make/create json
+      */
+     "Simulate with JsValue" should {
+       "return correct results" in {
+         running(FakeApplication()){
+           val json: JsValue = Json.parse ("""
+               {"name":"testCircuit",
+			    "circuit":
+			    {
+			        "vertices":[
+			            {"id":"input","type":"input","x":30,"y":30},
+			            {"id":"output","type":"output","x":470,"y":50},
+			            {"id":"not2","type":"not","x":258.140625,"y":159},
+			            {"id":"and3","type":"and","x":287.140625,"y":59}
+			            ],
+			        "edges":[
+			            {"source":"input","target":"not2","protein":"B"},
+			            {"source":"input","target":"and3","protein":"A"},
+			            {"source":"not2","target":"and3","protein":"C"},
+			            {"source":"and3","target":"output","protein":"D"}
+			            ]
+			    },
+			    "inputs":"t,A,B\n0,1,0\n10,0,1\n60,1,1\n90,0,0",
+			    "time":"5",
+			    "steps":"100",
+			    "library":"2"
+        		 }	""")
+           val simulate = Network.simulate(json)
+           val jsonName = (simulate \\ "name").map(_.as[JsValue])
+           jsonName must not beNull
+           val data = (simulate \\ "data").map(_.as[JsArray])
+           for(info <- data) {
+            val x = (info \\ "x").map(_.as[Double])
+            x must not beNull
+	        val y = (info \\ "y").map(_.as[Double])
+	        y must not beNull
+           }
+           val save = Network.saveFromJson(json)
+           //todo check the result
+         }
+       }
+     }
+     
+
+     /*
+      * Getting network id with correct input,
+      * it should return something.
+      */
+     "Get Network" should {
+       "return correct ID" in {
+         running(FakeApplication()) {
+           val getNetworkID = Network.getNetworks(-1)
+           //println(getNetworkID)
+           getNetworkID must not beNull
+         }
+       }
+     }
 }

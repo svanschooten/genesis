@@ -193,17 +193,18 @@ function showSetup(){
 
 function showLoad(){
     loadModal.modal("show");
+    $("#loadNetworkSelector").empty();
+    $("<option></option>").text("Loading circuits...").appendTo($("#loadNetworkSelector"));
     getallCircuits();
-}
-
-function showNetworkList(){
-	
 }
 
 function getallCircuits() {
 	jsRoutes.controllers.Application.getallcircuits().ajax({
         method: "POST",
-        success: function(response) { parseCircuits(response) },
+        success: function(response) { 
+        	$("#loadNetworkSelector").empty();
+        	parseCircuits(response);
+        },
         error: function(response) { "Unable to load circuits." }
     });
 }
@@ -219,21 +220,22 @@ function parseCircuits(json) {
 		var outputs = {};
 		var gateID = {};
 		var allCDS = {};
-		for(var j=0;j<cur["CDS"].length;j++){
-			var cs = cur["CDS"][j];
-			if(!(cs["next"] in inputs)) inputs[cs["next"]] = Array();
-			inputs[cs["next"]].push(cs["name"]);
-			if(!(cs["name"] in outputs)) outputs[cs["name"]] = Array();
-			outputs[cs["name"]].push(cs["next"])
-			allCDS[cs["next"]] = true; allCDS[cs["name"]] = true;
+		for(var j=0;j<cur.CDS.length;j++){
+			var cs = cur.CDS[j];
+			if(!(cs.next in inputs)) inputs[cs.next] = Array();
+			inputs[cs.next].push(cs.name);
+			if(!(cs.name in outputs)) outputs[cs.name] = Array();
+			outputs[cs.name].push(cs.next)
+			allCDS[cs.next] = true; allCDS[cs.name] = true;
 		}
 		
 		var network = new Object();
 	    network.vertices = new Array();
 	    network.edges = new Array();
 	    network.name = name;
-	    for(var j=0;j<cur["gates"].length;j++){
-	    	var g = cur["gates"][j];
+	    network.libraryid = cur.libraryid;
+	    for(var j=0;j<cur.gates.length;j++){
+	    	var g = cur.gates[j];
 	    	var gate = {
 	            x: g.x,
 	        	y: g.y
@@ -280,45 +282,72 @@ function parseCircuits(json) {
 }
 
 function saveCircuit() {
-    var saveData = {name: circuitName, circuit: parseJsPlumb(), library: selectedLibrary};
+	var data = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, library: selectedLibrary};
     jsRoutes.controllers.Application.savecircuit().ajax({
-        data: JSON.stringify(saveData),
+        data: JSON.stringify(data),
         method: "POST",
         contentType: "application/json",
-        success: function(response) { console.log("success saving");notify(response,"success");},
-        error: function(response) { alertError(response)}
+        success: function(response) { notify(response,"success") },
+        error: function(response) { alertError("Circuit could not be saved.")}
     });
 }
 
 function loadCircuit() {
-	hardReset();
 	var selected = $("#loadNetworkSelector").find('option:selected').text();
 	var network = circuitList[selected];
+	if(network == undefined) return;
+	hardReset();
+    circuitName = network.name;
 	for(var i=0;i<network.vertices.length;i++){
 		var cur = network.vertices[i]
 		if(cur.type=="and") andGate(cur.x, cur.y);
 		if(cur.type=="not") notGate(cur.x, cur.y);
 	}
-	
 	for(var i=0;i<network.edges.length;i++){
 		var cur = network.edges[i];
-		var srcEndP = (jsPlumb.getEndpoints(cur.source) == null)? cur.source : jsPlumb.getEndpoints(cur.source)[0];
-		var trtEndP = (jsPlumb.getEndpoints(cur.target) == null)? cur.target : jsPlumb.getEndpoints(cur.target)[0];
-
+		var srcEndP;
+		var trtEndP;
+		if(cur.source == "input") srcEndP = cur.source
+		else{
+			var endPoints = jsPlumb.getEndpoints(cur.source);
+			for(var j=0;j<endPoints.length;j++){
+				if(endPoints[j].isSource){
+					srcEndP = endPoints[j];
+					break;
+				}
+			}
+		}
+		if(cur.target == "output") trtEndP = cur.target
+		else{
+			var endPoints = jsPlumb.getEndpoints(cur.target);
+			for(var j=0;j<endPoints.length;j++){
+				if(endPoints[j].isTarget && endPoints[j].connections.length==0){
+					trtEndP = endPoints[j];
+					break;
+				}
+			}
+		}
 		var connection = jsPlumb.connect({
 		    source : srcEndP,
 			target : trtEndP,
             paintStyle: connectorPaintStyle,
 			hoverPaintStyle: endpointHoverStyle,
-			connectorHoverStyle: connectorHoverStyle
-            //endpoints: [jsPlumb.getEndpoints(cur.source)[0],jsPlumb.getEndpoints(cur.target)[0]]
-        });
-        //jsPlumb.getEndpoints(cur.source)[0].addConnection(connection);
-		
+			connectorHoverStyle: connectorHoverStyle,
+			connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5 } ]
+		});
+		connection.protein = cur.protein;
+		connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
+	    connection.bind("click", function(connection){ openProteinModal(connection) });
+	    connection.bind("contextmenu", function(connection){ 
+	        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
+	            jsPlumb.detach(connection);
+	        }
+	        return false;
+	    });
 		var location = (cur.target == "output")? 0.4 : 0.7;
     	connection.addOverlay([ "Label", {label: cur.protein, location: location, cssClass: "aLabel", id:"label"}]);
-		//
 	}
+	getLibrary(network.libraryid.toString());
 	loadModal.modal("hide");
 }
 

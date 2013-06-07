@@ -58,7 +58,7 @@ object User {
     DB.withConnection { implicit connection =>
       SQL(
         """
-        INSERT INTO User( email, password, fname, lname )
+        INSERT INTO "User"( email, password, fname, lname )
         VALUES ({email}, {password}, {fname}, {lname})
         """
       ).on(
@@ -75,7 +75,7 @@ object User {
     DB.withConnection{ implicit connection =>
       SQL(
         """
-        UPDATE User
+        UPDATE "User"
         SET email={email}
         WHERE id = {id}
         """
@@ -92,7 +92,7 @@ object User {
     DB.withConnection{ implicit connection =>
       SQL(
           """
-          UPDATE User
+          UPDATE "User"
           SET password = {password}
           WHERE id = {id}
           """
@@ -108,7 +108,7 @@ object User {
     DB.withConnection{ implicit connection =>
       SQL(
         """
-        UPDATE User
+        UPDATE "User"
         SET fname={fname}
         WHERE id = {id}
         """
@@ -124,7 +124,7 @@ object User {
     DB.withConnection{ implicit connection =>
       SQL(
         """
-          UPDATE User
+          UPDATE "User"
           SET lname={lname}
           WHERE id = {id}
         """

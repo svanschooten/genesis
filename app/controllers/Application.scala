@@ -96,11 +96,12 @@ object Application extends Controller {
   }
 
   def getCooking = Action(parse.json) { implicit request =>
-    Ok(Network.simulate(request.body)).as("text/plain")
+    Ok(Network.simulate(request.body, Integer.parseInt(request.session.get("userid").get))).as("text/plain")
   }
   
   def savecircuit = Action(parse.json) { implicit request =>
-    Ok(Network.saveFromJson(request.body)).as("text/plain")
+    val userID = User.findByEmail(request.session.get("email").get).get.id
+    Ok(Network.saveFromJson(request.body, userID)).as("text/plain")
   }
 
   def setSessionHelper(sh: String) = {
