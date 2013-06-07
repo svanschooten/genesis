@@ -57,6 +57,7 @@ function findElement(array, elementId) {
 }
 
 function openProteinModal(connection){
+	console.log(connection);
     currentConnection = connection;
     proteinModal.modal("show");
     makeProteinList(connection);
@@ -76,7 +77,6 @@ function setProtein() {
 }
 
 function makeConnection(params) {
-	console.log(params);
     if(params.sourceId == params.targetId) {
         notify("Cannot connect to self.", "Warning");
         return false;
@@ -94,7 +94,7 @@ function makeConnection(params) {
             jsPlumb.detach(connection);
         }
         return false;
-        });
+    });
     return true;
 }
 
@@ -443,21 +443,6 @@ function hardReset(){
     $("#plumbArea").empty();
     makeInput();
     makeOutput();
-}
-
-function saveCircuit(){
-    var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, time: timeSpan, steps: numSteps, library: selectedLibrary};
-    jsRoutes.controllers.Application.savecircuit().ajax({
-        data: JSON.stringify(simulateData),
-        method: "POST",
-        contentType: "application/json",
-        success: function(response) {
-            drawGraph(parseJSONdataRickShaw(response));
-            signalModal.modal("hide");
-            resultModal.modal("show");
-        },
-        error: function(response) { alertError(response)}
-    });
 }
 
 function getAllCircuits(){

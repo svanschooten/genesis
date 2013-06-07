@@ -87,7 +87,6 @@ object Application extends Controller {
         User.findByEmail(email) match{
           case Some(u) => {
             val userNetworks = Network.getNetworks(u.id)
-            println(userNetworks)
             Ok(userNetworks).as("text/plain")
           }
           case _ => BadRequest("No user found")
@@ -98,11 +97,12 @@ object Application extends Controller {
   }
 
   def getCooking = Action(parse.json) { implicit request =>
-    Ok(Network.simulate(request.body)).as("text/plain")
+    Ok(Network.simulate(request.body, Integer.parseInt(request.session.get("userid").get))).as("text/plain")
   }
   
   def savecircuit = Action(parse.json) { implicit request =>
-    Ok(Network.saveFromJson(request.body)).as("text/plain")
+    val userID = User.findByEmail(request.session.get("email").get).get.id
+    Ok(Network.saveFromJson(request.body, userID)).as("text/plain")
   }
 
   def setSessionHelper(sh: String) = {

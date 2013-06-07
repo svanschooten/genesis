@@ -193,6 +193,7 @@ function showSetup(){
 
 function showLoad(){
     loadModal.modal("show");
+    $("#loadNetworkSelector").empty();
     getallCircuits();
 }
 
@@ -206,6 +207,7 @@ function getallCircuits() {
 
 function parseCircuits(json) {
 	var data = JSON.parse(json);
+	console.log(data);
 	var results = {};
 	for(var i=0; i<data.length; i++){
 		var cur = data[i];
@@ -215,13 +217,13 @@ function parseCircuits(json) {
 		var outputs = {};
 		var gateID = {};
 		var allCDS = {};
-		for(var j=0;j<cur["CDS"].length;j++){
-			var cs = cur["CDS"][j];
-			if(!(cs["next"] in inputs)) inputs[cs["next"]] = Array();
-			inputs[cs["next"]].push(cs["name"]);
-			if(!(cs["name"] in outputs)) outputs[cs["name"]] = Array();
-			outputs[cs["name"]].push(cs["next"])
-			allCDS[cs["next"]] = true; allCDS[cs["name"]] = true;
+		for(var j=0;j<cur.CDS.length;j++){
+			var cs = cur.CDS[j];
+			if(!(cs.next in inputs)) inputs[cs.next] = Array();
+			inputs[cs.next].push(cs.name);
+			if(!(cs.name in outputs)) outputs[cs.name] = Array();
+			outputs[cs.name].push(cs.next)
+			allCDS[cs.next] = true; allCDS[cs.name] = true;
 		}
 		console.log(inputs);
 		
@@ -229,8 +231,9 @@ function parseCircuits(json) {
 	    network.vertices = new Array();
 	    network.edges = new Array();
 	    network.name = name;
-	    for(var j=0;j<cur["gates"].length;j++){
-	    	var g = cur["gates"][j];
+	    network.libraryid = cur.libraryid;
+	    for(var j=0;j<cur.gates.length;j++){
+	    	var g = cur.gates[j];
 	    	var gate = {
 	            x: g.x,
 	        	y: g.y
@@ -278,12 +281,13 @@ function parseCircuits(json) {
 }
 
 function saveCircuit() {
+	var data = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, library: selectedLibrary};
     jsRoutes.controllers.Application.savecircuit().ajax({
-        data: Json.stringify(parseJsPlumb()),
+        data: JSON.stringify(data),
         method: "POST",
         contentType: "application/json",
         success: function(response) { notify(response,"success") },
-        error: function(response) { alertError(response)}
+        error: function(response) { alertError("Circuit could not be saved.")}
     });
 }
 
@@ -291,28 +295,60 @@ function loadCircuit() {
 	hardReset();
 	var selected = $("#loadNetworkSelector").find('option:selected').text();
 	var network = circuitList[selected];
+	console.log(network.libraryid);
+    circuitName = network.name;
+	console.log(network);
 	for(var i=0;i<network.vertices.length;i++){
 		var cur = network.vertices[i]
 		if(cur.type=="and") andGate(cur.x, cur.y);
 		if(cur.type=="not") notGate(cur.x, cur.y);
 	}
-	
 	for(var i=0;i<network.edges.length;i++){
 		var cur = network.edges[i];
-		//console.log(jsPlumb.getEndpoints(cur.target)[0]);
-		//console.log(jsPlumb.getEndpoints(cur.source)[0]);
-		var connection = jsPlumb.connect({source : cur.source, 
-			target : cur.target, paintStyle: connectorPaintStyle,
-			hoverPaintStyle: endpointHoverStyle, connectorHoverStyle: connectorHoverStyle,
-            connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5 } ]
-            //endpoints: [jsPlumb.getEndpoints(cur.source)[0],jsPlumb.getEndpoints(cur.target)[0]]
-        });
-        //jsPlumb.getEndpoints(cur.source)[0].addConnection(connection);
-		
+		console.log(cur);
+		var srcEndP;
+		var trtEndP;
+		if(cur.source == "input") srcEndP = cur.source
+		else{
+			var endPoints = jsPlumb.getEndpoints(cur.source);
+			for(var j=0;j<endPoints.length;j++){
+				if(endPoints[j].isSource){
+					srcEndP = endPoints[j];
+					break;
+				}
+			}
+		}
+		if(cur.target == "output") trtEndP = cur.target
+		else{
+			var endPoints = jsPlumb.getEndpoints(cur.target);
+			for(var j=0;j<endPoints.length;j++){
+				if(endPoints[j].isTarget && endPoints[j].connections.length==0){
+					trtEndP = endPoints[j];
+					break;
+				}
+			}
+		}
+		var connection = jsPlumb.connect({
+		    source : srcEndP,
+			target : trtEndP,
+            paintStyle: connectorPaintStyle,
+			hoverPaintStyle: endpointHoverStyle,
+			connectorHoverStyle: connectorHoverStyle,
+			connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5 } ]
+		});
+		connection.protein = cur.protein;
+		connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
+	    connection.bind("click", function(connection){ openProteinModal(connection) });
+	    connection.bind("contextmenu", function(connection){ 
+	        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
+	            jsPlumb.detach(connection);
+	        }
+	        return false;
+	    });
 		var location = (cur.target == "output")? 0.4 : 0.7;
     	connection.addOverlay([ "Label", {label: cur.protein, location: location, cssClass: "aLabel", id:"label"}]);
-		//
 	}
+	getLibrary(network.libraryid.toString());
 	loadModal.modal("hide");
 }
 

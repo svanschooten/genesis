@@ -151,6 +151,7 @@ function clearParameters(){
 }
 
 function getLibrary(libraryId){
+	console.log("getLibrary : "+libraryId);
     jsRoutes.controllers.Application.getlibrary().ajax({
         method: "POST",
         contentType: "application/json",

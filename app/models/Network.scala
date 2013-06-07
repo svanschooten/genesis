@@ -238,31 +238,6 @@ object Network {
       	  val id = getID(userid, networkname)
       	  val libraryid = SQL("select libraryid from networkownedby where networkid={id}")
       	  				.on('id -> id).apply().head[Int]("libraryid")
-      	  /*val tempconcs = SQL(
-			      """
-			      select * from concentrations
-	    		  where networkid = {id}
-			      """
-			      ).on('id -> id)
-			      .as {
-	      	  		get[String]("name")~get[Int]("time")~get[Double]("conc1")~get[Double]("conc2") map{
-	      	  		  case name~time~conc1~conc2 => (name,time,conc1,conc2)
-	      	  		} *
-	      	}
-      	  var tempconcs2:Map[String,List[(Double,Double,Double)]] = Map()
-      	  for(c <- tempconcs){
-      	    if(tempconcs2 contains c._1){
-      	      tempconcs2(c._1) ::= (c._2,c._3,c._4)
-      	    }
-      	    else{
-      	      tempconcs2 += (c._1 -> List((c._2,c._3,c._4)))
-      	    }
-      	  }
-      	  var concentrations:Map[String,List[(Double,Double)]] = Map()
-      	  for(c <- tempconcs2.keys){
-      	    val list = tempconcs2(c).sortBy(_._1).map(x => (x._2,x._3))
-      	    concentrations += c -> list
-      	  }*/
 	      val allCDS = SQL(
 			      """
 			      select * from cds
@@ -342,8 +317,7 @@ object Network {
     /**
      *  Generate a new Network based on JSON input.
      */
-    def fromJSON(json: JsValue) = {
-    	println(json)
+    def fromJSON(json: JsValue, userid: Int) = {
         val net_name = (json \ "name").as[String]
         val libraryID = (json \ "library").as[String].toInt
 
@@ -360,7 +334,7 @@ object Network {
                 val cs = CodingSeq(csName, libraryID, List((0,0)), false)
                 // startsWith can be replaced by == once the setup only generates
                 // the source and sink "gates" once
-                if(src.startsWith("Input"))
+                if(src.startsWith("input"))
                     cs.isInput=true
                 csMap+= csName -> cs
             }
@@ -401,11 +375,11 @@ object Network {
                 and.y = (v \ "y").as[Double]
             }
         })
-        new Network(csMap.values.filter(_.isInput).toList,-1,net_name)
+        new Network(csMap.values.filter(_.isInput).toList,userid,net_name)
     }
 
-    def simulate(json: JsValue): JsValue = {
-      val network = fromJSON(json)
+    def simulate(json: JsValue, userID: Int): JsValue = {
+      val network = fromJSON(json, userID)
       val inputs = (json \ "inputs").as[String].split("\n")
       val time = (json \ "time").as[String].toDouble
       val steps = (json \ "steps").as[String].toInt
@@ -413,16 +387,15 @@ object Network {
       val res = network.simJson(steps - 1)
       Json.arr(res._1, res._2)
     }
-	
-	def saveFromJson(json: JsValue) = {
-    	println("Network.saveFromJson")
+
+	def saveFromJson(json: JsValue, userID: Int) = {
     	val libraryID = (json \ "library").as[String].toInt
-		fromJSON(json).save(libraryID)
+    	val network = fromJSON(json, userID)
+		network.save(libraryID)
 		Json.toJson("Circuit correctly saved.")
 	}
-	
+
     def getNetworks(userId: Int) = {
-      println("GETNETWORKS")
       DB.withConnection { implicit connection =>
         val networks = SQL(
           """
@@ -432,7 +405,6 @@ object Network {
         ).on(
           'userid -> userId
         ).as { get[String]("networkname")* }
-        println(networks)
         val resMap = Map(networks map {s => (s, Network.load(userId,s))} : _*)
         Json.toJson(networks.map(x => {
 	        Json.obj(x -> Json.obj("libraryid"->resMap(x)._1, "CDS"->resMap(x)._2, "gates"->resMap(x)._3) )
