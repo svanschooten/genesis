@@ -47,7 +47,7 @@ jsPlumb.ready(function(){
 });
 
 function findElement(array, elementId) {
-    for(i = 0; i < array.length; i++) {
+    for(var i = 0; i < array.length; i++) {
         if(array[i].id == elementId) {
             return array[i];
         }
@@ -100,7 +100,7 @@ function makeConnection(params) {
 Wrapper for adding multiple endPoints
 */
 function addEndPoints(inputs, outputs, element) {
-    for(i = 0; i < inputs; i++) {
+    for(var i = 0; i < inputs; i++) {
         jsPlumb.addEndpoint(
             element.id,
             {
@@ -116,7 +116,7 @@ function addEndPoints(inputs, outputs, element) {
         );
     }
 
-    for(i = 0; i < outputs; i++) {
+    for(var i = 0; i < outputs; i++) {
         jsPlumb.addEndpoint(
             element.id,
             {
@@ -139,7 +139,7 @@ function repaintElement(elementId) {
     jsPlumb.selectEndpoints({element:elementId}).repaint();
     jsPlumb.selectEndpoints({element:elementId}).each(function(endpoint){
         var conns = endpoint.getAttachedElements();
-        for(i = 0; i < conns.length; i++) {
+        for(var i = 0; i < conns.length; i++) {
             conns[i].repaint();
         }
     });
@@ -150,7 +150,7 @@ function parseJsPlumb() {
     var plumb = jsPlumb.getConnections();
     network.vertices = new Array();
     network.edges = new Array();
-    for(i = 0; i < circuit.length; i++) {
+    for(var i = 0; i < circuit.length; i++) {
         if(circuit[i] != null){
             network.vertices.push({
                 id: circuit[i].id,
@@ -160,7 +160,7 @@ function parseJsPlumb() {
             });
         }
     }
-    for(i = 0; i < plumb.length; i++) {
+    for(var i = 0; i < plumb.length; i++) {
         network.edges.push({
             source: plumb[i].source.selector.replace("#",""),
             target: plumb[i].target.selector.replace("#",""),
@@ -277,7 +277,7 @@ function makeDeletable(gate){
     $('#' +	gate.id).bind('contextmenu', {gate: gate}, function(event){
 		if(confirm("Delete this gate?")){
 			gate = event.data.gate;
-			i = circuit.indexOf(gate);
+			var i = circuit.indexOf(gate);
 			if(~i){
 				circuit[i] = null; // Replace instead of remove because the ids depend on circuit.length...
 			}
@@ -323,7 +323,7 @@ function connTargetHasOther(connection){
     var other = jsPlumb.getConnections({
             target: targetId
     });
-    for(i = 0; i <  other.length; i++){
+    for(var i = 0; i <  other.length; i++){
 		if(other[i] != connection) return other[i].protein;
     }
     return "";
