@@ -76,7 +76,6 @@ function setProtein() {
 }
 
 function makeConnection(params) {
-	console.log(params);
     if(params.sourceId == params.targetId) {
         notify("Cannot connect to self.", "Warning");
         return false;
@@ -341,24 +340,41 @@ function makeCustomGate(id,posx,posy) {
             data = customGates[i];
     if(data === undefined)
         return false;
-    new Gate(id, data.inputs.length, data.outputs.length, $("#"+id+" img").src, posx, posy);
-    circuit.pop();
-    // create dummy divs with connections to represent the contents of the custom gate (needed for the simulation)
-    var divmap = {};
-    for(var i = 0; i < data.nodes.length; i++) {
-        var name = data.nodes[i].name;
-        divmap[name] = $("<div></div>", {
-            "id": id+"_"+name,
-            "type": id,
-            "x": 0,
-            "y": 0
-        });
-    }
+    var nodes = Array();
+    // generate edges one at a time, making nodes as needed
     for(var i = 0; i < data.edges.length; i++) {
-        jsPlumb.connect({"source": data.edges[i].source, "target": data.edges[i].target});
+        var reduceFn = function(toFind) {
+            return function(prev, next, idx, arr){
+                if(next.id == toFind)
+                    return next;
+                return prev;
+            }
+        }
+        var source = nodes.reduce(reduceFn(data.edges[i].source), undefined);
+        if(!source) {
+            src = data.nodes.reduce(reduceFn(data.edges[i].source),undefined);
+            source = src.type == "not" ? notGate(posx+i*100, posy+i*100) : andGate(posx+i*100, posy+i*100);
+            nodes.push(source);
+        }
+        var target = nodes.reduce(reduceFn(data.edges[i].target),undefined);
+        if(!target){
+            tgt = data.nodes.reduce(reduceFn(data.edges[i].target), undefined);
+            target = tgt.type == "not" ? notGate(posx+(i+1)*100, posy+(i+1)*100) : andGate(posx+(i+1)*100, posy+(i+1)*100);
+            nodes.push(target);
+        }
+        var conn = jsPlumb.connect({"source": source, "target": target});
+        makeConnection({
+            "sourceId": source.id,
+            "targedId": target.id,
+            "scope": jsPlumb.Defaults.Scope,
+            "connection": conn
+        });
+        conn.protein = data.edges[i].protein;
+        conn.removeOverlay("Label");
+        conn.addOverlay([ "Label", {label: data.edges[i].protein, location: 0.7, cssClass: "aLabel", id:"label"}]);
     }
 }
-
+//////["sourceId", "targetId", "scope", "connection", "dropEndpoint", removeElem: function]
 /**
 Testing drag and drop
 */
@@ -366,7 +382,6 @@ $(function() {
     $('.product').draggable({
         revert: "invalid",
 		helper: "clone",
-
     });
 
     $('#plumbArea').droppable({
@@ -374,7 +389,6 @@ $(function() {
                 drop: function(event, ui) {
 	                var posx = event.pageX + $('#plumbArea').scrollLeft() - $('#plumbArea').offset().left - 30;
 	        		var posy = event.pageY + $('#plumbArea').scrollTop() - $('#plumbArea').offset().top - 30;
-	        		console.log("posx: " + posx + ", posy: " + posy)
 	        		var id = ui.draggable.attr("id");
 	        		if(id == "ng") {
 	        			notGate(posx,posy);

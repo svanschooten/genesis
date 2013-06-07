@@ -227,7 +227,6 @@ function parseCircuits(json) {
 			outputs[cs["name"]].push(cs["next"])
 			allCDS[cs["next"]] = true; allCDS[cs["name"]] = true;
 		}
-		console.log(inputs);
 		
 		var network = new Object();
 	    network.vertices = new Array();
@@ -274,7 +273,6 @@ function parseCircuits(json) {
 	    }
 	    results[name] = network;
 	}
-	console.log(results);
 	circuitList = results;
 	for(key in results){
 	    $("<option></option>").text(results[key].name).appendTo($("#loadNetworkSelector"));
@@ -304,8 +302,6 @@ function loadCircuit() {
 	
 	for(var i=0;i<network.edges.length;i++){
 		var cur = network.edges[i];
-		console.log("target: " + cur.target); console.log(jsPlumb.getEndpoints(cur.target));
-		console.log("source: " + cur.source); console.log(jsPlumb.getEndpoints(cur.source));
 		var srcEndP = (jsPlumb.getEndpoints(cur.source) == null)? cur.source : jsPlumb.getEndpoints(cur.source)[0];
 		var trtEndP = (jsPlumb.getEndpoints(cur.target) == null)? cur.target : jsPlumb.getEndpoints(cur.target)[0];
 
@@ -362,7 +358,7 @@ function getCustomGates(){
 function parseGates(json){
     var data = $.parseJSON(json);
     // copy for showGates
-    data_parsed = new Array();
+    var data_parsed = new Array();
     // get it sorted out
     data.forEach(function(gate) {
         var nodes = Array();
@@ -375,9 +371,21 @@ function parseGates(json){
         });
         var outputs = Array();
         for(var i = 0; i < gate.data.gates.length; i++) {
+            var targets = 0;
+            for(var j = 0; j < gate.data.CDS.length; j++) {
+                if(gate.data.CDS[j].next == gate.data.gates[i].name)
+                    targets++;
+            }
+            var type;
+            switch(targets) {
+                case 0: throw "gate input missing"; break;
+                case 1: type = "not"; break;
+                case 2: type = "and"; break;
+                default:type = "not"; break;
+            }
             nodes.push({
                 "id": gate.name+i,
-                "type": null,
+                "type": type,
                 "x": gate.data.gates[i].x,
                 "y": gate.data.gates[i].y,
                 "next": gate.data.gates[i].name
@@ -401,7 +409,7 @@ function parseGates(json){
                 });
             else {
                 for(var j = 0; j < nodes.length; j++){
-                    if(nodes[j].next == gate.data.CDS[idx].name)
+                    if(nodes[j].next == gate.data.CDS[idx].next)
                         edges.push({
                             "source": nodes[i].id,
                             "target": nodes[j].id,
@@ -436,14 +444,17 @@ function showGates(data) {
     var customDiv = $("#customGates");
     for(i = 0; i < data.length; i++){
         var gate = $("<div></div>",{
-            id: data.name + circuit.length,
-            class: "product",
+            'id': data[i].name,
+            'class': "product",
             'data-inputs': data.inputs,
             'data-outputs': data.outputs,
             'data-image': data.image,
             'data-posx': data.posx,
             'data-posy': data.posy
-        })
+        }).draggable({
+            revert: "invalid",
+    		helper: "clone",
+        });
         if(data.image == null){
             $("<p>no img</p>")
             .text(data.name)
