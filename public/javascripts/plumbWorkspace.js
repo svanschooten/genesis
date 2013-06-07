@@ -428,7 +428,10 @@ function makeOutput(){
 
 function resetWorkspace(){
     var confirmedReset = confirm("Are you sure you want to reset?\nMake sure you saved first.");
-    if(confirmedReset) hardReset();
+    if(confirmedReset){
+    	hardReset();
+    	setupModal.modal("show");	
+    }
 }
 
 function hardReset(){
