@@ -5,16 +5,6 @@
 # The home page
 GET		/									controllers.Home.home
 
-# The about page
-GET		/about								controllers.About.about
-
-# The settings page
-GET		/settings							controllers.Settings.settings
-POST	/settings							controllers.Settings.saveSettings
-
-# The help page
-GET		/help								controllers.Help.help
-
 # Authentication
 GET     /login                              controllers.Application.login
 POST    /login                              controllers.Application.authenticate
@@ -28,7 +18,7 @@ POST	/newuser							controllers.Admin.saveUser
 POST    /getcooking                         controllers.Application.getCooking
 
 # Javascript routing
-GET    /assets/javascripts/routes      		controllers.Application.javascriptRoutes
+GET    	/assets/javascripts/routes      	controllers.Application.javascriptRoutes
 POST    /getlibrary                         controllers.Application.getlibrary
 POST    /savecircuit                        controllers.Application.savecircuit
 POST    /getallcircuits                     controllers.Application.getallcircuits
