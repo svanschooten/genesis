@@ -1,0 +1,21 @@
+@* testresults Template File *@
+@(param: Any)
+
+<head>
+	<meta charset="utf-8">
+	<title>Test results</title>
+	<link href=@routes.Assets.at("stylesheets/qunit-1.11.0.css") rel='stylesheet' />
+	<script src=@routes.Assets.at("javascripts/lib/qunit-1.11.0.js")></script>
+	<script src=@routes.Assets.at("javascripts/lib/jquery-1.9.1.min.js")></script>
+	<script src=@routes.Assets.at("javascripts/lib/jquery.ui.touch-punch.min.js")></script>
+	<script src=@routes.Assets.at("javascripts/lib/jquery.jsPlumb-1.4.0-all-min.js")></script>
+	<script src=@routes.Assets.at("javascripts/lib/jquery-ui-1.10.2.min.js")></script>
+	<script src=@routes.Assets.at("javascripts/plumbWorkspace.js") data-cover></script>
+	<script src=@routes.Assets.at("javascripts/test/testPlumbWorkspace.js")></script>
+
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+	<script src=@routes.Assets.at("javascripts/lib/blanket.min.js")></script>
+</body>

@@ -111,6 +111,10 @@ object Application extends Controller {
   def getSessionHelper(): String = {
     sessionHelper
   }
+  
+  def testresults = Action { implicit request =>
+    Ok(html.testresults(""))
+  }
 }
 
 /** Provide security features */
