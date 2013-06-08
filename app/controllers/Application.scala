@@ -15,7 +15,7 @@ import factories._
 object Application extends Controller {
 
   private var sessionHelper: String = ""
-
+    
   /** Form used for authenticating a user. */
   val loginForm = Form(
     tuple(

@@ -47,7 +47,9 @@ object User {
   /** Authenticates a user given an email and password. */
   def authenticate(email: String, password: String): Option[User] = {
     findByEmail(email) match {
-      case Some(User(id,email,hashedPw,fname,lname)) => if (password.isBcrypted(hashedPw)) Some(User(id, email, hashedPw, fname, lname)) else None
+      case Some(User(id,email,hashedPw,fname,lname)) => 
+        if (password.isBcrypted(hashedPw)) Some(User(id, email, hashedPw, fname, lname))
+        else None
       case _ => None
     }
   }

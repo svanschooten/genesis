@@ -1,9 +1,11 @@
 @(title: String)(form: Form[User])
 
-@main(title)(Html.apply("Placeholder")){
+@head = {
 	
-	<div>
-		
+}
+
+@main(title)(head){
+	<div class='container'>
 		@helper.form(action = routes.Admin.saveUser) {
 			@helper.inputText(form("Email"))
 			@helper.inputPassword(form("Password"))
@@ -12,5 +14,4 @@
 			<button class='btn btn-primary' type='submit'>Save</button>
 		}
 	</div>
-	
 }

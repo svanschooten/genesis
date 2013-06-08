@@ -9,7 +9,6 @@
     <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
 	
     @head_extra
-
 }
 
 @base(title)(head) {	
@@ -24,8 +23,6 @@
                             <li @active("Home")><a href="/">Home</a></li>
                         </ul>
                         <ul class="nav pull-right">
-                            <!--<li @active("Help")><a href="/help">Help</a></li> TODO verwijzen naar github pages?-->
-                            <!--<li @active("Settings")><a href="/settings">Settings</a></li> TODO Finaliseren of weghalen -->
                             <li><a href="/logout">Logout</a></li>
                         </ul>
                     </div>
@@ -47,4 +44,4 @@
 		
 	</div>
 	<script src=@routes.Assets.at("javascripts/script.js") ></script>
-    }
+}
