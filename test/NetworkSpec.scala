@@ -6,7 +6,6 @@ import play.api.test.Helpers._
 import models._
 import play.api.libs.json.Json
 import play.api.libs.json.JsValue
-import play.api.libs.json.JsObject
 import play.api.libs.json.JsArray
 import play.api.db.DB
 import play.api.Play.current
