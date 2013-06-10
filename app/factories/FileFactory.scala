@@ -24,7 +24,7 @@ object FileFactory {
   private def makeContent(input: List[List[(String, Double, Double)]]): String = {
     input.foldLeft(
       input.head.foldRight("")(
-        (tup: (String, Double, Double), rest: String) => tup._1 + "," + rest
+        (tup: (String, Double, Double), rest: String) => "mRNA_" + tup._1 + "," + "protein_" + tup._1 + ", " + rest
       )
     )(
       (rest: String, list: List[(String, Double, Double)]) => rest + "\n" + list.foldRight("")(

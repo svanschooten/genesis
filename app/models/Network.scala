@@ -48,10 +48,10 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
         val times = 0.0 to finish by stepSize
         inputs.foreach(reset_readies _)
         // do the required steps and save the concentrations each round
-        times.foldRight(List(getConcs().toList))((time,li)=>{
+        times.foldRight(List(getConcs().toList.sortWith(_._1 < _._1)))((time,li)=>{
             step() // this is very poor actually: functional method fold has side effects now
             inputs.foreach(reset_readies _)
-            getConcs().toList :: li
+            getConcs().toList.sortWith(_._1 < _._1) :: li
         }).reverse
     }
 
