@@ -73,10 +73,10 @@ class NetworkSpec extends Specification {
             val results = net.simulate(1500.0)
             results(results.length-1)(0)._2 must beCloseTo(1.0, 0.1)
             results(results.length-1)(0)._3 must beCloseTo(1.0, 0.1)
-            results(results.length-1)(1)._2 must beCloseTo(1.41e-5, 1e-5)
-            results(results.length-1)(1)._3 must beCloseTo(7.05e-5, 1e-5)
-            results(results.length-1)(2)._2 must beCloseTo(1.0, 0.1)
-            results(results.length-1)(2)._3 must beCloseTo(1.0, 0.1)
+            results(results.length-1)(1)._2 must beCloseTo(1.0, 0.1)
+            results(results.length-1)(1)._3 must beCloseTo(1.0, 0.1)
+            results(results.length-1)(2)._2 must beCloseTo(1.41e-5, 1e-5)
+            results(results.length-1)(2)._3 must beCloseTo(7.05e-5, 1e-5)
           }
          }
       }

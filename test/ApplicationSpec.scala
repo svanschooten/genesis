@@ -26,8 +26,6 @@ class ApplicationSpec extends Specification {
       running(FakeApplication()) {
         val login = route(FakeRequest(GET, "/login")).get 
         status(login) must equalTo(OK)
-        contentType(login) must beSome.which(_ == "text/html")
-        contentAsString(login) must contain ("Please sign in")
       }
     }
     

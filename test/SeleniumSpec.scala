@@ -92,7 +92,7 @@ class SeleniumSpec  extends Specification {
        */
       webDriver.findElement(By.id("circuit")).click()
       webDriver.findElement(By.id("load")).click()
-      Thread.sleep(1000)
+      Thread.sleep(2000)
       webDriver.findElement(By.id("loadNetworkSelector")).sendKeys("Not")
       webDriver.findElement(By.id("loadcircuit")).click()
       assertTrue(webDriver.findElements(By.id("not2")).size() > 0)
@@ -105,7 +105,6 @@ class SeleniumSpec  extends Specification {
       webDriver.findElement(By.id("save")).click()
       assertEquals(webDriver.findElement(By.className("alert-success")).findElement(By.tagName("Strong")).getText(),"SUCCESS!")
       webDriver.findElement(By.className("alert-success")).findElement(By.className("close")).click()
-      Thread.sleep(1000)
       
       /*
        * Testing simulate
@@ -118,14 +117,25 @@ class SeleniumSpec  extends Specification {
       assertTrue(webDriver.findElements(By.id("resultModal")).size() > 0)
       webDriver.findElement(By.id("closeSim")).click()
       
-      /*
+       /*
        * Testing setup
        */
-      Thread.sleep(1000)
+      Thread.sleep(2000)
       webDriver.findElement(By.id("simulation")).click()
       webDriver.findElement(By.id("setup")).click()
       webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS)
       webDriver.findElement(By.className("btn-primary")).click()
+      assertEquals(webDriver.findElement(By.className("alert-success")).findElement(By.tagName("Strong")).getText(),"SUCCESS!")
+      webDriver.findElement(By.className("alert-success")).findElement(By.className("close")).click()
+      
+      /*
+       * Testing import lib
+       */
+      Thread.sleep(1000)
+      webDriver.findElement(By.id("simulation")).click()
+      webDriver.findElement(By.id("import")).click()
+      webDriver.findElement(By.id("libraryName")).sendKeys("testLib")
+      webDriver.findElement(By.id("applyLib")).click()
       assertEquals(webDriver.findElement(By.className("alert-success")).findElement(By.tagName("Strong")).getText(),"SUCCESS!")
       webDriver.findElement(By.className("alert-success")).findElement(By.className("close")).click()
       
