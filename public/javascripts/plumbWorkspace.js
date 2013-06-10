@@ -62,7 +62,6 @@ function openProteinModal(connection){
 }
 
 function setProtein() {
-    //TODO Protein selectie en controle
     if(selectedProtein === ""){
         alertError("Invalid protein selection!");
         return;
@@ -294,6 +293,10 @@ function makeDeletable(gate){
 Protein constructor
 */
 function Protein(id, data) {
+    if(id < 0){ return null;}
+    if(!(data typeof 'string') || !(data instanceof String)){
+        return null;
+    }
     this.id = id;
     this.data = data;
 }
