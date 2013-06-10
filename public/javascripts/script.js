@@ -17,7 +17,7 @@ var libraries = [ 'bootstrap.min.js',
 var scripts = [  ];
 
 var proteinModal, resultModal, signalModal, setupModal, loadModal;
-var circuitName, timeSpan, numSteps;
+var circuitName, numSteps;
 var circuitList;
 
 /**
@@ -173,7 +173,7 @@ function completeSimulation(){
         $("#signalErrorDiv").text("No input signal given.");
     } else {
         signalModal.modal("hide");
-        var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, time: timeSpan, steps: numSteps, library: selectedLibrary};
+        var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, steps: numSteps, library: selectedLibrary};
         jsRoutes.controllers.Application.getCooking().ajax({
             data: JSON.stringify(simulateData),
             method: "POST",
@@ -363,7 +363,6 @@ function applySetup(){
         $("#setupErrorDiv").text("");
         getLibrary($("#setupLibrarySelector option:selected")[0].value);
         circuitName = name;
-        timeSpan = $("#simTimeSpan")[0].value;
         numSteps = $("#simSteps")[0].value;
         makeInput();
         makeOutput();

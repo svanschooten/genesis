@@ -383,7 +383,6 @@ object Network {
     def simulate(json: JsValue, userID: Int): JsValue = {
       val network = fromJSON(json, userID)
       val inputs = (json \ "inputs").as[String].split("\n")
-      val time = (json \ "time").as[String].toDouble
       val steps = (json \ "steps").as[String].toInt
       network.setStartParameters(inputs, 100.0, 10.0, steps)
       val res = network.simJson(steps - 1)
