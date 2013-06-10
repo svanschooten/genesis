@@ -1,27 +1,26 @@
+/*jshint -W099, smarttabs: true, forin:true, noarg:true, noempty:true, eqeqeq:true, unused:true, curly:true, browser:true, jquery:true, indent:4, maxerr:50 */
 /**
 Authors:
 -Stijn van Schooten
 */
 
 //Globals
-var gateid = 0
-var circuit = new Array();
-var customGates = new Array();
-var endpointOptions = { isTarget:true, isSource:true };
+var circuit = [];
+var customGates = [];
 var connectorPaintStyle = {
-    lineWidth:4,
-    strokeStyle:"#deea18",
-    joinstyle:"round",
+    lineWidth: 4,
+    strokeStyle: "#deea18",
+    joinstyle: "round"
 };
 var connectorHoverStyle = {
-    lineWidth:4,
-    strokeStyle:"#2e2aF8"
+    lineWidth: 4,
+    strokeStyle: "#2e2aF8"
 };
-var endpointHoverStyle = {fillStyle:"#2e2aF8"};
+var endpointHoverStyle = {fillStyle: "#2e2aF8"};
 var dropOptions = {
-    tolerance:"touch",
-    hoverClass:"dropHover",
-    activeClass:"dragActive"
+    tolerance: "touch",
+    hoverClass: "dropHover",
+    activeClass: "dragActive"
 };
 
 var jsp, gin, gout;
@@ -32,24 +31,24 @@ var gateHeight = 80, gateWith = 80;
 /**
 Ready call for jsPlumb library
 */
-jsPlumb.ready(function(){
+jsPlumb.ready(function() {
     jsp = jsPlumb.getInstance({
-        connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5 } ],
-        Endpoints : [ [ "Dot", {radius: 5} ], [ "Dot", { radius: 7 } ]],
-        EndpointStyles : [{ fillStyle:'#225588' }, { fillStyle:'#558822' }],
-        hoverPaintStyle: endpointHoverStyle,
+        connector: ["Flowchart", { stub: [40, 60], gap: 10, cornerRadius: 5 }],
+        Endpoints : [[ "Dot", {radius: 5} ], [ "Dot", { radius: 7 } ]],
+        EndpointStyles : [{ fillStyle: '#225588' }, { fillStyle: '#558822' }],
+        hoverPaintStyle: endpointHoverStyle
     });
     jsp.Defaults.Container = "plumbArea";
     jsp.importDefaults({
-        DragOptions : { cursor: "pointer", zIndex:-2 },
+        DragOptions : {cursor: "pointer", zIndex: -2},
         HoverClass: connectorHoverStyle,
-        ConnectionOverlays : [[ "Arrow", { width:15, location: 0.6,height:10, id:"arrow" }]],
+        ConnectionOverlays : [[ "Arrow", {width: 15, location: 0.6, height: 10, id: "arrow"}]]
     });
 });
 
 function findElement(array, elementId) {
-    for(var i = 0; i < array.length; i++) {
-        if(array[i].id == elementId) {
+    for (var i = 0; i < array.length; i++) {
+        if(array[i].id === elementId) {
             return array[i];
         }
     }
@@ -64,30 +63,30 @@ function openProteinModal(connection){
 
 function setProtein() {
     //TODO Protein selectie en controle
-    if(selectedProtein == ""){
+    if(selectedProtein === ""){
         alertError("Invalid protein selection!");
         return;
     }
     currentConnection.protein = selectedProtein.input1;
     currentConnection.removeOverlay("label");
-    var location = (currentConnection.targetId == "Output")? 0.4 : 0.7;
+    var location = (currentConnection.targetId === "Output")? 0.4 : 0.7;
     currentConnection.addOverlay([ "Label", {label: selectedProtein.input1, location: location, cssClass: "aLabel", id:"label"}]);
     proteinModal.modal("hide");
 }
 
 function makeConnection(params) {
-    if(params.sourceId == params.targetId) {
+    if(params.sourceId === params.targetId) {
         notify("Cannot connect to self.", "Warning");
         return false;
     }
     var element = findElement(circuit, params.sourceId.replace("#",""));
-    if(element == null) {
+    if(element === null) {
         notify("Invalid element: " + params.sourceId, "Warning");
         return false;
     }
     params.connection.protein = "";
     params.connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
-    params.connection.bind("click", function(connection){ openProteinModal(connection) });
+    params.connection.bind("click", function(connection){ openProteinModal(connection); });
     params.connection.bind("contextmenu", function(connection){ 
         if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
             jsPlumb.detach(connection);
@@ -117,7 +116,7 @@ function addEndPoints(inputs, outputs, element) {
         );
     }
 
-    for(var i = 0; i < outputs; i++) {
+    for(var j = 0; j < outputs; j++) {
         jsPlumb.addEndpoint(
             element.id,
             {
@@ -129,7 +128,7 @@ function addEndPoints(inputs, outputs, element) {
                 hoverPaintStyle: endpointHoverStyle,
                 connectorHoverStyle: connectorHoverStyle,
                 maxConnections: -1,
-                anchor: [1, (1 / (outputs+1)) * (i + 1), 1, 0],
+                anchor: [1, (1 / (outputs+1)) * (j + 1), 1, 0],
                 ConnectionOverlays : [ [ "Label", {label:" ", location: 0.25, cssClass: "aLabel", id:"label"}]],
             }
         );
@@ -147,12 +146,12 @@ function repaintElement(elementId) {
 }
 
 function parseJsPlumb() {
-    var network = new Object();
+    var network = {};
     var plumb = jsPlumb.getConnections();
-    network.vertices = new Array();
-    network.edges = new Array();
+    network.vertices = [];
+    network.edges = [];
     for(var i = 0; i < circuit.length; i++) {
-        if(circuit[i] != null){
+        if(circuit[i] !== null){
             network.vertices.push({
                 id: circuit[i].id,
                 type: circuit[i].type,
@@ -161,11 +160,11 @@ function parseJsPlumb() {
             });
         }
     }
-    for(var i = 0; i < plumb.length; i++) {
+    for(var j = 0; j < plumb.length; j++) {
         network.edges.push({
-            source: plumb[i].source.selector.replace("#",""),
-            target: plumb[i].target.selector.replace("#",""),
-            protein: plumb[i].protein
+            source: plumb[j].source.selector.replace("#",""),
+            target: plumb[j].target.selector.replace("#",""),
+            protein: plumb[j].protein
         });
     }
     return network;
@@ -194,11 +193,11 @@ function InputGate() {
 	var text = $('<p>').appendTo(gate);
 	text.css('margin', "15px 30px");
 	gate.css({
-	    border: "2px dashed black",
-	    position: "absolute",
-	    left: 0,
-	    height: "50%",
-	    width: "80px"
+        border: "2px dashed black",
+        position: "absolute",
+        left: 0,
+        height: "50%",
+        width: "80px"
 	});
 	text.text(this.id);
 
@@ -246,11 +245,11 @@ function Gate(name, inputs, outputs, image,px,py) {
     var gate = $('<div/>', {
         id: this.id,
         class: "gateElement",
-    })
+    });
     gate.offset({ top: py, left: px });
     $("#plumbArea").append(gate);
 
-    if(image == null) {
+    if(image === null) {
         var text = $("<p>").appendTo(gate);
         text.css("padding", "15px 30px");
         gate.css("border", "1px solid black");
@@ -304,28 +303,33 @@ Wrapper for simple creation of AND gates
 */
 function andGate(posx,posy) {
     return new Gate("and", 2, 1, "assets/images/AND_gate.png",posx,posy);
-};
+}
 
 /**
 Wrapper for simple creation of NOT gates
 */
 function notGate(posx,posy) {
     return new Gate("not", 1, 1, "assets/images/NOT_gate.png",posx,posy);
-};
+}
 
 /**
 Provided a connection this method will return the protein
 linked to the other input if it exists, or "" otherwise
 */
 function connTargetHasOther(connection){
-	if(connection == undefined) return "";
+	if(connection === undefined){
+		return "";
+    }
+    
     var targetId = connection.target.selector.replace("#","");
     var sourceId = connection.source.selector.replace("#","");
     var other = jsPlumb.getConnections({
             target: targetId
-    });
-    for(var i = 0; i <  other.length; i++){
-		if(other[i] != connection) return other[i].protein;
+        });
+    
+    for(var i = 0; i < other.length; i++){
+        if(other[i] !== connection)
+            return other[i].protein;
     }
     return "";
 }
@@ -335,38 +339,43 @@ function connTargetHasOther(connection){
  */
 function makeCustomGate(id,posx,posy) {
     var data;
-    for(var i = 0; i < customGates.length; i++)
-        if(customGates[i].name == id)
+    for(var i = 0; i < customGates.length; i++) {
+        if(customGates[i].name === id)
             data = customGates[i];
+    }
     if(data === undefined)
         return false;
+    
     var nodes = Array();
+    
+    function reduceFn(toFind) {
+        return function(prev, next, idx, arr){
+            if(next.id === toFind)
+                return next;
+            return prev;
+        };
+    }
+    
+    function filterFn(testProp) {
+        return function(el, idx, arr){
+            if(el[testProp])
+                return true;
+            return false;
+        };
+    }
     // generate edges one at a time, making nodes as needed
     for(var i = 0; i < data.edges.length; i++) {
-        var reduceFn = function(toFind) {
-            return function(prev, next, idx, arr){
-                if(next.id == toFind)
-                    return next;
-                return prev;
-            }
-        }
-        var filterFn = function(testProp) {
-            return function(el, idx, arr){
-                if(el[testProp])
-                    return true;
-                return false;
-            }
-        }
+        
         var source = nodes.reduce(reduceFn(data.edges[i].source), undefined);
         if(!source) {
             src = data.nodes.reduce(reduceFn(data.edges[i].source),undefined);
-            source = src.type == "not" ? notGate(posx+i*100, posy+i*100) : andGate(posx+i*100, posy+i*100);
+            source = src.type === "not" ? notGate(posx+i*100, posy+i*100) : andGate(posx+i*100, posy+i*100);
             nodes.push(source);
         }
         var target = nodes.reduce(reduceFn(data.edges[i].target),undefined);
         if(!target){
             tgt = data.nodes.reduce(reduceFn(data.edges[i].target), undefined);
-            target = tgt.type == "not" ? notGate(posx+(i+1)*100, posy+(i+1)*100) : andGate(posx+(i+1)*100, posy+(i+1)*100);
+            target = tgt.type === "not" ? notGate(posx+(i+1)*100, posy+(i+1)*100) : andGate(posx+(i+1)*100, posy+(i+1)*100);
             nodes.push(target);
         }
         // thanks to Anton for figuring out it had to be the EPs, not just the DIVs
@@ -399,24 +408,24 @@ $(function() {
 
     $('#plumbArea').droppable({
 		accept: '.product',
-                drop: function(event, ui) {
-	                var posx = event.pageX + $('#plumbArea').scrollLeft() - $('#plumbArea').offset().left - 30;
-	        		var posy = event.pageY + $('#plumbArea').scrollTop() - $('#plumbArea').offset().top - 30;
-	        		var id = ui.draggable.attr("id");
-	        		if(id == "ng") {
-	        			notGate(posx,posy);
-	        		} else if(id == "ag") {
-	        			andGate(posx,posy);
-	        		} else {
-                        makeCustomGate(id,posx,posy);
-	        		}
-
-	            }
-        });
+        drop: function(event, ui) {
+            var posx = event.pageX + $('#plumbArea').scrollLeft() - $('#plumbArea').offset().left - 30;
+            var posy = event.pageY + $('#plumbArea').scrollTop() - $('#plumbArea').offset().top - 30;
+            var id = ui.draggable.attr("id");
+            
+            if(id === "ng") {
+                notGate(posx,posy);
+            } else if(id === "ag") {
+                andGate(posx,posy);
+            } else {
+                makeCustomGate(id,posx,posy);
+            }
+        }
+    });
 });
 
 function makeInput(){
-    if(gin != null){
+    if(gin !== null){
         $("#input").remove();
     }
     gin = new InputGate();
@@ -429,7 +438,7 @@ function makeInput(){
 }
 
 function makeOutput(){
-    if(gout != null){
+    if(gout !== null){
         $("#output").remove();
     }
     gout = new OutputGate();
@@ -437,10 +446,10 @@ function makeOutput(){
         deleteEndpointsOnDetach: false,
         anchor:[ "Perimeter", { shape:"Rectangle"} ],
         dropOptions: $.extend(dropOptions, 
-        	{drop: function(event, ui){
-	        	connections = jsPlumb.getConnections({target: 'output'});
-	        	connections.forEach(function(connection){
-					connection.bind("click", function(connection){ openProteinModal(connection) });
+            {drop: function(event, ui){
+	            connections = jsPlumb.getConnections({target: 'output'});
+                connections.forEach(function(connection){
+					connection.bind("click", function(connection){ openProteinModal(connection); });
 				    connection.bind("contextmenu", function(connection){ 
 				        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
 				            jsPlumb.detach(connection);
@@ -462,7 +471,7 @@ function resetWorkspace(){
 }
 
 function hardReset(){
-	circuit = new Array();
+	circuit = [];
     currentConnection = null;
     resetInputs();
     jsPlumb.detachEveryConnection();
@@ -477,7 +486,7 @@ function getAllCircuits(){
         success: function(response) {
             displayCircuits(response);
         },
-        error: function(response) { alertError(response)}
+        error: function(response) { alertError(response); }
     });
 }
 
