@@ -48,10 +48,10 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
         val times = 0.0 to finish by stepSize
         inputs.foreach(reset_readies _)
         // do the required steps and save the concentrations each round
-        times.foldRight(List(getConcs().toList))((time,li)=>{
+        times.foldRight(List(getConcs().toList.sortWith(_._1 < _._1)))((time,li)=>{
             step() // this is very poor actually: functional method fold has side effects now
             inputs.foreach(reset_readies _)
-            getConcs().toList :: li
+            getConcs().toList.sortWith(_._1 < _._1) :: li
         }).reverse
     }
 
@@ -383,7 +383,6 @@ object Network {
     def simulate(json: JsValue, userID: Int): JsValue = {
       val network = fromJSON(json, userID)
       val inputs = (json \ "inputs").as[String].split("\n")
-      val time = (json \ "time").as[String].toDouble
       val steps = (json \ "steps").as[String].toInt
       network.setStartParameters(inputs, 100.0, 10.0, steps)
       val res = network.simJson(steps - 1)

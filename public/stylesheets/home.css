@@ -24,18 +24,8 @@ header {
 	height: 100%;
 }
 
-#application-header-row {
-	height: 10%;
-}
-
 #application-main-row {
-	height: 90%;
-}
-
-#application-header-row header {
 	height: 100%;
-	background-color: red;
-	padding: 5px;
 }
 
 #application-header-row header .btn-toolbar {
@@ -154,13 +144,6 @@ header {
 
 }
 
-.inline{
-    display: inline;
-}
-
-.block{
-    display block;
-}
 
 .spanProtein{
     float: inherit;
@@ -180,4 +163,13 @@ header {
     margin-bottom: 20px;
     padding-top: 0;
 
+}
+
+#alertBox{
+    position: absolute;
+    bottom: 10px;
+    z-index: 100;
+    opacity:0.8;
+    filter:alpha(opacity=80);
+    width: 85%;
 }

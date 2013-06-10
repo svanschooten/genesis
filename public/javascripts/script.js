@@ -1,3 +1,4 @@
+/*jshint -W099, smarttabs: true, forin:true, noarg:true, noempty:true, eqeqeq:true, unused:true, curly:false, browser:true, jquery:true, indent:4, maxerr:50 */
 /**
 Authors:
 -Jeroen Peperkamp
@@ -16,7 +17,7 @@ var libraries = [ 'bootstrap.min.js',
 var scripts = [  ];
 
 var proteinModal, resultModal, signalModal, setupModal, loadModal, importLibModal;
-var circuitName, timeSpan, numSteps;
+var circuitName, numSteps;
 var circuitList;
 
 /**
@@ -50,20 +51,20 @@ If needed on all pages: Put in scripts array.
 */
 function loadPageScript() {
     switch(document.URL.split("/").pop()) {
-        case "rk":
-            loadScript("test/rkPlot.js");
-            break;
-        case "plumbtest":
-            loadScript("test/plumbTest.js");
-            break;
-        default:
-            break;
+    case "rk":
+        loadScript("test/rkPlot.js");
+        break;
+    case "plumbtest":
+        loadScript("test/plumbTest.js");
+        break;
+    default:
+        break;
     }
     var mainLibs = [
         'rickShawPlot.js',
         'lib/rickshaw.min.js',
-        'lib/d3.v3.min.js',
-        'plumbWorkspace.js']
+        'lib/d3.v3.min.js'
+    ];
     loadArrayScripts("", mainLibs);
 }
 
@@ -78,7 +79,7 @@ function alertError(error) {
 Loads an array of .js files with a prefix to simplify importing scripts and libraries.
 */
 function loadArrayScripts(prefix, files, callback) {
-    if(files.length != 0) {
+    if(files.length !== 0) {
         loadScript(prefix + files.shift(), loadArrayScripts(prefix, files, callback));
     } else {
         callback;
@@ -101,7 +102,7 @@ for different types of alerts use:
 - info (blue)
 */
 function notify(message, type) {
-    if(type == null) {
+    if(type === null) {
         type = "warning";
     }
     var notificationID = "notification" + Math.floor((Math.random()*100)+1);
@@ -135,9 +136,9 @@ Enhancing the methods of an array
 */
 Array.prototype.removeElem = function(elem)   {
     var idx = this.indexOf(elem);
-    if(idx != -1)
+    if(idx !== -1)
         this.splice(idx, 1);
-}
+};
 
 /**
 Generalised object toString method. JSON.stringify does not work with cyclomatic objects.
@@ -158,7 +159,7 @@ The id is the id of the element and the data is the name of the attribute.
 No # and no data- prefixes needed.
 */
 function getData(id, data) {
-    return $("#" + id.replace("#", ""))[0].getAttribute("data-" + data.replace("data-", ""))
+    return $("#" + id.replace("#", ""))[0].getAttribute("data-" + data.replace("data-", ""));
 }
 
 function beginSimulation(){
@@ -179,13 +180,12 @@ function beginSimulation(){
 function completeSimulation(){
     //TODO Checken van inputsignalen
     inputs = $("#signalArea")[0].value;
-    timeSpan = $("#simTimeSpan")[0].value;
     numSteps = $("#simSteps")[0].value;
     if(inputs == ""){
         $("#signalErrorDiv").text("No input signal given.")
     } else {
         signalModal.modal("hide");
-        var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, time: timeSpan, steps: numSteps, library: selectedLibrary};
+        var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, steps: numSteps, library: selectedLibrary};
         jsRoutes.controllers.Application.getCooking().ajax({
             data: JSON.stringify(simulateData),
             method: "POST",
@@ -195,7 +195,7 @@ function completeSimulation(){
                 signalModal.modal("hide");
                 resultModal.modal("show");
             },
-            error: function(response) { alertError(response)}
+            error: function(response) { alertError(response); }
         });
     }
 }
@@ -237,7 +237,7 @@ function getallCircuits() {
         	$("#loadNetworkSelector").empty();
         	parseCircuits(response);
         },
-        error: function(response) { "Unable to load circuits." }
+        error: function(response) { "Unable to load circuits."; }
     });
 }
 
@@ -256,13 +256,14 @@ function parseCircuits(json) {
 			if(!(cs.next in inputs)) inputs[cs.next] = Array();
 			inputs[cs.next].push(cs.name);
 			if(!(cs.name in outputs)) outputs[cs.name] = Array();
-			outputs[cs.name].push(cs.next)
-			allCDS[cs.next] = true; allCDS[cs.name] = true;
+			outputs[cs.name].push(cs.next);
+			allCDS[cs.next] = true;
+			allCDS[cs.name] = true;
 		}
 		
-		var network = new Object();
-	    network.vertices = new Array();
-	    network.edges = new Array();
+		var network = {};
+	    network.vertices = [];
+	    network.edges = [];
 	    network.name = name;
 	    network.libraryid = cur.libraryid;
 	    for(var j=0;j<cur.gates.length;j++){
@@ -270,12 +271,12 @@ function parseCircuits(json) {
 	    	var gate = {
 	            x: g.x,
 	        	y: g.y
-	        }
-	        if(inputs[g.name].length==2){
+	        };
+	        if(inputs[g.name].length === 2){
 	        	gate.type = "and";
 	        	gate.id = "and"+(j+2);
 	        }
-	        else if(inputs[g.name].length==1){
+	        else if(inputs[g.name].length === 1){
 	        	gate.type = "not";
 	        	gate.id = "not"+(j+2);
 	        }
@@ -286,8 +287,8 @@ function parseCircuits(json) {
 	        gateID[g.name] = gate.id;
 		    network.vertices.push(gate);
 	    }
-	    for(key in allCDS){
-	    	if(outputs[key]==undefined){
+	    for (var key in allCDS){
+	    	if(outputs[key] === undefined){
 	    		network.edges.push({
 		            source: gateID[key],
 		            target: "output",
@@ -295,10 +296,10 @@ function parseCircuits(json) {
 		        });
 	    	}
 	    }
-	    for(key in inputs){
+	    for (var key in inputs){
 	    	for(var j=0;j<inputs[key].length;j++){
 	    		network.edges.push({
-		            source: (gateID[inputs[key][j]]==undefined ? "input" : gateID[inputs[key][j]]),
+		            source: (gateID[inputs[key][j]] === undefined ? "input" : gateID[inputs[key][j]]),
 		            target: gateID[key],
 		            protein: inputs[key][j]
 		        });
@@ -307,7 +308,7 @@ function parseCircuits(json) {
 	    results[name] = network;
 	}
 	circuitList = results;
-	for(key in results){
+	for (var key in results){
 	    $("<option></option>").text(results[key].name).appendTo($("#loadNetworkSelector"));
 	}
 }
@@ -318,28 +319,28 @@ function saveCircuit() {
         data: JSON.stringify(data),
         method: "POST",
         contentType: "application/json",
-        success: function(response) { notify(response,"success") },
-        error: function(response) { alertError("Circuit could not be saved.")}
+        success: function(response) { notify(response,"success"); },
+        error: function(response) { alertError("Circuit could not be saved."); }
     });
 }
 
 function loadCircuit() {
 	var selected = $("#loadNetworkSelector").find('option:selected').text();
 	var network = circuitList[selected];
-	if(network == undefined) return;
+	if(network === undefined) return;
 	hardReset();
     circuitName = network.name;
 	for(var i=0;i<network.vertices.length;i++){
-		var cur = network.vertices[i]
-		if(cur.type=="and") andGate(cur.x, cur.y);
-		if(cur.type=="not") notGate(cur.x, cur.y);
+		var cur = network.vertices[i];
+		if(cur.type === "and") andGate(cur.x, cur.y);
+		if(cur.type === "not") notGate(cur.x, cur.y);
 	}
-	for(var i=0;i<network.edges.length;i++){
+	for(var i = 0; i < network.edges.length; i++){
 		var cur = network.edges[i];
 		var srcEndP;
 		var trtEndP;
-		if(cur.source == "input") srcEndP = cur.source
-		else{
+		if(cur.source === "input") srcEndP = cur.source;
+		else {
 			var endPoints = jsPlumb.getEndpoints(cur.source);
 			for(var j=0;j<endPoints.length;j++){
 				if(endPoints[j].isSource){
@@ -348,11 +349,11 @@ function loadCircuit() {
 				}
 			}
 		}
-		if(cur.target == "output") trtEndP = cur.target
-		else{
+		if(cur.target === "output") trtEndP = cur.target;
+		else {
 			var endPoints = jsPlumb.getEndpoints(cur.target);
-			for(var j=0;j<endPoints.length;j++){
-				if(endPoints[j].isTarget && endPoints[j].connections.length==0){
+			for(var j = 0; j < endPoints.length; j++){
+				if(endPoints[j].isTarget && endPoints[j].connections.length === 0){
 					trtEndP = endPoints[j];
 					break;
 				}
@@ -368,14 +369,14 @@ function loadCircuit() {
 		});
 		connection.protein = cur.protein;
 		connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
-	    connection.bind("click", function(connection){ openProteinModal(connection) });
+	    connection.bind("click", function(connection){ openProteinModal(connection); });
 	    connection.bind("contextmenu", function(connection){ 
 	        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
 	            jsPlumb.detach(connection);
 	        }
 	        return false;
 	    });
-		var location = (cur.target == "output")? 0.4 : 0.7;
+		var location = (cur.target === "output") ? 0.4 : 0.7;
     	connection.addOverlay([ "Label", {label: cur.protein, location: location, cssClass: "aLabel", id:"label"}]);
 	}
 	getLibrary(network.libraryid.toString());
@@ -385,9 +386,9 @@ function loadCircuit() {
 function applySetup(){
     var lib = $("#setupLibrarySelector option:selected")[0].value;
     var name = $("#circuitName")[0].value;
-    if(lib == -1){
+    if(lib === -1){
         $("#setupErrorDiv").text("Choose a library first!");
-    } else if(name == ""){
+    } else if(name === ""){
         $("#setupErrorDiv").text("You must specify a name!");
     } else {
         $("#setupErrorDiv").text("");
@@ -407,7 +408,7 @@ function getCustomGates(){
         success: function(response) {
             showGates(parseGates(response));
         },
-        error: function(response) { alertError(response)}
+        error: function(response) { alertError(response); }
     });
 }
 
@@ -416,7 +417,7 @@ function getCustomGates(){
 function parseGates(json){
     var data = $.parseJSON(json);
     // copy for showGates
-    var data_parsed = new Array();
+    var data_parsed = [];
     // get it sorted out
     data.forEach(function(gate) {
         var nodes = Array();
@@ -431,7 +432,7 @@ function parseGates(json){
         for(var i = 0; i < gate.data.gates.length; i++) {
             var targets = 0;
             for(var j = 0; j < gate.data.CDS.length; j++) {
-                if(gate.data.CDS[j].next == gate.data.gates[i].name)
+                if(gate.data.CDS[j].next === gate.data.gates[i].name)
                     targets++;
             }
             var type;
@@ -452,14 +453,14 @@ function parseGates(json){
         for(var i = 0; i < nodes.length; i++) {
             var idx = -1;
             for(var j = 0; j < gate.data.CDS.length; j++ ){
-                if(gate.data.CDS[j].name == nodes[i].next) {
+                if(gate.data.CDS[j].name === nodes[i].next) {
                     if(idx < 0){
                         idx = j;
                         break;
                     }
                 }
             }
-            if(idx == -1)
+            if(idx === -1)
                 outputs.push({
                     "name": nodes[i].next,
                     "next": null,
@@ -467,7 +468,7 @@ function parseGates(json){
                 });
             else {
                 for(var j = 0; j < nodes.length; j++){
-                    if(nodes[j].next == gate.data.CDS[idx].next)
+                    if(nodes[j].next === gate.data.CDS[idx].next)
                         edges.push({
                             "source": nodes[i].id,
                             "target": nodes[j].id,
@@ -513,8 +514,8 @@ function showGates(data) {
             revert: "invalid",
     		helper: "clone",
         });
-        if(data.image == null){
-            $("<p>no img</p>")
+        if(data.image === null){
+            $("<p>"+data[i].name+"</p>")
             .text(data.name)
             .appendTo(gate);
         } else {
