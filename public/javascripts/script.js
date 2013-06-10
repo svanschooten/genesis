@@ -16,7 +16,7 @@ var libraries = [ 'bootstrap.min.js',
 //Load all the standard scripts. If page specific, extend loadPageScript()
 var scripts = [  ];
 
-var proteinModal, resultModal, signalModal, setupModal, loadModal;
+var proteinModal, resultModal, signalModal, setupModal, loadModal, importLibModal;
 var circuitName, numSteps;
 var circuitList;
 
@@ -40,6 +40,7 @@ function wrapModals(){
     signalModal = $("#signalModal");
     setupModal = $("#setupModal");
     loadModal = $("#loadModal");
+    importLibModal = $("#importLibModal");
     getAvailableLibraries();
 }
 
@@ -164,13 +165,24 @@ function getData(id, data) {
 function beginSimulation(){
 //TODO Checken van verbindingen enzo
     signalModal.modal("show");
+    var textBox = $("#signalArea")[0];
+    var inputs = jsPlumb.getConnections({source: "input"});
+    textBox.value = "t";
+    var proteins = {};
+    for(var i=0;i<inputs.length;i++){
+    	proteins[inputs[i].protein] = inputs[i].protein;
+    }
+    for(var key in proteins) textBox.value += ","+proteins[key];
+    textBox.value += "\n0";
+    for(var i=0;i<Object.keys(proteins).length;i++) textBox.value += ",1";
 }
 
 function completeSimulation(){
     //TODO Checken van inputsignalen
     inputs = $("#signalArea")[0].value;
-    if(inputs === ""){
-        $("#signalErrorDiv").text("No input signal given.");
+    numSteps = $("#simSteps")[0].value;
+    if(inputs == ""){
+        $("#signalErrorDiv").text("No input signal given.")
     } else {
         signalModal.modal("hide");
         var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, steps: numSteps, library: selectedLibrary};
@@ -190,6 +202,25 @@ function completeSimulation(){
 
 function showSetup(){
     setupModal.modal("show");
+}
+
+function showImportLibrary(){
+	importLibModal.modal("show");
+}
+
+function importLibrary(){
+	var text = $("#libraryTextArea")[0].value;
+	var name = $("#libraryName")[0].value;
+	var type = $("#libraryTypeSelector").find('option:selected')[0].value;
+	if(text == undefined || name == undefined || type == undefined) return;
+	var data = {text : text, name : name, type : type};
+	jsRoutes.controllers.Application.importlibrary().ajax({
+        data: JSON.stringify(data),
+        method: "POST",
+        contentType: "application/json",
+        success: function(response) { importLibModal.modal("hide"); notify(response,"success") },
+        error: function(response) { alertError("Library could not be imported.")}
+    });
 }
 
 function showLoad(){
@@ -363,7 +394,6 @@ function applySetup(){
         $("#setupErrorDiv").text("");
         getLibrary($("#setupLibrarySelector option:selected")[0].value);
         circuitName = name;
-        numSteps = $("#simSteps")[0].value;
         makeInput();
         makeOutput();
         setupModal.modal("hide");

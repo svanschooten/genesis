@@ -4,6 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.db._
 import play.api.Play.current
+import libs.json.{Json, __}
 import anorm._
 import anorm.SqlParser._
 
@@ -51,7 +52,7 @@ object FileParser {
    * Saves all protein in the input file to the database with the corresponding parameters.
    * This proteinlibrary is only accessible by the user with ID userid.
    */
-  def saveParams(input: Array[String], partType: String, userid: Int, libraryname: String){
+  def saveParams(input: Array[String], partType: String, userid: Int, libraryname: String) = {
 	  DB.withConnection { implicit connection =>
 	      var libraryid = getLibraryID(userid,libraryname)
 	      if(libraryid == -1) createLibrary(userid, libraryname)
@@ -113,6 +114,7 @@ object FileParser {
 	        }
 	      }
 	    }
-	  }
+	  Json.toJson("Correctly saved parameters.")
+	}
 }
 
