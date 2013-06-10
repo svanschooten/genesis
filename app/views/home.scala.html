@@ -3,7 +3,7 @@
 @head = {
 	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/home.css")">
     <link href=@routes.Assets.at("stylesheets/lib/rickshaw.min.css") rel='stylesheet' />
-    <link href=@routes.Assets.at("stylesheets/main.css") rel='stylesheet' />
+    <!--link href=@routes.Assets.at("stylesheets/main.css") rel='stylesheet' /-->
     <script src=@routes.Assets.at("javascripts/lib/jquery-ui-1.9.2.js") ></script> 
 	<script src=@routes.Assets.at("javascripts/lib/jquery.jsPlumb-1.4.0-all-min.js") ></script>
 	<script src=@routes.Assets.at("javascripts/plumbWorkspace.js") ></script>
@@ -19,7 +19,7 @@
 			<header class="span12">
 				<div class="btn-toolbar">
 					<div class="btn-group">
-						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+						<a id = "circuit" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
 					   	 Circuit
 						</a>
 						<ul class="dropdown-menu">
@@ -30,13 +30,13 @@
 							<li class="divider" />
 
 							<li>
-								<a onclick="resetWorkspace()"> New </a>
+								<a id = "new" onclick="resetWorkspace()"> New </a>
 							</li>
 							<li>
-								<a onclick="saveCircuit()"> Save </a>
+								<a id = "save" onclick="saveCircuit()"> Save </a>
 							</li>
 							<li>
-								<a onclick="showLoad()"> Load </a>
+								<a id = "load" onclick="showLoad()"> Load </a>
 							</li>
 							<!-- <li>  //TODO Pas invoegen als we het daadwerkelijk gaan doen. Opschonen voor SIG!
 								<a href="#">Import...</a>
@@ -47,15 +47,15 @@
 						</ul>
 					</div>
 					<div class="btn-group">
-						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+						<a id = "simulation" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
 					   	 Simulation
 						</a>
 						<ul class="dropdown-menu">
 							<li>
-								<a onclick="beginSimulation()">Run circuit</a>
+								<a id = "runcircuit" onclick="beginSimulation()">Run circuit</a>
 							</li>
                             <li>
-                                <a onclick="showSetup()">Setup</a>
+                                <a id = "setup" onclick="showSetup()">Setup</a>
                             </li>
 						</ul>
 					</div>
