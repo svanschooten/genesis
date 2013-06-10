@@ -22,20 +22,14 @@ header {
 
 #application-area {
 	height: 100%;
-}
-
-#application-header-row {
-	height: 10%;
+	background-image: url('/assets/images/BG-protein.png');
+    background-size:100% 100%;
+    background-repeat:no-repeat;
+    background-origin:content-box;
 }
 
 #application-main-row {
-	height: 90%;
-}
-
-#application-header-row header {
 	height: 100%;
-	background-color: red;
-	padding: 5px;
 }
 
 #application-header-row header .btn-toolbar {

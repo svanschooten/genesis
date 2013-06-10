@@ -5,32 +5,32 @@
 }
 
 @base("Welcome to GENESIS")(head) {	
-	<div class="container">
+	<div class="container well">
+	
 		<div class="row-fluid">
-			<div id="container-left" class="span6">
-				@helper.form(routes.Application.authenticate, 'class -> "form-signin") {
-					@form.globalError.map { error =>
-						<p class="error">@error.message</p>
-					} 
-					
-					@flash.get("success").map { message =>
-						<p class="success">@message</p>
-					}				
-					
-					<h2 id="title" class="form-signin-heading">Please sign in</h2>
+			<div class="span8">
+				@helper.form(routes.Application.authenticate) {
+					<h2 id="title" class="form-signin-heading">Sign in to GENESIS©</h2>
 					<input class="input-block-level" type="email" id="email" name="email" placeholder="Username">
 					<input class="input-block-level" type="password" id="password" name="password" placeholder="Password">
 					<button id ="loginbutton" class="btn btn-large btn-primary" type="submit">Sign in</button>
+                <br><br>
+                @form.globalError.map { error =>
+                <p class="error">@error.message</p>
+                }
+
+                @flash.get("success").map { message =>
+                <p class="success">@message</p>
+                }
 				}
 			</div>
-			
-			<div id="container-right" class="span6">
-				A little bit of lorem ipsum
-			</div>
+            <div class="span4">
+                <img src=@routes.Assets.at("images/genesis.png") >
+            </div>
 		</div>
 		
-		<footer>
-			<p>&copy; Team James</p>
+		<footer class="inline-block pull-right">
+            <img class="inline" src=@routes.Assets.at("images/teamJamesLogoSmall32x32.png") >&nbsp;&nbsp;&nbsp;<p class="inline" >&copy; Team James</p>
 		</footer>   
 	</div>
 		

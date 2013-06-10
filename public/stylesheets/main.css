@@ -56,3 +56,15 @@
     position: absolute;
 
 }
+
+.inline {
+    display: inline;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.widthMargin {
+    margin: 0 60px 0 60px;
+}
