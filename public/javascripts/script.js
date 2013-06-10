@@ -39,7 +39,7 @@ function wrapModals(){
     signalModal = $("#signalModal");
     setupModal = $("#setupModal");
     loadModal = $("#loadModal");
-    importLibModal = $("importLibModal");
+    importLibModal = $("#importLibModal");
     getAvailableLibraries();
 }
 
@@ -179,6 +179,8 @@ function beginSimulation(){
 function completeSimulation(){
     //TODO Checken van inputsignalen
     inputs = $("#signalArea")[0].value;
+    timeSpan = $("#simTimeSpan")[0].value;
+    numSteps = $("#simSteps")[0].value;
     if(inputs == ""){
         $("#signalErrorDiv").text("No input signal given.")
     } else {
@@ -207,7 +209,18 @@ function showImportLibrary(){
 }
 
 function importLibrary(){
-	
+	var text = $("#libraryTextArea")[0].value;
+	var name = $("#libraryName")[0].value;
+	var type = $("#libraryTypeSelector").find('option:selected')[0].value;
+	if(text == undefined || name == undefined || type == undefined) return;
+	var data = {text : text, name : name, type : type};
+	jsRoutes.controllers.Application.importlibrary().ajax({
+        data: JSON.stringify(data),
+        method: "POST",
+        contentType: "application/json",
+        success: function(response) { importLibModal.modal("hide"); notify(response,"success") },
+        error: function(response) { alertError("Library could not be imported.")}
+    });
 }
 
 function showLoad(){
@@ -366,8 +379,6 @@ function loadCircuit() {
     	connection.addOverlay([ "Label", {label: cur.protein, location: location, cssClass: "aLabel", id:"label"}]);
 	}
 	getLibrary(network.libraryid.toString());
-	timeSpan = 100+"";
-	numSteps = 1000+"";
 	loadModal.modal("hide");
 }
 
@@ -382,8 +393,6 @@ function applySetup(){
         $("#setupErrorDiv").text("");
         getLibrary($("#setupLibrarySelector option:selected")[0].value);
         circuitName = name;
-        timeSpan = $("#simTimeSpan")[0].value;
-        numSteps = $("#simSteps")[0].value;
         makeInput();
         makeOutput();
         setupModal.modal("hide");

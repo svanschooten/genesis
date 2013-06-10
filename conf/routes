@@ -23,6 +23,7 @@ POST    /getlibrary                         controllers.Application.getlibrary
 POST    /savecircuit                        controllers.Application.savecircuit
 POST    /getallcircuits                     controllers.Application.getallcircuits
 POST    /getalllibraries                    controllers.Application.getalllibraries
+POST    /importlibrary                    	controllers.Application.importlibrary
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               		controllers.Assets.at(path="/public", file)

@@ -166,20 +166,23 @@ function getLibrary(libraryId){
 function getAvailableLibraries(){
     jsRoutes.controllers.Application.getalllibraries().ajax({
         success: function(response) {
-            setupLibrarySelector($.parseJSON(response));
+            setupgetLibraries($.parseJSON(response));
         },
         error: function(response) { alertError(response)}
     });
 }
 
-function setupLibrarySelector(libraries) {
-    var selector = $("#setupLibrarySelector");
+function setupgetLibraries(libraries){
+	setupLibrarySelector(libraries, $("#setupLibrarySelector"));
+}
+
+function setupLibrarySelector(libraries, elem) {
     for(i = 0; i < libraries.length; i++) {
         $("<option></option>",{
             value: libraries[i].libraryId
         })
         .text(libraries[i].libraryname)
-        .appendTo(selector);
+        .appendTo(elem);
     }
     showSetup();
 }
