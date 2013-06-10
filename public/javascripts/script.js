@@ -514,7 +514,7 @@ function showGates(data) {
             revert: "invalid",
     		helper: "clone",
         });
-        if(data.image === null){
+        if(data.image === null || data.image === undefined){
             $("<p>"+data[i].name+"</p>")
             .text(data.name)
             .appendTo(gate);
