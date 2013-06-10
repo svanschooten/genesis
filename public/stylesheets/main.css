@@ -13,3 +13,8 @@
 .widthMargin {
     margin: 0 60px 0 60px;
 }
+
+.plain-link{
+    text-decoration: none;
+    color: inherit;
+}
