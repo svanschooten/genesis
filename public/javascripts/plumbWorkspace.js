@@ -49,7 +49,7 @@ jsPlumb.ready(function(){
 
 function findElement(array, elementId) {
     for(var i = 0; i < array.length; i++) {
-        if(array[i].id == elementId) {
+        if(array[i] !== null && array[i].id == elementId) {
             return array[i];
         }
     }
@@ -109,7 +109,7 @@ function addEndPoints(inputs, outputs, element) {
                 paintStyle:{ fillStyle:"#558822",radius:9 },
                 hoverPaintStyle: endpointHoverStyle,
                 isTarget:true,
-                maxConnections: -1,
+                maxConnections: 1,
                 anchor: [0, (1 / (inputs+1)) * (i + 1), -1, 0],
                 beforeDrop: makeConnection,
                 dropOptions: dropOptions
