@@ -15,7 +15,7 @@ var libraries = [ 'bootstrap.min.js',
 //Load all the standard scripts. If page specific, extend loadPageScript()
 var scripts = [  ];
 
-var proteinModal, resultModal, signalModal, setupModal, loadModal;
+var proteinModal, resultModal, signalModal, setupModal, loadModal, importLibModal;
 var circuitName, timeSpan, numSteps;
 var circuitList;
 
@@ -39,6 +39,7 @@ function wrapModals(){
     signalModal = $("#signalModal");
     setupModal = $("#setupModal");
     loadModal = $("#loadModal");
+    importLibModal = $("importLibModal");
     getAvailableLibraries();
 }
 
@@ -163,6 +164,16 @@ function getData(id, data) {
 function beginSimulation(){
 //TODO Checken van verbindingen enzo
     signalModal.modal("show");
+    var textBox = $("#signalArea")[0];
+    var inputs = jsPlumb.getConnections({source: "input"});
+    textBox.value = "t";
+    var proteins = {};
+    for(var i=0;i<inputs.length;i++){
+    	proteins[inputs[i].protein] = inputs[i].protein;
+    }
+    for(var key in proteins) textBox.value += ","+proteins[key];
+    textBox.value += "\n0";
+    for(var i=0;i<Object.keys(proteins).length;i++) textBox.value += ",1";
 }
 
 function completeSimulation(){
@@ -189,6 +200,14 @@ function completeSimulation(){
 
 function showSetup(){
     setupModal.modal("show");
+}
+
+function showImportLibrary(){
+	importLibModal.modal("show");
+}
+
+function importLibrary(){
+	
 }
 
 function showLoad(){
