@@ -347,6 +347,8 @@ function loadCircuit() {
     	connection.addOverlay([ "Label", {label: cur.protein, location: location, cssClass: "aLabel", id:"label"}]);
 	}
 	getLibrary(network.libraryid.toString());
+	timeSpan = 100+"";
+	numSteps = 1000+"";
 	loadModal.modal("hide");
 }
 
