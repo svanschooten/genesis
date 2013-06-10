@@ -26,12 +26,12 @@ class SeleniumSpec  extends Specification {
       webDriver.findElement(By.id("email")).sendKeys("wrong@email.com")
       webDriver.findElement(By.id("password")).sendKeys("helloworld")
       webDriver.findElement(By.id("loginbutton")).click()
-      assertEquals(webDriver.getPageSource().contains("Please sign in"), true)
-      
+      assertEquals(webDriver.findElement(By.className("error")).getText(),"Wrong email or password")
+       
       webDriver.findElement(By.id("email")).sendKeys("hello@world.com")
       webDriver.findElement(By.id("password")).sendKeys("wrongpassword")
       webDriver.findElement(By.id("loginbutton")).click()
-      assertEquals(webDriver.getPageSource().contains("Please sign in"), true)
+      assertEquals(webDriver.findElement(By.className("error")).getText(),"Wrong email or password")
       
       /*
        * Testing url with correct information
@@ -47,7 +47,7 @@ class SeleniumSpec  extends Specification {
       assertEquals(webDriver.getPageSource().contains("Setup the circuit"), true)
       val okButton = webDriver.findElement(By.className("btn-primary"))
       okButton.click()
-      assertEquals(webDriver.getPageSource().contains("Choose a library first!"), true)
+      assertEquals(webDriver.getPageSource().contains("You must specify a name!"), true)
       webDriver.findElement(By.id("setupLibrarySelector")).sendKeys("default")
       okButton.click()
       assertEquals(webDriver.getPageSource().contains("You must specify a name!"), true)
@@ -112,12 +112,6 @@ class SeleniumSpec  extends Specification {
        */
       webDriver.findElement(By.id("simulation")).click()
       webDriver.findElement(By.id("runcircuit")).click()
-      val signalArea = webDriver.findElement(By.id("signalArea"))
-      signalArea.sendKeys("t,A")
-      signalArea.sendKeys(Keys.ENTER)
-      signalArea.sendKeys("0,0")
-      signalArea.sendKeys(Keys.ENTER)
-      signalArea.sendKeys("30,1")
       Thread.sleep(1000)
       webDriver.findElement(By.id("completesimulation")).click()
       Thread.sleep(5000)
