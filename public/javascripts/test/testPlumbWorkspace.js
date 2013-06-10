@@ -11,12 +11,10 @@ test("Find Element", function(){
 
 test("Protein constructor", function(){
 	var validProtein = new Protein(0, "data");
-	var invalidProtein1 = new Protein(-1, "data");
-	var invalidProtein2 = new Protein(0, 32);
+	var invalidProtein = new Protein(-1, "data");
 	equal(validProtein.id, 0, "Protein has correct id.");
 	equal(validProtein.data, "data", "Protein has correct data.");
-	notEqual(invalidProtein1.id, -1, "Invalid protein (by id) has not been constructed.");
-	notEqual(invalidProtein2.data, 32, "Invalid protein (by data) has not been constructed.");
+	equal(invalidProtein1, null, "Invalid protein (by id) has not been constructed.");
 });
 
 test("Gate constructor", function(){
@@ -55,4 +53,13 @@ test("jsPlumb parsetest", function(){
     equal(jspRes.edges.length, 1, "One connection made and parsed.");
     deepEqual(jspRes.edges[0], {protein: "", source: and.id, target: not.id}, "Connection correctly stored.");
     equal(jspRes.vertices.length, 7, "All gates have been added.");
+});
+
+test("jsPlumb reset workspace", function(){
+    notEqual($("#plumbArea"[0], null, "Workspace is not empty.");
+    resetWorkspace(true);
+    ok(circuit.length == 2, "Circuit is empty again, only input and output remain.");
+    ok(currentConnection == null, "No currently selected connection.");
+    ok(inputs == "", "Inputs have been removed.");
+    ok($("#plumbArea")[0].children().length == 2, "Only input and output remain in DOM.");
 });
