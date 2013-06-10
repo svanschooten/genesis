@@ -32,6 +32,7 @@ var gateHeight = 80, gateWith = 80;
 Ready call for jsPlumb library
 */
 jsPlumb.ready(function() {
+    $(window).resize(function(){jsPlumb.repaintEverything();});
     jsp = jsPlumb.getInstance({
         connector: ["Flowchart", { stub: [40, 60], gap: 10, cornerRadius: 5 }],
         Endpoints : [[ "Dot", {radius: 5} ], [ "Dot", { radius: 7 } ]],
