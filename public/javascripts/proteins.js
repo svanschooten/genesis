@@ -106,7 +106,7 @@ function findProtein(name) {
 
 function updateParameters(fromSource, toSink, toAndGate){
 	var prot = {};
-	if(selectedProtein.input2 !== -1){
+	if(selectedProtein.input2 !== "-1"){
 		prot = andMap[selectedProtein.input1][selectedProtein.input2];
 		prot.pd1 = cdsMap[selectedProtein.input1].pd1;
 		prot.pd2 = cdsMap[selectedProtein.input1].pd2;
