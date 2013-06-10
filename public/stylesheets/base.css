@@ -5,3 +5,7 @@ html, body {
 body {
 	min-width: 768px;
 }
+
+.inset-area{
+    background: #eee;
+}

@@ -22,10 +22,6 @@ header {
 
 #application-area {
 	height: 100%;
-	background-image: url('/assets/images/BG-protein.png');
-    background-size:100% 100%;
-    background-repeat:no-repeat;
-    background-origin:content-box;
 }
 
 #application-main-row {
@@ -148,13 +144,6 @@ header {
 
 }
 
-.inline{
-    display: inline;
-}
-
-.block{
-    display block;
-}
 
 .spanProtein{
     float: inherit;
@@ -174,4 +163,13 @@ header {
     margin-bottom: 20px;
     padding-top: 0;
 
+}
+
+#alertBox{
+    position: absolute;
+    bottom: 10px;
+    z-index: 100;
+    opacity:0.8;
+    filter:alpha(opacity=80);
+    width: 85%;
 }
