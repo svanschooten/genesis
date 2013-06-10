@@ -213,9 +213,8 @@ function parseCircuits(json) {
 	var data = JSON.parse(json);
 	var results = {};
 	for(var i=0; i<data.length; i++){
-		var cur = data[i];
-		var name = Object.keys(cur)[0];
-		cur = cur[name];
+		var cur = data[i].data;
+		var name = data[i].name;
 		var inputs = {};
 		var outputs = {};
 		var gateID = {};
