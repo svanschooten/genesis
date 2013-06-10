@@ -96,7 +96,8 @@ object Application extends Controller {
   }
 
   def getCooking = Action(parse.json) { implicit request =>
-    Ok(Network.simulate(request.body, Integer.parseInt(request.session.get("userid").get))).as("text/plain")
+    val userID = User.findByEmail(request.session.get("email").get).get.id
+    Ok(Network.simulate(request.body, userID)).as("text/plain")
   }
   
   def savecircuit = Action(parse.json) { implicit request =>
