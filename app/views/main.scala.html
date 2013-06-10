@@ -18,7 +18,7 @@
                 <div class="navbar-inner">
                     <div class="container">
                         <ul class="nav pull-left">
-                            <li><img src="@routes.Assets.at("images/genesis-logo-h40.png")"></li>
+                            <li><img height="40px" width="40px" src="@routes.Assets.at("images/genesis-logo-inv.png")"></li>
                             <li>&nbsp;</li>
                             <li @active("Home")><a href="/">Home</a></li>
                         </ul>
@@ -30,18 +30,17 @@
 	        </div>  
 		</header>
 
-		<section class="content">@content</section>
+		<section class="content widthMargin">@content</section>
 		
 		<footer>
 			<div class="pull-left inline-block">
 				<img class="inline" src=@routes.Assets.at("images/teamJamesLogoSmall32x32.png") >&nbsp;&nbsp;&nbsp;<p class="inline" >&copy; Team James</p>
 			</div>
-			
-			<div class="pull-right">		
+			<div class="pull-right inline-block">
 				<a href="http://svanschooten.github.io/genesis/" target="_blank">About</a>
 			</div>
 		</footer>
-		
+
 	</div>
 	<script src=@routes.Assets.at("javascripts/script.js") ></script>
 }
