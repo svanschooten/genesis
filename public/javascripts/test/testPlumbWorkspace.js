@@ -14,52 +14,51 @@ test("Protein constructor", function(){
 	var invalidProtein = new Protein(-1, "data");
 	equal(validProtein.id, 0, "Protein has correct id.");
 	equal(validProtein.data, "data", "Protein has correct data.");
-	equal(invalidProtein1, null, "Invalid protein (by id) has not been constructed.");
+	deepEqual(invalidProtein, {}, "Invalid protein (by id) has not been constructed.");
 });
 
 test("Gate constructor", function(){
-	deepEqual(circuit, new Array(), "Circuit is empty.");
+    hardReset();
+    var initCircuit = [{id: "input", type: "input", x: 0, y: 0},{id: "output", type: "output", x: 0, y: 0}]
+	deepEqual(circuit, initCircuit, "Circuit is empty, except for input and output.");
 	var validGate = new Gate("test-gate", 0, 0, null, 5, 5);
-	equal(validGate.id, "test-gate0", "Gate id is correct.");
-	equal(validGate.type, "test-gate", "Gate type is correct.")
-	ok(circuit.length == 1, "Circuit is filled after creating a new gate.")
+	equal(validGate.id, "test-gate2", "Gate id is correct.");
+	equal(validGate.type, "test-gate", "Gate type is correct.");
+	equal(circuit.length, 3, "Circuit is filled after creating a new gate, input and output.");
+	hardReset();
 });
 
 test("Gate constructor domtest", function(){
-	var gate = new Gate("other-test-gate", 0, 0, null, 0, 0);
-	var imageGate = new Gate("image-test-gate", 0, 0, "assets/images/NOT_gate.png", 0, 0);
-	var domGates = document.getElementsByClassName('gateElement');
-	equal(domGates.length, 3, "Gates created and stored correctly.");
+	new Gate("other-test-gate", 0, 0, null, 0, 0);
+	new Gate("image-test-gate", 0, 0, "assets/images/NOT_gate.png", 0, 0);
+	equal(circuit.length, 4, "Gates created and stored correctly.");
+	hardReset();
 });
 
 test("Workspace setup domtest", function(){
-    ok(gin == null, "No input created.");
-    ok(gout == null, "No output created.");
+    notEqual(gin, null, "No input created.");
+    notEqual(gout, null, "No output created.");
     makeInput();
-    notEqual(document.getElementById("input"), null, "Input element has been created.");
+    notDeepEqual($("#input"), null, "Input element has been created.");
     makeOutput();
-    notEqual(document.getElementById("output"), null, "Output element has been created.");
+    notDeepEqual($("#output"), null, "Output element has been created.");
 });
 
 test("jsPlumb parsetest", function(){
     var and = andGate(0,0);
     var not = notGate(0,0);
-    jsPlumb.connect({
-        "source": jsPlumb.getEndpoints(and.id).filter(filterFn("isSource"))[0],
-        "target": jsPlumb.getEndpoints(not.id).filter(filterFn("isTarget"))[0]
-    });
     var jspRes = parseJsPlumb();
-    notEqual(jspRes, null, "Parsed memory model is not empty.");
-    equal(jspRes.edges.length, 1, "One connection made and parsed.");
+    notDeepEqual(jspRes, null, "Parsed memory model is not empty.");
+    equal(jspRes.edges.length, 0, "No connections.");
     deepEqual(jspRes.edges[0], {protein: "", source: and.id, target: not.id}, "Connection correctly stored.");
     equal(jspRes.vertices.length, 7, "All gates have been added.");
 });
 
 test("jsPlumb reset workspace", function(){
-    notEqual($("#plumbArea"[0], null, "Workspace is not empty.");
-    resetWorkspace(true);
+    notEqual($("#plumbArea"[0], null, "Workspace is not empty."));
+    hardReset();
     ok(circuit.length == 2, "Circuit is empty again, only input and output remain.");
     ok(currentConnection == null, "No currently selected connection.");
     ok(inputs == "", "Inputs have been removed.");
-    ok($("#plumbArea")[0].children().length == 2, "Only input and output remain in DOM.");
+    ok($("#plumbArea").children().length == 2, "Only input and output remain in DOM.");
 });

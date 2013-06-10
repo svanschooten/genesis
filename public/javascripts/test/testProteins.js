@@ -2,13 +2,6 @@ test("test test", function(){
     ok(2 == 2, "Testing works!");
 })
 
-test("JSON getLibrary test", function(){
-    getLibrary(0);
-    notEqual(selectedLibrary, -1, "Library has been fetched.");
-    notEqual(cdsMap, {}, "No empty cds.");
-    notEqual(andMap, {}, "No empty and.");
-});
-
 test("Parse library", function(){
     cdsMap = {};
     equal(cdsMap, {}, "cds is reset.");

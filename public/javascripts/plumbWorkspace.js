@@ -293,9 +293,10 @@ function makeDeletable(gate){
 Protein constructor
 */
 function Protein(id, data) {
-    if(id < 0){ return null;}
-    this.id = id;
-    this.data = data;
+    if(!(id < 0)){
+        this.id = id;
+        this.data = data;
+    }
 }
 
 /**
