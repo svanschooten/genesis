@@ -484,7 +484,7 @@ function showGates(data) {
     		helper: "clone",
         });
         if(data.image == null){
-            $("<p>no img</p>")
+            $("<p>"+data[i].name+"</p>")
             .text(data.name)
             .appendTo(gate);
         } else {
