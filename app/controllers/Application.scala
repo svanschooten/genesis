@@ -15,7 +15,7 @@ import factories._
 object Application extends Controller {
 
   private var sessionHelper: String = ""
-
+    
   /** Form used for authenticating a user. */
   val loginForm = Form(
     tuple(
@@ -54,7 +54,8 @@ object Application extends Controller {
         routes.javascript.Application.getCooking,
         routes.javascript.Application.getallcircuits,
         routes.javascript.Application.getalllibraries,
-        routes.javascript.Application.savecircuit
+        routes.javascript.Application.savecircuit,
+        routes.javascript.Application.importlibrary
       )
     ).as("text/javascript")
   }
@@ -96,12 +97,22 @@ object Application extends Controller {
   }
 
   def getCooking = Action(parse.json) { implicit request =>
-    Ok(Network.simulate(request.body, Integer.parseInt(request.session.get("userid").get))).as("text/plain")
+    val userID = User.findByEmail(request.session.get("email").get).get.id
+    Ok(Network.simulate(request.body, userID)).as("text/plain")
   }
   
   def savecircuit = Action(parse.json) { implicit request =>
     val userID = User.findByEmail(request.session.get("email").get).get.id
     Ok(Network.saveFromJson(request.body, userID)).as("text/plain")
+  }
+  
+  def importlibrary = Action(parse.json) { implicit request =>
+    val json = request.body
+    val userID = User.findByEmail(request.session.get("email").get).get.id
+    val partType = (json \ "type").as[String];
+    val libraryName = (json \ "name").as[String];
+    val text = (json \ "text").as[String].split("\n");
+    Ok(FileParser.saveParams(text, partType, userID, libraryName)).as("text/plain")
   }
 
   def setSessionHelper(sh: String) = {
@@ -110,6 +121,10 @@ object Application extends Controller {
 
   def getSessionHelper(): String = {
     sessionHelper
+  }
+  
+  def testresults = Action { implicit request =>
+    Ok(html.testresults(""))
   }
 }
 

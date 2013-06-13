@@ -9,7 +9,6 @@
     <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
 	
     @head_extra
-
 }
 
 @base(title)(head) {	
@@ -24,8 +23,8 @@
                             <li @active("Home")><a href="/">Home</a></li>
                         </ul>
                         <ul class="nav pull-right">
-                            <!--<li @active("Help")><a href="/help">Help</a></li> TODO verwijzen naar github pages?-->
-                            <!--<li @active("Settings")><a href="/settings">Settings</a></li> TODO Finaliseren of weghalen -->
+                            <li><a href="http://svanschooten.github.io/genesis/" target="_blank">About</a></li>
+                            <li class="divider-vertical"></li>
                             <li><a href="/logout">Logout</a></li>
                         </ul>
                     </div>
@@ -35,15 +34,10 @@
 
 		<section class="content widthMargin">@content</section>
 		
-		<footer>
-			<div class="pull-left inline-block">
-				<img class="inline" src=@routes.Assets.at("images/teamJamesLogoSmall32x32.png") >&nbsp;&nbsp;&nbsp;<p class="inline" >&copy; Team James</p>
-			</div>
-			<div class="pull-right inline-block">
-				<a href="http://svanschooten.github.io/genesis/" target="_blank">About</a>
-			</div>
+		<footer class="pull-right inline-block">
+            <a class="plain-link" target="_blank" href="http://svanschooten.github.io/genesis/#aboutJames"><img class="inline" src=@routes.Assets.at("images/teamJamesLogoSmall32x32.png") >&nbsp;&nbsp;&nbsp;<p class="inline" >&copy; Team James</p></a>
 		</footer>
 
 	</div>
 	<script src=@routes.Assets.at("javascripts/script.js") ></script>
-    }
+}

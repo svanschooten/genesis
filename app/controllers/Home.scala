@@ -18,8 +18,4 @@ object Home extends Controller with Secured{
         Ok(html.home("Home")(Html.apply(homeText)))
       }.getOrElse(Forbidden)
   }
-  
-  def hometest = Action { implicit request =>
-    Ok(html.home("Home")(Html.apply("Some content")))
-  }
 }

@@ -14,7 +14,6 @@ import org.openqa.selenium.interactions._
  */
 class SeleniumSpec  extends Specification {
 
-  case class param(sourceId : String, targetId:String)
   implicit val webDriver : WebDriver = new FirefoxDriver
 
   "The blog app home page" should {
@@ -22,16 +21,17 @@ class SeleniumSpec  extends Specification {
       /* 
        * Testing url with wrong information
        */
-      webDriver.get("http://80.112.151.137:9001")
+      //Use this for testing the website : webDriver.get("http://80.112.151.137:9001")
+      webDriver.get("http://127.0.0.1:9000")
       webDriver.findElement(By.id("email")).sendKeys("wrong@email.com")
       webDriver.findElement(By.id("password")).sendKeys("helloworld")
       webDriver.findElement(By.id("loginbutton")).click()
-      assertEquals(webDriver.getPageSource().contains("Please sign in"), true)
-      
+      assertEquals(webDriver.findElement(By.className("error")).getText(),"Wrong email or password")
+       
       webDriver.findElement(By.id("email")).sendKeys("hello@world.com")
       webDriver.findElement(By.id("password")).sendKeys("wrongpassword")
       webDriver.findElement(By.id("loginbutton")).click()
-      assertEquals(webDriver.getPageSource().contains("Please sign in"), true)
+      assertEquals(webDriver.findElement(By.className("error")).getText(),"Wrong email or password")
       
       /*
        * Testing url with correct information
@@ -45,13 +45,16 @@ class SeleniumSpec  extends Specification {
        */
       webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS)
       assertEquals(webDriver.getPageSource().contains("Setup the circuit"), true)
-      webDriver.findElement(By.className("btn-primary")).click()
-      assertEquals(webDriver.getPageSource().contains("Choose a library first!"), true)
+      val okButton = webDriver.findElement(By.className("btn-primary"))
+      okButton.click()
+      assertEquals(webDriver.getPageSource().contains("You must specify a name!"), true)
       webDriver.findElement(By.id("setupLibrarySelector")).sendKeys("default")
-      webDriver.findElement(By.className("btn-primary")).click()
+      okButton.click()
       assertEquals(webDriver.getPageSource().contains("You must specify a name!"), true)
       webDriver.findElement(By.id("circuitName")).sendKeys("testCircuit")
-      webDriver.findElement(By.className("btn-primary")).click()
+      okButton.click()
+      assertEquals(webDriver.findElement(By.className("alert-success")).findElement(By.tagName("Strong")).getText(),"SUCCESS!")
+      webDriver.findElement(By.className("alert-success")).findElement(By.className("close")).click()
       
       /*
        * Testing workspace (canvas)
@@ -59,12 +62,82 @@ class SeleniumSpec  extends Specification {
       assertTrue(webDriver.findElements(By.id("input")).size() > 0)
       assertTrue(webDriver.findElements(By.id("output")).size() > 0)
       val builder : Actions = new Actions(webDriver)
+      val gate : WebElement = webDriver.findElement(By.id("ng")) 
       val input : WebElement = webDriver.findElement(By.id("input"))
       val output : WebElement = webDriver.findElement(By.id("output"))
-      val dragAndDrop : Action = builder.clickAndHold(input).moveToElement(output).click().build()
-      dragAndDrop.perform()
+      val dragNdrop : Action = builder.clickAndHold(gate).moveToElement(output).click().build()
+      dragNdrop.perform()
+      assertTrue(webDriver.findElements(By.id("not2")).size() > 0)
+      val makeConnection : Action = builder.clickAndHold(input).moveToElement(output).click().build()
+      makeConnection.perform()
       val svg : WebElement = webDriver.findElement(By.className("_jsPlumb_connector"))
       assertTrue(webDriver.findElements(By.className("_jsPlumb_connector")).size() > 0)
+      
+      /*
+       * Testing new (clean workspace)
+       */
+      webDriver.findElement(By.id("circuit")).click()
+      webDriver.findElement(By.id("new")).click()
+      val alert : Alert = webDriver.switchTo().alert()
+      alert.accept()
+      webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS)
+      webDriver.findElement(By.className("btn-primary")).click()
+      webDriver.findElement(By.className("alert-success")).findElement(By.className("close")).click()
+      assertTrue(webDriver.findElements(By.id("input")).size() > 0)
+      assertTrue(webDriver.findElements(By.id("output")).size() > 0)
+      
+      
+      /*
+       * Testing load 
+       */
+      webDriver.findElement(By.id("circuit")).click()
+      webDriver.findElement(By.id("load")).click()
+      Thread.sleep(2000)
+      webDriver.findElement(By.id("loadNetworkSelector")).sendKeys("Not")
+      webDriver.findElement(By.id("loadcircuit")).click()
+      assertTrue(webDriver.findElements(By.id("not2")).size() > 0)
+      assertTrue(webDriver.findElements(By.className("_jsPlumb_connector")).size() > 0)
+      
+      /*
+       * Testing save
+       */
+      webDriver.findElement(By.id("circuit")).click()
+      webDriver.findElement(By.id("save")).click()
+      assertEquals(webDriver.findElement(By.className("alert-success")).findElement(By.tagName("Strong")).getText(),"SUCCESS!")
+      webDriver.findElement(By.className("alert-success")).findElement(By.className("close")).click()
+      
+      /*
+       * Testing simulate
+       */
+      webDriver.findElement(By.id("simulation")).click()
+      webDriver.findElement(By.id("runcircuit")).click()
+      Thread.sleep(1000)
+      webDriver.findElement(By.id("completesimulation")).click()
+      Thread.sleep(5000)
+      assertTrue(webDriver.findElements(By.id("resultModal")).size() > 0)
+      webDriver.findElement(By.id("closeSim")).click()
+      
+       /*
+       * Testing setup
+       */
+      Thread.sleep(2000)
+      webDriver.findElement(By.id("simulation")).click()
+      webDriver.findElement(By.id("setup")).click()
+      webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS)
+      webDriver.findElement(By.className("btn-primary")).click()
+      assertEquals(webDriver.findElement(By.className("alert-success")).findElement(By.tagName("Strong")).getText(),"SUCCESS!")
+      webDriver.findElement(By.className("alert-success")).findElement(By.className("close")).click()
+      
+      /*
+       * Testing import lib
+       */
+      Thread.sleep(1000)
+      webDriver.findElement(By.id("simulation")).click()
+      webDriver.findElement(By.id("import")).click()
+      webDriver.findElement(By.id("libraryName")).sendKeys("testLib")
+      webDriver.findElement(By.id("applyLib")).click()
+      assertEquals(webDriver.findElement(By.className("alert-success")).findElement(By.tagName("Strong")).getText(),"SUCCESS!")
+      webDriver.findElement(By.className("alert-success")).findElement(By.className("close")).click()
       
       /*
        * Testing logout

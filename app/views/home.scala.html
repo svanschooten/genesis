@@ -2,7 +2,7 @@
 
 @head = {
 	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/home.css")">
-    <link href=@routes.Assets.at("stylesheets/rickshaw.min.css") rel='stylesheet' />
+    <link href=@routes.Assets.at("stylesheets/lib/rickshaw.min.css") rel='stylesheet' />
     <link href=@routes.Assets.at("stylesheets/main.css") rel='stylesheet' />
     <script src=@routes.Assets.at("javascripts/lib/jquery-ui-1.10.2.min.js") ></script>
 	<script src=@routes.Assets.at("javascripts/lib/jquery.jsPlumb-1.4.0-all-min.js") ></script>
@@ -21,24 +21,24 @@
 			<div class="span2">
                 <div class="btn-toolbar span12 none">
                     <div class="btn-group span6">
-                        <a class="btn dropdown-toggle  btn-inverse" data-toggle="dropdown" href="#">
+                        <a id = "circuit" class="btn dropdown-toggle  btn-inverse" data-toggle="dropdown" href="#">
                             Circuit
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a onclick="resetWorkspace()"> New </a>
+                                <a id="new" onclick="resetWorkspace()"> New </a>
                             </li>
                             <li class="divider" />
                             <li>
-                                <a onclick="saveCircuit()"> Save </a>
+                                <a id="save" onclick="saveCircuit()"> Save </a>
                             </li>
                             <li>
-                                <a onclick="showLoad()"> Load </a>
+                                <a id="load" onclick="showLoad()"> Load </a>
                             </li>
                         </ul>
                     </div>
                     <div class="btn-group span6">
-                        <a class="btn dropdown-toggle btn-inverse" data-toggle="dropdown" href="#">
+                        <a  id = "simulation" class="btn dropdown-toggle btn-inverse" data-toggle="dropdown" href="#">
                             Simulation
                         </a>
                         <ul class="dropdown-menu">
@@ -49,9 +49,13 @@
                             <li>
                                 <a onclick="beginSimulation()">Run circuit</a>
                             </li>
+                            <li class="divider" />
+                            <li>
+                                <a id ="import" onclick="showImportLibrary()">Import protein library</a>
+                            </li>
                         </ul>
                     </div>
-                </div><br><br><br>     <!-- TODO wth, waarom float hij ze eroverheen? -->
+                </div><br><br><br>    
                 <div class="well inset-area">
 					<div>
 					    <div id="ag" class="product"><img height="80px" width="80px" src=@routes.Assets.at("images/AND_gate.png")></div>
