@@ -327,7 +327,7 @@ object Network {
     def fromJSON(json: JsValue, userid: Int) = {
         val net_name = (json \ "name").as[String]
         val libraryID = (json \ "library").as[String].toInt
-        println((json \ "stepSize"))
+        println("stepSize : " + (json \ "stepSize").as[String].toDouble)
         val stepSize = (json \ "stepSize").as[String].toDouble
 
         // parse the network

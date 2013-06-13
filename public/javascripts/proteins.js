@@ -160,7 +160,7 @@ function getLibrary(libraryId){
             parseLibrary(response);
             notify("Protein library successfully loaded!", "success");
         },
-        error: function(response) { alertError(response); }
+        error: function(response) { alertError("Could not load library."); }
     });
 }
 
@@ -169,7 +169,7 @@ function getAvailableLibraries(){
         success: function(response) {
             setupgetLibraries($.parseJSON(response));
         },
-        error: function(response) { alertError(response); }
+        error: function(response) { alertError("Library fetching failed."); }
     });
 }
 
