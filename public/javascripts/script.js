@@ -178,13 +178,15 @@ function beginSimulation(){
 }
 
 function completeSimulation(){
-    inputs = $("#signalArea")[0].value;
-    numSteps = $("#simSteps")[0].value;
+    //TODO Checken van inputsignalen
+    var inputs = $("#signalArea")[0].value;
+    var numSteps = $("#simSteps")[0].value;
+    var stepSize = $("#simStepSize")[0].value;
     if(inputs == ""){
         $("#signalErrorDiv").text("No input signal given.")
     } else {
         signalModal.modal("hide");
-        var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, steps: numSteps, library: selectedLibrary};
+        var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, steps: numSteps, stepSize: stepSize, library: selectedLibrary};
         jsRoutes.controllers.Application.getCooking().ajax({
             data: JSON.stringify(simulateData),
             method: "POST",

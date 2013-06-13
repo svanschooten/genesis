@@ -370,13 +370,13 @@ function makeCustomGate(id,posx,posy) {
         
         var source = nodes.reduce(reduceFn(data.edges[i].source), undefined);
         if(!source) {
-            src = data.nodes.reduce(reduceFn(data.edges[i].source),undefined);
+            var src = data.nodes.reduce(reduceFn(data.edges[i].source),undefined);
             source = src.type === "not" ? notGate(posx+i*100, posy+i*100) : andGate(posx+i*100, posy+i*100);
             nodes.push(source);
         }
         var target = nodes.reduce(reduceFn(data.edges[i].target),undefined);
         if(!target){
-            tgt = data.nodes.reduce(reduceFn(data.edges[i].target), undefined);
+            var tgt = data.nodes.reduce(reduceFn(data.edges[i].target), undefined);
             target = tgt.type === "not" ? notGate(posx+(i+1)*100, posy+(i+1)*100) : andGate(posx+(i+1)*100, posy+(i+1)*100);
             nodes.push(target);
         }
@@ -479,7 +479,7 @@ function hardReset(){
     jsPlumb.detachEveryConnection();
     jsPlumb.deleteEveryEndpoint();
     $("#plumbArea").empty();
-    $("#circuitNameTag").text("None");
+    $("#circuitNameTag").text("");
     circuitName = "";
     makeInput();
     makeOutput();

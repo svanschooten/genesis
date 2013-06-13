@@ -21,21 +21,21 @@ object FileFactory {
     fileName
   }
 
-  private def makeContent(input: List[List[(String, Double, Double)]]): String = {
+  private def makeContent(input: List[(List[(String, Double, Double)], Double)]): String = {
     input.foldLeft(
-      input.head.foldRight("")(
-        (tup: (String, Double, Double), rest: String) => "mRNA_" + tup._1 + "," + "protein_" + tup._1 + ", " + rest
+      input.head._1.foldLeft("t,")(
+        (rest: String, tup: (String, Double, Double)) => rest + "mRNA_" + tup._1 + "," + "protein_" + tup._1 + ", "
       )
     )(
-      (rest: String, list: List[(String, Double, Double)]) => rest + "\n" + list.foldRight("")(
+      (rest: String, list: (List[(String, Double, Double)], Double)) => rest + "\n" + list._2 + "," + list._1.foldRight("")(
         (tup: (String, Double, Double), rest: String) => tup._2 + "," + tup._3 + "," + rest
       )
     )
   }
 
-  def makeFile(results: List[List[(String, Double, Double)]]): String = {
+  def makeFile(results: List[List[(String, Double, Double)]], finish: Double): String = {
     val fileName: String = getSessionHelper() + ".csv"
-    val content = makeContent(results)
+    val content = makeContent(results.zip((0.0 to finish by (finish/results.length))))
     writeFile(fileName, content)
   }
 }

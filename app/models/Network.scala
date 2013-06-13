@@ -63,7 +63,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
      */
     def simJson(finish: Double) = {
         val results = simulate(finish)
-        val file: String = FileFactory.makeFile(results)
+        val file: String = FileFactory.makeFile(results, finish)
         val flipped = new scala.collection.mutable.ListMap[String, scala.collection.mutable.ListBuffer[(String, Double, Double)]]()
         results(0).foreach( triple => flipped += triple._1 -> new scala.collection.mutable.ListBuffer[(String,Double,Double)]())
         results.foreach( li => {
@@ -327,6 +327,7 @@ object Network {
     def fromJSON(json: JsValue, userid: Int) = {
         val net_name = (json \ "name").as[String]
         val libraryID = (json \ "library").as[String].toInt
+        val stepSize = (json \ "stepSize").as[String].toDouble
 
         // parse the network
         val jsVertices = (json \ "circuit" \ "vertices").as[List[JsValue]]
@@ -380,7 +381,7 @@ object Network {
                 and.y = (v \ "y").as[Double]
             }
         })
-        new Network(csMap.values.filter(_.isInput).toList,userid,net_name)
+        new Network(csMap.values.filter(_.isInput).toList,userid,net_name,stepSize)
     }
 
     def simulate(json: JsValue, userID: Int): JsValue = {
