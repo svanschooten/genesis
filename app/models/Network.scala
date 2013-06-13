@@ -331,15 +331,15 @@ object Network {
         // map from source of an edge to protein name for that edge
         val srcToCSMap = jsEdges.foldLeft(Map[String,String]())((m,e) => {
             val src = (e \ "source").as[String]
+            val trg = (e \ "target").as[String]
             val csName = (e \ "protein").as[String]
             if(!csMap.contains(csName)) {
                 val cs = CodingSeq(csName, libraryID, List((0,0)), false)
-                // startsWith can be replaced by == once the setup only generates
-                // the source and sink "gates" once
-                if(src.startsWith("input"))
+                if(src == "input")
                     cs.isInput=true
-                csMap+= csName -> cs
+                csMap += csName -> cs
             }
+            if(trg == "output") csMap.get(csName).get.linksTo ::= new Output()
             m + (src -> csName)
         })
         // map from destination of an edge to protein name for that edge
@@ -355,8 +355,6 @@ object Network {
             else
                 m + (dest -> csName)
         })
-        // list of inputs for the network
-        val inputs = (json \ "inputs").as[String].split("\n")
 
         jsVertices.foreach(v => {
             val id = (v \ "id").as[String]

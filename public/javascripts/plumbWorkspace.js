@@ -161,9 +161,10 @@ function parseJsPlumb() {
         }
     }
     for(var j = 0; j < plumb.length; j++) {
+    	var trg = plumb[j].target.selector.replace("#","");
         network.edges.push({
             source: plumb[j].source.selector.replace("#",""),
-            target: plumb[j].target.selector.replace("#",""),
+            target: (trg == "" ? "output" : trg),
             protein: plumb[j].protein
         });
     }
