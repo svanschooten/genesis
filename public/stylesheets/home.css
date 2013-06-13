@@ -4,7 +4,7 @@
 
 section .content, footer {
 	width: 96%;
-	padding: 2%;
+	padding: 2px;
 }
 
 header {

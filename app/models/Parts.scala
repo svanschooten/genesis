@@ -14,6 +14,9 @@ abstract class Gate extends Part {
 	var x : Double = 0
 	var y : Double = 0
 }
+case class Output() extends Gate {
+  val output = null
+}
 
 /**
  * class for coding sequences
@@ -61,13 +64,18 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
     /**
      * Save this codingSequence to the database.
      */
-    def save(id: Int, isInput: Boolean, canBeInput: Boolean) {
+    def save(id: Int, isInput: Boolean) {
       //To prevent infinite loops when a cycle is present
-      if(isInput && !canBeInput) return
+      if(ready) return;
       ready = true;
+      println(name+" ready!")
       DB.withConnection { implicit connection =>   
           for(l <- linksTo){
-        	  val exists = SQL(
+        	  val out = l match {
+        	    case _: Output => "output"
+        	    case _ => l.output.name
+        	  }
+        	  /*val exists = SQL(
 		            """
 		            select * from cds
 		            where networkid={id} and name={name} and next={next}
@@ -75,14 +83,14 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
 		            ).on(
 		            	'id -> id,
 		            	'name -> name,
-		            	'next -> l.output.name
+		            	'next -> out
 		            ).apply.size > 0
-		      if(exists) return
+		      if(exists) return*/
 		      SQL("insert into cds values({id},{name},{next},{isInput});")
 		      .on(
 		        'id -> id,
 		        'name -> name,
-		        'next -> l.output.name,
+		        'next -> out,
 		        'isInput -> isInput
 		      ).executeUpdate()
           }
@@ -106,21 +114,10 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
 			case _ =>
 		  }
 	      
-	      val concs = concentration.toArray
-	      for(i <- 0 to concs.length-1){
-		      SQL("insert into concentrations values({id},{name},{time},{c1},{c2});")
-		      .on(
-		        'id -> id,
-		        'name -> name,
-		        'time -> i,
-		        'c1 -> concs(i)._1,
-		        'c2 -> concs(i)._2
-		      ).executeUpdate()
-	      }
-	      
 	      for(l <- linksTo){
 			  l match{
-		        case x: Gate => if(!x.output.ready) x.output.save(id,x.output.isInput,false)
+			    case _: Output =>
+		        case x: Gate => x.output.save(id,x.output.isInput)
 		        case _ =>
 		      }
 	      }

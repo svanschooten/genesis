@@ -14,20 +14,13 @@
                 <td>Circuit name: </td>
                 <td><input type="text" name="circuitName" id="circuitName" placeholder="circuitName"></td>
             </tr>
-            <tr>
-                <td>Simulation timespan: </td>
-                <td><input type="number" name="simTimeSpan" id="simTimeSpan" value="5" min="1" max="100"></td>
-            </tr>
-            <tr>
-                <td>Simulation steps: </td>
-                <td><input type="number" name="simSteps" id="simSteps" value="100" min="1" max="10000"></td>
-            </tr>
         </table>
     </div>
     <div id="setupModalFooter" class="modal-footer">
         <button class="btn btn-primary" onclick="applySetup()">Apply setup</button>
     </div>
 </div>
+
 <div id="proteinModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="proteinModalHeader">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
@@ -36,11 +29,11 @@
     <div class="modal-body" id="proteinModalBody" >
         <div id="proteinListDiv" style="overflow-y: scroll;" class="well"></div>
         <div id="proteinParameters" class="well">
-            <span><b>Values that influence the reaction in the subsequent gate:</span><br><br>
+            <span><b>Values that influence the reaction in the following gate:</span><br><br>
             <span>k<sub>1</sub> = <p id="pk1" class="inline"></p></span><br><br>
             <span>k<sub>m</sub> = <p id="pkm" class="inline"></p></span><br><br>
             <span>n = <p id="pn" class="inline"></p></span><br><br>
-        	<span><b>Values that influence the reaction in the preceding gate:</span><br><br>
+        	<span><b>Values that influence the reaction in the previous gate:</span><br><br>
         	<span>k<sub>2</sub> = <p id="pk2" class="inline"></p></span><br><br>
         	<span>d<sub>1</sub> = <p id="pd1" class="inline"></p></span><br><br>
         	<span>d<sub>2</sub> = <p id="pd2" class="inline"></p></span>
@@ -51,6 +44,7 @@
         <button class="btn btn-primary" onclick="setProtein()">Select protein</button>
     </div>
 </div>
+
 <div id="resultModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="resultModalHeader">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
@@ -65,24 +59,32 @@
         </div>
     </div>
     <div id="resultModalFooter" class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <a class="btn btn-primary" id="csvDownload" target="_blank">Download csv.</a> <!-- \\TODO create csv in backend and push to front.      -->
+        <button id="closeSim" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <a class="btn btn-primary" id="csvDownload" target="_blank">Download csv.</a> 
     </div>
 </div>
+
 <div id="signalModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="signalModalHeader">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h3 id="signalModalHeader" accesskey="">Create your input signal.</h3>
     </div>
     <div class="modal-body" id="signalModalBody">
+    	<table class="noborders">
+            <tr>
+                <td>Simulation steps: </td>
+                <td><input type="number" name="simSteps" id="simSteps" value="100" min="1" max="10000"></td>
+            </tr>
+        </table>
         <div id="signalErrorDiv" style="color: red;"></div>
         <textarea rows="20" cols="100" id="signalArea"></textarea>
     </div>
     <div id="signalModalFooter" class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary" onclick="completeSimulation()">Apply</button>
+        <button id="completesimulation" class="btn btn-primary" onclick="completeSimulation()">Apply</button>
     </div>
 </div>
+
 <div id="loadModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="loadModalHeader">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
@@ -94,6 +96,35 @@
     </div>
     <div id="loadModalFooter" class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary" onclick="loadCircuit()">Load</button>
+        <button id ="loadcircuit" class="btn btn-primary" onclick="loadCircuit()">Load</button>
+    </div>
+</div>
+
+<div id="importLibModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="importLibModalHeader">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        <h3 id="importLibModalHeader" accesskey="">Import a protein library.</h3>
+    </div>
+    <div class="modal-body" id="importLibModalBody">
+    <table class="noborders">
+		<tr>
+            <td>Library name: </td>
+            <td><input type="text" name="libraryName" id="libraryName" placeholder="New library"></td>
+        </tr>
+        <tr>
+            <td>Library type: </td>
+            <td><select id="libraryTypeSelector">
+		    	<option value="CDS">Coding sequences</option>
+		    	<option value="AND">AND-gates</option>
+		    	<option value="NOT">NOT-gates</option>
+		    </select></td>
+        </tr>
+    </table><br>
+    <textarea rows="20" cols="100" id="libraryTextArea" placeholder="Paste your input file here."></textarea>
+    
+    </div>
+    <div id="importLibModalFooter" class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button id="applyLib" class="btn btn-primary" onclick="importLibrary()">Apply</button>
     </div>
 </div>

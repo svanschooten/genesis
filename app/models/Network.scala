@@ -23,6 +23,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
     private def reset_readies(cs: CodingSeq) {
         cs.ready=false
         cs.linksTo.foreach(_ match {
+          	case _: Output =>
             case x:Gate if(x.output.ready) => reset_readies(x.output)
             case _ => return
         })
@@ -40,7 +41,8 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
     	def getConcs(l: List[CodingSeq] = inputs): Set[(String,Double,Double)] = l.flatMap(seq => seq match {
             case CodingSeq(name,_,_,_) if(!seq.ready) => {seq.ready = true;
               Set((name, seq.concentration.head._1, seq.concentration.head._2)) ++ (seq.linksTo.collect( {
-                case x:Gate => getConcs(List(x.output))
+                case x:AndGate => getConcs(List(x.output))
+                case x:NotGate => getConcs(List(x.output))
             })).flatten}
             case _ => Nil
         }).toSet
@@ -48,10 +50,10 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
         val times = 0.0 to finish by stepSize
         inputs.foreach(reset_readies _)
         // do the required steps and save the concentrations each round
-        times.foldRight(List(getConcs().toList))((time,li)=>{
+        times.foldRight(List(getConcs().toList.sortWith(_._1 < _._1)))((time,li)=>{
             step() // this is very poor actually: functional method fold has side effects now
             inputs.foreach(reset_readies _)
-            getConcs().toList :: li
+            getConcs().toList.sortWith(_._1 < _._1) :: li
         }).reverse
     }
 
@@ -112,7 +114,10 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
             })
             // finally, recursively update the rest of the network
             // foreach won't do anything if parts was empty, that is the base case of the recursion
-            parts.foreach((x:Gate) => do_the_math(x.output))
+            parts.foreach((x:Gate) => x match {
+              case x:NotGate => do_the_math(x.output)
+              case x:AndGate => do_the_math(x.output)
+            })
         }
 
         // the function that calls the solver; the solver expects each element of the
@@ -144,7 +149,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
 	      ).executeUpdate()
 	      val id = getID
 		  for(cs:CodingSeq <- inputs) {
-		    cs.save(id,true,true)
+		    cs.save(id,cs.isInput)
 		  }
 	    }
     	inputs.foreach(cs => reset_readies(cs))
@@ -331,15 +336,16 @@ object Network {
         // map from source of an edge to protein name for that edge
         val srcToCSMap = jsEdges.foldLeft(Map[String,String]())((m,e) => {
             val src = (e \ "source").as[String]
+            val trg = (e \ "target").as[String]
             val csName = (e \ "protein").as[String]
+            println("NAME: "+csName+" SOURCE: "+src+" TARGET: "+trg)
             if(!csMap.contains(csName)) {
                 val cs = CodingSeq(csName, libraryID, List((0,0)), false)
-                // startsWith can be replaced by == once the setup only generates
-                // the source and sink "gates" once
-                if(src.startsWith("input"))
+                if(src == "input")
                     cs.isInput=true
-                csMap+= csName -> cs
+                csMap += csName -> cs
             }
+            if(trg == "output") csMap.get(csName).get.linksTo ::= new Output()
             m + (src -> csName)
         })
         // map from destination of an edge to protein name for that edge
@@ -352,18 +358,20 @@ object Network {
                 else
                     m + (dest+"1" -> csName)
             }
-            else
+            else {
                 m + (dest -> csName)
+            }
         })
-        // list of inputs for the network
-        val inputs = (json \ "inputs").as[String].split("\n")
-
+        println("destToCSMap: "+destToCSMap);
+        println("srcToCSMap: "+srcToCSMap);
+        
         jsVertices.foreach(v => {
             val id = (v \ "id").as[String]
             val gateType = (v \ "type").as[String]
             if(gateType == "not") {
                 val inCS = csMap(destToCSMap(id))
                 val outCS = csMap(srcToCSMap(id))
+                println("in: "+inCS+" out: "+outCS)
                 val not = NotGate(inCS,outCS,libraryID)
                 not.x = (v \ "x").as[Double]
                 not.y = (v \ "y").as[Double]
@@ -372,6 +380,7 @@ object Network {
                 val inCS1 = csMap(destToCSMap(id+"1"))
                 val inCS2 = csMap(destToCSMap(id+"2"))
                 val outCS = csMap(srcToCSMap(id))
+                println("in1: "+inCS1+" in2: "+inCS2+" out: "+outCS)
                 val and = AndGate((inCS1,inCS2),outCS,libraryID)
                 and.x = (v \ "x").as[Double]
                 and.y = (v \ "y").as[Double]
@@ -383,7 +392,6 @@ object Network {
     def simulate(json: JsValue, userID: Int): JsValue = {
       val network = fromJSON(json, userID)
       val inputs = (json \ "inputs").as[String].split("\n")
-      val time = (json \ "time").as[String].toDouble
       val steps = (json \ "steps").as[String].toInt
       network.setStartParameters(inputs, 100.0, 10.0, steps)
       val res = network.simJson(steps - 1)
