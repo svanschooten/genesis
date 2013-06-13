@@ -479,6 +479,8 @@ function hardReset(){
     jsPlumb.detachEveryConnection();
     jsPlumb.deleteEveryEndpoint();
     $("#plumbArea").empty();
+    $("#circuitNameTag").text("None");
+    circuitName = "";
     makeInput();
     makeOutput();
     disableResults();
