@@ -14,7 +14,7 @@ test("Protein constructor", function(){
 	var invalidProtein = new Protein(-1, "data");
 	equal(validProtein.id, 0, "Protein has correct id.");
 	equal(validProtein.data, "data", "Protein has correct data.");
-	deepEqual(invalidProtein, {}, "Invalid protein (by id) has not been constructed.");
+	deepEqual(invalidProtein, new Object(), "Invalid protein (by id) has not been constructed.");
 });
 
 test("Gate constructor", function(){
