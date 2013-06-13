@@ -83,11 +83,12 @@ function setProtein() {
 
 function setLabel(con) {
     con.removeOverlay("label");
-    var location = (con.targetId === "Output")? 0.4 : 0.7;
+    var location = (con.targetId === "output")? 0.4 : 0.7;
     con.addOverlay([ "Label", {label: con.protein, location: location, cssClass: "aLabel", id:"label"}]);
 }
 
 function makeConnection(params) {
+	console.log(params);
     if(params.sourceId === params.targetId) {
         notify("Cannot connect to self.", "Warning");
         return false;
@@ -373,7 +374,7 @@ function connSourceOther(connection){
             source: sourceId
         });    
     for(var i = 0; i < other.length; i++){
-        if(other[i] !== connection && other[i].protein !== "") res.push(other[i]);
+        if(other[i] !== connection) res.push(other[i]);
     }
     return res;
 }
