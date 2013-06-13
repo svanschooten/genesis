@@ -248,17 +248,11 @@ function parseCircuits(json) {
 		var cur = data[i].data;
 		var name = data[i].name;
 		var inputs = {};
-		var outputs = {};
 		var gateID = {};
-		var allCDS = {};
 		for(var j=0;j<cur.CDS.length;j++){
 			var cs = cur.CDS[j];
 			if(!(cs.next in inputs)) inputs[cs.next] = Array();
 			inputs[cs.next].push(cs.name);
-			if(!(cs.name in outputs)) outputs[cs.name] = Array();
-			outputs[cs.name].push(cs.next);
-			allCDS[cs.next] = true;
-			allCDS[cs.name] = true;
 		}
 		
 		var network = {};
@@ -287,20 +281,11 @@ function parseCircuits(json) {
 	        gateID[g.name] = gate.id;
 		    network.vertices.push(gate);
 	    }
-	    for (var key in allCDS){
-	    	if(outputs[key] === undefined){
-	    		network.edges.push({
-		            source: gateID[key],
-		            target: "output",
-		            protein: key
-		        });
-	    	}
-	    }
 	    for (var key in inputs){
 	    	for(var j=0;j<inputs[key].length;j++){
 	    		network.edges.push({
 		            source: (gateID[inputs[key][j]] === undefined ? "input" : gateID[inputs[key][j]]),
-		            target: gateID[key],
+		            target: (gateID[key] === undefined ? "output" : gateID[key]),
 		            protein: inputs[key][j]
 		        });
 	    	}
@@ -314,7 +299,7 @@ function parseCircuits(json) {
 }
 
 function saveCircuit() {
-	var data = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, library: selectedLibrary};
+	var data = {name: circuitName, circuit: parseJsPlumb(), library: selectedLibrary};
     jsRoutes.controllers.Application.savecircuit().ajax({
         data: JSON.stringify(data),
         method: "POST",
