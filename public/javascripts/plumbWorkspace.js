@@ -348,11 +348,11 @@ function makeCustomGate(id,posx,posy) {
     if(data === undefined)
         return false;
     
-    var nodes = Array();
+    var nodes = {};
     
     function reduceFn(toFind) {
         return function(prev, next, idx, arr){
-            if(next.id === toFind)
+            if(next.id === toFind || (next.id === undefined && nodes[next] !== undefined && next === toFind))
                 return next;
             return prev;
         };
@@ -367,25 +367,29 @@ function makeCustomGate(id,posx,posy) {
     }
     // generate edges one at a time, making nodes as needed
     for(var i = 0; i < data.edges.length; i++) {
-        
-        var source = nodes.reduce(reduceFn(data.edges[i].source), undefined);
+        // firstTimeTarget is used to determine which endpoint of an and gate to connect to
+        var firstTimeTarget = false;
+        var source = nodes[Object.getOwnPropertyNames(nodes).reduce(reduceFn(data.edges[i].source), undefined)];
         if(!source) {
             var src = data.nodes.reduce(reduceFn(data.edges[i].source),undefined);
-            source = src.type === "not" ? notGate(posx+i*100, posy+i*100) : andGate(posx+i*100, posy+i*100);
-            nodes.push(source);
+            source = src.type === "not" ? notGate(posx+src.x, posy+src.y) : andGate(posx+src.x, posy+src.y);
+            nodes[data.edges[i].source] = source;
         }
-        var target = nodes.reduce(reduceFn(data.edges[i].target),undefined);
+        var target = nodes[Object.getOwnPropertyNames(nodes).reduce(reduceFn(data.edges[i].target),undefined)];
         if(!target){
+            firstTimeTarget = true;
             var tgt = data.nodes.reduce(reduceFn(data.edges[i].target), undefined);
             target = tgt.type === "not" ? notGate(posx+(i+1)*100, posy+(i+1)*100) : andGate(posx+(i+1)*100, posy+(i+1)*100);
-            nodes.push(target);
+            nodes[data.edges[i].target] = target;
         }
+        else
+            firstTimeTarget = false;
         // thanks to Anton for figuring out it had to be the EPs, not just the DIVs
         var srcEPs = jsPlumb.getEndpoints(source.id);
         var tgtEPs = jsPlumb.getEndpoints(target.id);
         var conn = jsPlumb.connect({
             "source": srcEPs.filter(filterFn("isSource"))[0],
-            "target": tgtEPs.filter(filterFn("isTarget"))[0]
+            "target": tgtEPs.filter(filterFn("isTarget"))[firstTimeTarget ? 0 : 1]
         });
         makeConnection({
             "sourceId": source.id,
