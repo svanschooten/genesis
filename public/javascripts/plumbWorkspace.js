@@ -88,7 +88,6 @@ function setLabel(con) {
 }
 
 function makeConnection(params) {
-	console.log(params);
     if(params.sourceId === params.targetId) {
         notify("Cannot connect to self.", "Warning");
         return false;
@@ -98,8 +97,19 @@ function makeConnection(params) {
         notify("Invalid element: " + params.sourceId, "Warning");
         return false;
     }
-    currentConnection = params.connection;
-    params.connection.protein = "";
+    currentConnection = params.connection;    
+    var other = connSourceOther(params.connection);
+    if(other.length > 0){
+    	var otherTarget = connTargetHasOther(params.connection);
+    	if(otherTarget !== "" && andMap[other[0].protein][otherTarget] === undefined){
+    		notify("Proteins "+other[0].protein+" and "+otherTarget+" can not lead to the same AND-gate with this library.", "Warning")
+    		return false;
+    	}
+    	params.connection.protein = other[0].protein;
+    	setLabel(params.connection);
+    }
+    else params.connection.protein = "";  
+     
     params.connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
     params.connection.bind("click", function(connection){ openProteinModal(connection); });
     params.connection.bind("contextmenu", function(connection){ 
@@ -108,11 +118,7 @@ function makeConnection(params) {
         }
         return false;
     });
-    var other = connSourceOther(params.connection);
-    if(other.length > 0){
-    	params.connection.protein = other[0].protein;
-    	setLabel(params.connection);
-    }
+    
     return true;
 }
 
@@ -406,13 +412,13 @@ function makeCustomGate(id,posx,posy) {
         
         var source = nodes.reduce(reduceFn(data.edges[i].source), undefined);
         if(!source) {
-            src = data.nodes.reduce(reduceFn(data.edges[i].source),undefined);
+            var src = data.nodes.reduce(reduceFn(data.edges[i].source),undefined);
             source = src.type === "not" ? notGate(posx+i*100, posy+i*100) : andGate(posx+i*100, posy+i*100);
             nodes.push(source);
         }
         var target = nodes.reduce(reduceFn(data.edges[i].target),undefined);
         if(!target){
-            tgt = data.nodes.reduce(reduceFn(data.edges[i].target), undefined);
+            var tgt = data.nodes.reduce(reduceFn(data.edges[i].target), undefined);
             target = tgt.type === "not" ? notGate(posx+(i+1)*100, posy+(i+1)*100) : andGate(posx+(i+1)*100, posy+(i+1)*100);
             nodes.push(target);
         }
@@ -515,8 +521,11 @@ function hardReset(){
     jsPlumb.detachEveryConnection();
     jsPlumb.deleteEveryEndpoint();
     $("#plumbArea").empty();
+    $("#circuitNameTag").text("");
+    circuitName = "";
     makeInput();
     makeOutput();
+    disableResults();
 }
 
 function getAllCircuits(){

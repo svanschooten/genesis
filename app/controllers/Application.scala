@@ -55,6 +55,7 @@ object Application extends Controller {
         routes.javascript.Application.getallcircuits,
         routes.javascript.Application.getalllibraries,
         routes.javascript.Application.savecircuit,
+        routes.javascript.Application.removecircuit,
         routes.javascript.Application.importlibrary
       )
     ).as("text/javascript")
@@ -105,14 +106,22 @@ object Application extends Controller {
     val userID = User.findByEmail(request.session.get("email").get).get.id
     Ok(Network.saveFromJson(request.body, userID)).as("text/plain")
   }
+
+  def removecircuit = Action(parse.json) { implicit request =>
+    val userID = User.findByEmail(request.session.get("email").get).get.id
+    val networkname = (request.body \ "name").as[String]
+    Network.delete(userID, networkname)
+    Ok("Circuit " + networkname + " has successfully been removed.").as("text/plain")
+  }
   
   def importlibrary = Action(parse.json) { implicit request =>
     val json = request.body
     val userID = User.findByEmail(request.session.get("email").get).get.id
-    val partType = (json \ "type").as[String];
-    val libraryName = (json \ "name").as[String];
-    val text = (json \ "text").as[String].split("\n");
-    Ok(FileParser.saveParams(text, partType, userID, libraryName)).as("text/plain")
+    val libraryName = (json \ "name").as[String]
+    val cds = (json \ "cds").as[String].split("\n")
+    val and = (json \ "and").as[String].split("\n")
+    val not = (json \ "not").as[String].split("\n")
+    Ok(FileParser.saveParams(userID, libraryName, cds, and, not)).as("text/plain")
   }
 
   def setSessionHelper(sh: String) = {

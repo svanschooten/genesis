@@ -18,3 +18,8 @@
     text-decoration: none;
     color: inherit;
 }
+
+#circuitNameTag{
+    color: white;
+    margin-left: 50px;
+}

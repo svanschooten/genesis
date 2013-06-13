@@ -70,14 +70,23 @@
         <h3 id="signalModalHeader" accesskey="">Create your input signal.</h3>
     </div>
     <div class="modal-body" id="signalModalBody">
-    	<table class="noborders">
-            <tr>
-                <td>Simulation steps: </td>
-                <td><input type="number" name="simSteps" id="simSteps" value="100" min="1" max="10000"></td>
-            </tr>
-        </table>
+        <div class="floatLeft halfWidth">
+            <table class="noborders">
+                <tr>
+                    <td>Simulation steps: </td>
+                    <td><input type="number" name="simSteps" id="simSteps" value="100" min="1" max="10000"></td>
+                </tr>
+                <tr>
+                    <td>Time step: </td>
+                    <td><input type="number" name="simStepSize" id="simStepSize" value="1" min="0.01" max="10" step="0.01"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="floatLeft halfWidth">
+            <textarea rows="18" cols="100" id="signalArea" ></textarea>
+        </div>
         <div id="signalErrorDiv" style="color: red;"></div>
-        <textarea rows="20" cols="100" id="signalArea"></textarea>
+
     </div>
     <div id="signalModalFooter" class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -85,7 +94,7 @@
     </div>
 </div>
 
-<div id="loadModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="loadModalHeader">
+<div id="loadModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="loadModalHeader">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h3 id="loadModalHeader" accesskey="">Load a circuit.</h3>
@@ -99,6 +108,20 @@
         <button id ="loadcircuit" class="btn btn-primary" onclick="loadCircuit()">Load</button>
     </div>
 </div>
+<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalHeader">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        <h3 id="deleteModalHeader" accesskey="">Delete a circuit.</h3>
+    </div>
+    <div class="modal-body" id="deleteModalBody">
+    <select id="deleteNetworkSelector">
+    </select>
+    </div>
+    <div id="deleteModalFooter" class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button id ="deletecircuit" class="btn btn-primary" onclick="deleteCircuit()">Delete</button>
+    </div>
+</div>
 
 <div id="importLibModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="importLibModalHeader">
     <div class="modal-header">
@@ -106,22 +129,22 @@
         <h3 id="importLibModalHeader" accesskey="">Import a protein library.</h3>
     </div>
     <div class="modal-body" id="importLibModalBody">
-    <table class="noborders">
-		<tr>
-            <td>Library name: </td>
-            <td><input type="text" name="libraryName" id="libraryName" placeholder="New library"></td>
-        </tr>
-        <tr>
-            <td>Library type: </td>
-            <td><select id="libraryTypeSelector">
-		    	<option value="CDS">Coding sequences</option>
-		    	<option value="AND">AND-gates</option>
-		    	<option value="NOT">NOT-gates</option>
-		    </select></td>
-        </tr>
-    </table><br>
-    <textarea rows="20" cols="100" id="libraryTextArea" placeholder="Paste your input file here."></textarea>
-    
+        <div class="floatLeft fullWidth">
+            <span>Library name: <input type="text" name="libraryName" id="libraryName" placeholder="New library"></span>
+
+        </div>
+        <div class="floatLeft thirdWidth">
+            Coding sequences: <br>
+            <textarea rows="15" cols="110" id="libraryCDSArea" placeholder="Paste your coding sequences here."></textarea>
+        </div>
+        <div class="floatLeft thirdWidth">
+            AND-gate parameters: <br>
+            <textarea rows="15" cols="110" id="libraryANDArea" placeholder="Paste your AND-gate parameters here."></textarea>
+        </div>
+        <div class="floatLeft thirdWidth">
+            NOT-gate parameters: <br>
+            <textarea rows="15" cols="110" id="libraryNOTArea" placeholder="Paste your NOT-gate parameters here."></textarea>
+        </div>
     </div>
     <div id="importLibModalFooter" class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>

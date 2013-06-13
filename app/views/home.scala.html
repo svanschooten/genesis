@@ -33,7 +33,11 @@
                                 <a id="save" onclick="saveCircuit()"> Save </a>
                             </li>
                             <li>
-                                <a id="load" onclick="showLoad()"> Load </a>
+                                <a id="load" onclick="showLoadModal()"> Load </a>
+                            </li>
+                            <li class="divider" />
+                            <li>
+                                <a id="delete" onclick="showDeleteModal()"> Delete a circuit </a>
                             </li>
                         </ul>
                     </div>
@@ -43,11 +47,14 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a onclick="showSetup()">Setup</a>
+                                <a id = "setup" onclick="showSetup()">Setup</a>
                             </li>
                             <li class="divider" />
                             <li>
-                                <a onclick="beginSimulation()">Run circuit</a>
+                                <a id = "runcircuit" onclick="beginSimulation()">Run circuit</a>
+                            </li>
+                            <li id="viewResults" class="disabled">
+                                <a onclick="openResultModal()">View results</a>
                             </li>
                             <li class="divider" />
                             <li>

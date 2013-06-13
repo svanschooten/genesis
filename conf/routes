@@ -21,6 +21,7 @@ POST    /getcooking                         controllers.Application.getCooking
 GET    	/assets/javascripts/routes      	controllers.Application.javascriptRoutes
 POST    /getlibrary                         controllers.Application.getlibrary
 POST    /savecircuit                        controllers.Application.savecircuit
+POST    /removecircuit                      controllers.Application.removecircuit
 POST    /getallcircuits                     controllers.Application.getallcircuits
 POST    /getalllibraries                    controllers.Application.getalllibraries
 POST    /importlibrary                    	controllers.Application.importlibrary
