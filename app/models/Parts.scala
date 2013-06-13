@@ -64,26 +64,16 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
     /**
      * Save this codingSequence to the database.
      */
-    def save(id: Int, isInput: Boolean, canBeInput: Boolean) {
+    def save(id: Int, isInput: Boolean) {
       //To prevent infinite loops when a cycle is present
-      if(isInput && !canBeInput) return
+      if(ready) return;
+      ready = true;
       DB.withConnection { implicit connection =>   
           for(l <- linksTo){
         	  val out = l match {
         	    case _: Output => "output"
         	    case _ => l.output.name
         	  }
-        	  val exists = SQL(
-		            """
-		            select * from cds
-		            where networkid={id} and name={name} and next={next}
-		            """
-		            ).on(
-		            	'id -> id,
-		            	'name -> name,
-		            	'next -> out
-		            ).apply.size > 0
-		      if(exists) return
 		      SQL("insert into cds values({id},{name},{next},{isInput});")
 		      .on(
 		        'id -> id,
@@ -115,7 +105,7 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
 	      for(l <- linksTo){
 			  l match{
 			    case _: Output =>
-		        case x: Gate => x.output.save(id,x.output.isInput,false)
+		        case x: Gate => x.output.save(id,x.output.isInput)
 		        case _ =>
 		      }
 	      }

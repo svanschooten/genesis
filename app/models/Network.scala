@@ -149,10 +149,10 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
 	      ).executeUpdate()
 	      val id = getID
 		  for(cs:CodingSeq <- inputs) {
-		    cs.save(id,true,true)
+		    cs.save(id,cs.isInput)
 		  }
 	    }
-
+    	inputs.foreach(cs => reset_readies(cs))
 	  }
 
     /**
@@ -327,7 +327,6 @@ object Network {
     def fromJSON(json: JsValue, userid: Int) = {
         val net_name = (json \ "name").as[String]
         val libraryID = (json \ "library").as[String].toInt
-        println("stepSize : " + (json \ "stepSize").as[String].toDouble)
         val stepSize = (json \ "stepSize").as[String].toDouble
 
         // parse the network
@@ -359,10 +358,11 @@ object Network {
                 else
                     m + (dest+"1" -> csName)
             }
-            else
+            else {
                 m + (dest -> csName)
+            }
         })
-
+        
         jsVertices.foreach(v => {
             val id = (v \ "id").as[String]
             val gateType = (v \ "type").as[String]

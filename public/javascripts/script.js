@@ -17,8 +17,8 @@ var libraries = [ 'bootstrap.min.js',
 var scripts = [  ];
 
 var proteinModal, resultModal, signalModal, setupModal, loadModal, importLibModal, deleteModal;
-var circuitName, numSteps, stepSize = 1;
-var circuitList;
+var circuitName, numSteps, stepSize = "1";
+var circuitList = {};
 
 /**
 Method that fires when the document is loaded.
@@ -229,7 +229,6 @@ function importLibrary(){
 
 function deleteCircuit(){
     var selected = $(".networkSelector").find('option:selected').text();
-    console.log(selected);
     var confirmed = confirm("Are you sure you want to remove this circuit?");
     if(confirmed) {
         jsRoutes.controllers.Application.removecircuit().ajax({
@@ -273,6 +272,7 @@ function getallCircuits(select) {
         method: "POST",
         success: function(response) {
         	parseCircuits(response);
+      		fillSelection(select);
         },
         complete: function(){
             fillSelection(select);

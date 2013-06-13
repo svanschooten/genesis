@@ -11,6 +11,7 @@ var cdsMap = {};
 var andMap = {};
 var selectedProtein = "";
 var selectedLibrary = -1;
+var usedProteins = {};
 
 function makeProteinList(connection){
 	$("#proteinListDiv").empty();
@@ -21,7 +22,14 @@ function makeProteinList(connection){
 	var o = connTargetHasOther(connection);
 	if(o !== ""){
 		var ind = 0;
+		var proteinArray = Array();
 		for(var key in andMap[o]) {
+			if(usedProteins[key]) continue;
+			proteinArray.push(key);
+		}
+		proteinArray.sort();
+		for(var i=0;i<proteinArray.length;i++){
+			var key = proteinArray[i];
 	        var oddClass = (ind % 2) === 0 ? "" : " odd";
 	        ind += 1;
 	        var span = $("<span></span>")
@@ -41,7 +49,14 @@ function makeProteinList(connection){
 	}
 	else{
 		var ind = 0;
+		var proteinArray = Array();
 	    for(var key in cdsMap) {
+	    	if(usedProteins[key]) continue;
+	    	proteinArray.push(key);
+	    }
+	    proteinArray.sort();
+	    for(var i=0;i<proteinArray.length;i++){
+	    	var key = proteinArray[i];
 	        var oddClass = (ind % 2) === 0 ? "" : " odd";
 	        ind += 1;
 	        var span = $("<span></span>", {
