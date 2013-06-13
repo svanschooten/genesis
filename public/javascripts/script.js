@@ -198,7 +198,7 @@ function completeSimulation(){
                 $("#viewResults").removeClass("disabled");
                 resultModal.modal("show");
             },
-            error: function(response) { alertError(response); }
+            error: function(response) { alertError("Error while simulating."); }
         });
     }
 }
@@ -228,7 +228,7 @@ function importLibrary(){
 }
 
 function deleteCircuit(){
-    var selected = $("#deleteNetworkSelector").find('option:selected').text();
+    var selected = $(".networkSelector").find('option:selected').text();
     var confirmed = confirm("Are you sure you want to remove this circuit?");
     if(confirmed) {
         jsRoutes.controllers.Application.removecircuit().ajax({
@@ -257,8 +257,8 @@ function showDeleteModal(){
 }
 
 function showSelectionModal(modal, select){
-    modal.modal("show");
     select.empty();
+    modal.modal("show");
     $("<option></option>").text("Loading circuits...").appendTo(select);
     getallCircuits(select);
 }
@@ -267,13 +267,15 @@ function showLoadModal(){
     showSelectionModal(loadModal, $("#loadNetworkSelector"));
 }
 
-function getallCircuits(element) {
+function getallCircuits(select) {
 	jsRoutes.controllers.Application.getallcircuits().ajax({
         method: "POST",
         success: function(response) {
-        	element.empty();
         	parseCircuits(response);
-      		fillSelection(element);
+      		fillSelection(select);
+        },
+        complete: function(){
+            fillSelection(select);
         },
         error: function(response) { "Unable to load circuits."; }
     });
@@ -334,6 +336,7 @@ function parseCircuits(json) {
 }
 
 function fillSelection(element){
+    element.empty();
     for (var key in circuitList){
  	    $("<option></option>").text(circuitList[key].name).appendTo(element);
  	}
@@ -447,7 +450,7 @@ function getCustomGates(){
         success: function(response) {
             showGates(parseGates(response));
         },
-        error: function(response) { alertError(response); }
+        error: function(response) { alertError("Gates could not be loaded...."); }
     });
 }
 

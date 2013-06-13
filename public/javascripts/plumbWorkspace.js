@@ -533,7 +533,7 @@ function getAllCircuits(){
         success: function(response) {
             displayCircuits(response);
         },
-        error: function(response) { alertError(response); }
+        error: function(response) { alertError("Error while getting circuits."); }
     });
 }
 
