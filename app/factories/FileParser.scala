@@ -12,6 +12,8 @@ import models._
 import views._
 import scalation._
 import factories._
+import scala.Array
+import scala.Predef._
 
 object FileParser {
   
@@ -52,7 +54,7 @@ object FileParser {
    * Saves all protein in the input file to the database with the corresponding parameters.
    * This proteinlibrary is only accessible by the user with ID userid.
    */
-  def saveParams(input: Array[String], partType: String, userid: Int, libraryname: String) = {
+  def saveParams(userid: Int, libraryname: String, cds: Array[String], and: Array[String], not: Array[String]) = {
 	  DB.withConnection { implicit connection =>
 	      var libraryid = getLibraryID(userid,libraryname)
 	      if(libraryid == -1) createLibrary(userid, libraryname)

@@ -16,3 +16,19 @@ body {
     display: block;
     overflow: hidden;
 }
+
+.floatLeft{
+    float: left;
+}
+
+.halfWidth{
+    width: 49%;
+}
+
+.thirdWidth{
+    width: 32%;
+}
+
+.fullWidth{
+    width: 100%;
+}
