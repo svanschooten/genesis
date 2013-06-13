@@ -33,6 +33,7 @@ Ready call for jsPlumb library
 */
 jsPlumb.ready(function() {
     $(window).resize(function(){jsPlumb.repaintEverything();});
+    $("#plumbArea").bind("contextmenu", function(e){return false;});
     jsp = jsPlumb.getInstance({
         connector: ["Flowchart", { stub: [40, 60], gap: 10, cornerRadius: 5 }],
         Endpoints : [[ "Dot", {radius: 5} ], [ "Dot", { radius: 7 } ]],
@@ -58,6 +59,9 @@ function findElement(array, elementId) {
 
 function openProteinModal(connection){
     currentConnection = connection;
+    usedProteins = {};
+    var cons = jsPlumb.getConnections();
+    for(var i=0;i<cons.length;i++) usedProteins[cons[i].protein] = true;
     proteinModal.modal("show");
     makeProteinList(connection);
 }
@@ -68,10 +72,19 @@ function setProtein() {
         return;
     }
     currentConnection.protein = selectedProtein.input1;
-    currentConnection.removeOverlay("label");
-    var location = (currentConnection.targetId === "Output")? 0.4 : 0.7;
-    currentConnection.addOverlay([ "Label", {label: selectedProtein.input1, location: location, cssClass: "aLabel", id:"label"}]);
+    setLabel(currentConnection);
+    var other = connSourceOther(currentConnection);
+    for(var i=0;i<other.length;i++){
+    	other[i].protein = selectedProtein.input1;
+    	setLabel(other[i]);
+    }
     proteinModal.modal("hide");
+}
+
+function setLabel(con) {
+    con.removeOverlay("label");
+    var location = (con.targetId === "Output")? 0.4 : 0.7;
+    con.addOverlay([ "Label", {label: con.protein, location: location, cssClass: "aLabel", id:"label"}]);
 }
 
 function makeConnection(params) {
@@ -84,7 +97,19 @@ function makeConnection(params) {
         notify("Invalid element: " + params.sourceId, "Warning");
         return false;
     }
-    params.connection.protein = "";
+    currentConnection = params.connection;    
+    var other = connSourceOther(params.connection);
+    if(other.length > 0){
+    	var otherTarget = connTargetHasOther(params.connection);
+    	if(otherTarget !== "" && andMap[other[0].protein][otherTarget] === undefined){
+    		notify("Proteins "+other[0].protein+" and "+otherTarget+" can not lead to the same AND-gate with this library.", "Warning")
+    		return false;
+    	}
+    	params.connection.protein = other[0].protein;
+    	setLabel(params.connection);
+    }
+    else params.connection.protein = "";  
+     
     params.connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
     params.connection.bind("click", function(connection){ openProteinModal(connection); });
     params.connection.bind("contextmenu", function(connection){ 
@@ -93,6 +118,7 @@ function makeConnection(params) {
         }
         return false;
     });
+    
     return true;
 }
 
@@ -326,14 +352,30 @@ function connTargetHasOther(connection){
     var targetId = connection.target.selector.replace("#","");
     var sourceId = connection.source.selector.replace("#","");
     var other = jsPlumb.getConnections({
-            target: targetId
-        });
+        target: targetId
+    });
     
     for(var i = 0; i < other.length; i++){
         if(other[i] !== connection)
             return other[i].protein;
     }
     return "";
+}
+
+/**
+ * Returns an array of connections that share the same source gate as the input connection.
+ */
+function connSourceOther(connection){
+	var res = Array();
+	if(connection === undefined || connection.sourceId == "input") return res;
+    var sourceId = connection.source.selector.replace("#","");
+    var other = jsPlumb.getConnections({
+            source: sourceId
+        });    
+    for(var i = 0; i < other.length; i++){
+        if(other[i] !== connection && other[i].protein !== "") res.push(other[i]);
+    }
+    return res;
 }
 
 /**
@@ -495,7 +537,7 @@ function getAllCircuits(){
         success: function(response) {
             displayCircuits(response);
         },
-        error: function(response) { alertError(response); }
+        error: function(response) { alertError("Error while getting circuits."); }
     });
 }
 
