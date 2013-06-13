@@ -17,7 +17,7 @@ var libraries = [ 'bootstrap.min.js',
 var scripts = [  ];
 
 var proteinModal, resultModal, signalModal, setupModal, loadModal, importLibModal, deleteModal;
-var circuitName, numSteps, stepSize = 1;
+var circuitName, numSteps, stepSize = "1";
 var circuitList = {};
 
 /**
@@ -260,8 +260,7 @@ function showSelectionModal(modal, select){
     modal.modal("show");
     select.empty();
     $("<option></option>").text("Loading circuits...").appendTo(select);
-    getallCircuits(element);
-    fillSelection(select);
+    getallCircuits(select);
 }
 
 function showLoadModal(){
@@ -274,6 +273,7 @@ function getallCircuits(element) {
         success: function(response) {
         	element.empty();
         	parseCircuits(response);
+      		fillSelection(element);
         },
         error: function(response) { "Unable to load circuits."; }
     });

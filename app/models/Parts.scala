@@ -74,17 +74,6 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
         	    case _: Output => "output"
         	    case _ => l.output.name
         	  }
-        	  /*val exists = SQL(
-		            """
-		            select * from cds
-		            where networkid={id} and name={name} and next={next}
-		            """
-		            ).on(
-		            	'id -> id,
-		            	'name -> name,
-		            	'next -> out
-		            ).apply.size > 0
-		      if(exists) return*/
 		      SQL("insert into cds values({id},{name},{next},{isInput});")
 		      .on(
 		        'id -> id,

@@ -339,7 +339,6 @@ object Network {
             val src = (e \ "source").as[String]
             val trg = (e \ "target").as[String]
             val csName = (e \ "protein").as[String]
-            println("NAME: "+csName+" SOURCE: "+src+" TARGET: "+trg)
             if(!csMap.contains(csName)) {
                 val cs = CodingSeq(csName, libraryID, List((0,0)), false)
                 if(src == "input")
@@ -363,8 +362,6 @@ object Network {
                 m + (dest -> csName)
             }
         })
-        println("destToCSMap: "+destToCSMap);
-        println("srcToCSMap: "+srcToCSMap);
         
         jsVertices.foreach(v => {
             val id = (v \ "id").as[String]
@@ -372,7 +369,6 @@ object Network {
             if(gateType == "not") {
                 val inCS = csMap(destToCSMap(id))
                 val outCS = csMap(srcToCSMap(id))
-                println("in: "+inCS+" out: "+outCS)
                 val not = NotGate(inCS,outCS,libraryID)
                 not.x = (v \ "x").as[Double]
                 not.y = (v \ "y").as[Double]
@@ -381,7 +377,6 @@ object Network {
                 val inCS1 = csMap(destToCSMap(id+"1"))
                 val inCS2 = csMap(destToCSMap(id+"2"))
                 val outCS = csMap(srcToCSMap(id))
-                println("in1: "+inCS1+" in2: "+inCS2+" out: "+outCS)
                 val and = AndGate((inCS1,inCS2),outCS,libraryID)
                 and.x = (v \ "x").as[Double]
                 and.y = (v \ "y").as[Double]
