@@ -108,6 +108,20 @@
         <button id ="loadcircuit" class="btn btn-primary" onclick="loadCircuit()">Load</button>
     </div>
 </div>
+<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalHeader">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        <h3 id="deleteModalHeader" accesskey="">Delete a circuit.</h3>
+    </div>
+    <div class="modal-body" id="deleteModalBody">
+    <select id="deleteNetworkSelector">
+    </select>
+    </div>
+    <div id="deleteModalFooter" class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button id ="deletecircuit" class="btn btn-primary" onclick="deleteCircuit()">Delete</button>
+    </div>
+</div>
 
 <div id="importLibModal" class="modal hide fade bigModal" tabindex="-1" role="dialog" aria-labelledby="importLibModalHeader">
     <div class="modal-header">
