@@ -9,3 +9,10 @@ body {
 .inset-area{
     background: #eee;
 }
+
+.center{
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    overflow: hidden;
+}

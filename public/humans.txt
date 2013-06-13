@@ -1,7 +1,8 @@
 /* Team JAMES */
+/* Updated 13th June 2013 */
 
 Developer: Michael The
-Site: http://stackoverblog.wordpress.com
+Site: http://www.stackoverblog.com
 Twitter: @ReturnFalse
 Location: The Netherlands, Rotterdam
 
