@@ -55,6 +55,7 @@ object FileParser {
    * This proteinlibrary is only accessible by the user with ID userid.
    */
   def saveParams(userid: Int, libraryname: String, cds: Array[String], and: Array[String], not: Array[String]) = {
+    /*     TODO Anton will fix the implementation.
 	  DB.withConnection { implicit connection =>
 	      var libraryid = getLibraryID(userid,libraryname)
 	      if(libraryid == -1) createLibrary(userid, libraryname)
@@ -116,6 +117,7 @@ object FileParser {
 	        }
 	      }
 	    }
+	    */
 	  Json.toJson("Correctly saved parameters.")
 	}
 }
