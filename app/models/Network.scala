@@ -23,6 +23,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
     private def reset_readies(cs: CodingSeq) {
         cs.ready=false
         cs.linksTo.foreach(_ match {
+          	case _: Output =>
             case x:Gate if(x.output.ready) => reset_readies(x.output)
             case _ => return
         })
@@ -40,7 +41,8 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
     	def getConcs(l: List[CodingSeq] = inputs): Set[(String,Double,Double)] = l.flatMap(seq => seq match {
             case CodingSeq(name,_,_,_) if(!seq.ready) => {seq.ready = true;
               Set((name, seq.concentration.head._1, seq.concentration.head._2)) ++ (seq.linksTo.collect( {
-                case x:Gate => getConcs(List(x.output))
+                case x:AndGate => getConcs(List(x.output))
+                case x:NotGate => getConcs(List(x.output))
             })).flatten}
             case _ => Nil
         }).toSet
@@ -112,7 +114,10 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
             })
             // finally, recursively update the rest of the network
             // foreach won't do anything if parts was empty, that is the base case of the recursion
-            parts.foreach((x:Gate) => do_the_math(x.output))
+            parts.foreach((x:Gate) => x match {
+              case x:NotGate => do_the_math(x.output)
+              case x:AndGate => do_the_math(x.output)
+            })
         }
 
         // the function that calls the solver; the solver expects each element of the
