@@ -168,11 +168,14 @@ function beginSimulation(){
 function completeSimulation(){
     //TODO Checken van inputsignalen
     inputs = $("#signalArea")[0].value;
+    var inputs = $("#signalArea")[0].value;
+    var numSteps = $("#simSteps")[0].value;
+    var stepSize = $("#simStepSize")[0].value;
     if(inputs == ""){
         $("#signalErrorDiv").text("No input signal given.")
     } else {
         signalModal.modal("hide");
-        var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, time: timeSpan, steps: numSteps, library: selectedLibrary};
+        var simulateData = {name: circuitName, circuit: parseJsPlumb(), inputs: inputs, steps: numSteps, stepSize: stepSize, library: selectedLibrary};
         jsRoutes.controllers.Application.getCooking().ajax({
             data: JSON.stringify(simulateData),
             method: "POST",
