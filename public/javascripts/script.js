@@ -211,11 +211,12 @@ function showImportLibrary(){
 }
 
 function importLibrary(){
-	var text = $("#libraryTextArea")[0].value;
+	var CDSparams = $("#libraryCDSArea")[0].value;
+	var ANDparams = $("#libraryANDArea")[0].value;
+	var NOTparams = $("#libraryNOTArea")[0].value;
 	var name = $("#libraryName")[0].value;
-	var type = $("#libraryTypeSelector").find('option:selected')[0].value;
-	if(text == undefined || name == undefined || type == undefined) return;
-	var data = {text : text, name : name, type : type};
+	if(CDSparams == undefined || ANDparams == undefined || NOTparams == undefined || name == undefined) return;
+	var data = {name : name, cds : CDSparams, and: ANDparams, not: NOTparams};
 	jsRoutes.controllers.Application.importlibrary().ajax({
         data: JSON.stringify(data),
         method: "POST",
