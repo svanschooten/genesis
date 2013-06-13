@@ -168,7 +168,6 @@ function beginSimulation(){
     signalModal.modal("show");
     var textBox = $("#signalArea")[0];
     var inputs = jsPlumb.getConnections({source: "input"});
-    var
     textBox.value = "t";
     var proteins = {};
     for(var i=0;i<inputs.length;i++){
