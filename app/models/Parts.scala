@@ -64,6 +64,7 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
     def save(id: Int, isInput: Boolean, canBeInput: Boolean) {
       //To prevent infinite loops when a cycle is present
       if(isInput && !canBeInput) return
+      ready = true;
       DB.withConnection { implicit connection =>   
           for(l <- linksTo){
         	  val exists = SQL(
@@ -119,7 +120,7 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
 	      
 	      for(l <- linksTo){
 			  l match{
-		        case x: Gate => x.output.save(id,x.output.isInput,false)
+		        case x: Gate => if(!x.output.ready) x.output.save(id,x.output.isInput,false)
 		        case _ =>
 		      }
 	      }

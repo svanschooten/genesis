@@ -147,7 +147,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
 		    cs.save(id,true,true)
 		  }
 	    }
-
+    	inputs.foreach(cs => reset_readies(cs))
 	  }
 
     /**
