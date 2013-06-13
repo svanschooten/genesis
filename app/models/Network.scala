@@ -63,7 +63,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
      */
     def simJson(finish: Double) = {
         val results = simulate(finish)
-        val file: String = FileFactory.makeFile(results)
+        val file: String = FileFactory.makeFile(results, finish)
         val flipped = new scala.collection.mutable.ListMap[String, scala.collection.mutable.ListBuffer[(String, Double, Double)]]()
         results(0).foreach( triple => flipped += triple._1 -> new scala.collection.mutable.ListBuffer[(String,Double,Double)]())
         results.foreach( li => {
