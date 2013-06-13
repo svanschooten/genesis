@@ -47,7 +47,9 @@ object User {
   /** Authenticates a user given an email and password. */
   def authenticate(email: String, password: String): Option[User] = {
     findByEmail(email) match {
-      case Some(User(id,email,hashedPw,fname,lname)) => if (password.isBcrypted(hashedPw)) Some(User(id, email, hashedPw, fname, lname)) else None
+      case Some(User(id,email,hashedPw,fname,lname)) => 
+        if (password.isBcrypted(hashedPw)) Some(User(id, email, hashedPw, fname, lname))
+        else None
       case _ => None
     }
   }
@@ -66,71 +68,6 @@ object User {
         'password -> hashedPassword,
         'fname -> fname,
         'lname -> lname
-      ).executeUpdate
-    }
-  }
-  
-  /** Updates a user's email, provided the user's id */
-  def updateEmail(id: Int, email: String) = {
-    DB.withConnection{ implicit connection =>
-      SQL(
-        """
-        UPDATE "User"
-        SET email={email}
-        WHERE id = {id}
-        """
-      ).on(
-        'id -> id,
-        'email -> email
-      ).executeUpdate
-    }
-  }
-  
-  /** Update the password, given that the user can insert the old password. */
-  def updatePassword(id: Int, password: String) = {
-    val hashedPassword = password.bcrypt(12)
-    DB.withConnection{ implicit connection =>
-      SQL(
-          """
-          UPDATE "User"
-          SET password = {password}
-          WHERE id = {id}
-          """
-      ).on(
-        'password -> hashedPassword,
-        'id -> id
-      ).executeUpdate
-    }
-  }
-  
-  /** Updates a User's first name, provided the user's id */
-  def updateFirstName(id: Int, fname: String) = {
-    DB.withConnection{ implicit connection =>
-      SQL(
-        """
-        UPDATE "User"
-        SET fname={fname}
-        WHERE id = {id}
-        """
-      ).on(
-        'fname -> fname,
-        'id -> id
-      ).executeUpdate
-    }
-  }
-  
-  /** Updates a User's last name, provided the user's id */
-  def updateLastName(id: Int, lname: String) = {
-    DB.withConnection{ implicit connection =>
-      SQL(
-        """
-          UPDATE "User"
-          SET lname={lname}
-          WHERE id = {id}
-        """
-      ).on(
-        'lname -> lname,
-        'id -> id
       ).executeUpdate
     }
   }

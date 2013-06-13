@@ -5,9 +5,7 @@ footer {
 .container {
 	max-width: 600px;
 	min-width: 480px;
-	background-color: #eee;
-	border: 1px solid #e5e5e5;
-	margin: 50px auto auto; 
+	margin: 100px auto auto;
 }
 
 .form-signin {
@@ -27,4 +25,20 @@ footer {
       
 .form-signin input[type="password"] {
 	margin-bottom: 15px;
+}
+
+.inline {
+    display: inline;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.success {
+    color: green;
+}
+
+.error {
+    color: red;
 }
