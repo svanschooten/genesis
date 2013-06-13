@@ -481,6 +481,7 @@ function hardReset(){
     $("#plumbArea").empty();
     makeInput();
     makeOutput();
+    disableResults();
 }
 
 function getAllCircuits(){

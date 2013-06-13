@@ -178,7 +178,6 @@ function beginSimulation(){
 }
 
 function completeSimulation(){
-    //TODO Checken van inputsignalen
     inputs = $("#signalArea")[0].value;
     numSteps = $("#simSteps")[0].value;
     if(inputs == ""){
@@ -193,6 +192,7 @@ function completeSimulation(){
             success: function(response) {
                 drawGraph(parseJSONdataRickShaw(response));
                 signalModal.modal("hide");
+                $("#viewResults").removeClass("disabled");
                 resultModal.modal("show");
             },
             error: function(response) { alertError(response); }
@@ -309,12 +309,17 @@ function saveCircuit() {
     });
 }
 
+function setCircuitName(name){
+    circuitName = name;
+    $("#circuitNameTag").text(name);
+}
+
 function loadCircuit() {
 	var selected = $("#loadNetworkSelector").find('option:selected').text();
 	var network = circuitList[selected];
 	if(network === undefined) return;
 	hardReset();
-    circuitName = network.name;
+    setCircuitName(network.name);
 	for(var i=0;i<network.vertices.length;i++){
 		var cur = network.vertices[i];
 		if(cur.type === "and") andGate(cur.x, cur.y);
@@ -365,6 +370,7 @@ function loadCircuit() {
     	connection.addOverlay([ "Label", {label: cur.protein, location: location, cssClass: "aLabel", id:"label"}]);
 	}
 	getLibrary(network.libraryid.toString());
+    disableResults();
 	loadModal.modal("hide");
 }
 
@@ -378,10 +384,17 @@ function applySetup(){
     } else {
         $("#setupErrorDiv").text("");
         getLibrary($("#setupLibrarySelector option:selected")[0].value);
-        circuitName = name;
+        setCircuitName(name);
         makeInput();
         makeOutput();
+        disableResults();
         setupModal.modal("hide");
+    }
+}
+
+function openResultModal(){
+    if(data != null){
+        resultModal.modal("show");
     }
 }
 
@@ -513,4 +526,8 @@ function showGates(data) {
         }
         gate.appendTo(customDiv);
     }
+}
+
+function disableResults(){
+     $("#viewResults").addClass("disabled");
 }
