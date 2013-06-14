@@ -101,4 +101,7 @@ function drawGraph(series) {
         element: $('#slider') // RangeSlider's element is apparently supposed to be an Array
     });
 
+    // turn off the mRNA concentrations by default
+    $("#legend .ui-sortable").children().each(function(idx, li) { if(idx%2==1) li.children[0].click(); })
+
 }
