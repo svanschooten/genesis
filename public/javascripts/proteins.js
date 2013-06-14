@@ -24,8 +24,8 @@ function makeProteinList(connection){
 		var ind = 0;
 		var proteinArray = Array();
 		for(var key in andMap[o]) {
-			if(usedProteins[key]) continue;
-			proteinArray.push(key);
+			if((usedProteins[key] === "input" && fromSource) || usedProteins[key] === undefined)
+				proteinArray.push(key);
 		}
 		proteinArray.sort();
 		for(var i=0;i<proteinArray.length;i++){
@@ -173,15 +173,21 @@ function getLibrary(libraryId){
         success: function(response) {
             selectedLibrary = libraryId;
             parseLibrary(response);
+            selectLibrary(libraryId)
             notify("Protein library successfully loaded!", "success");
         },
         error: function(response) { alertError("Could not load library."); }
     });
 }
 
+function selectLibrary(libraryId){
+    $("#setupLibrarySelector").val(libraryId);
+}
+
 function getAvailableLibraries(){
     jsRoutes.controllers.Application.getalllibraries().ajax({
         success: function(response) {
+            loaderReady();
             setupgetLibraries($.parseJSON(response));
         },
         error: function(response) { alertError("Library fetching failed."); }
