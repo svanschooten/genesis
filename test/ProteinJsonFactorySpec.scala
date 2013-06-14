@@ -21,8 +21,8 @@ class ProteinJsonFactorySpec extends Specification{
 	      val lib = ProteinJSONFactory.libraryListJSON(-1)
 	      val libName = (lib \\ "libraryname").map(_.as[String])
 	      val libId = (lib \\ "libraryId").map(_.as[Int])
-	      libName must be equalTo(List("default","newLibrary1"))
-	      libId must be equalTo(List(0,2))
+	      libName must be equalTo(List("default"))
+	      libId must be equalTo(List(0))
 	    }
 	  }
 	}

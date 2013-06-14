@@ -22,6 +22,13 @@ class ApplicationSpec extends Specification {
       }
     }
     
+    "render javascript test page" in {
+      running(FakeApplication()) {
+        val jstest = route(FakeRequest(GET, "/testresults")).get 
+        status(jstest) must equalTo(OK)
+      }
+    }
+        
     "render the login page" in {
       running(FakeApplication()) {
         val login = route(FakeRequest(GET, "/login")).get 
@@ -143,9 +150,9 @@ class ApplicationSpec extends Specification {
 			            ]
 			    },
 			    "inputs":"t,A\n0,1",
-			    "time":"1",
-			    "steps":"1",
-			    "library":"2"
+			    "steps":"100",
+			    "stepSize":"1",
+			    "library":"0"
         		 }	""")
 		
 		val fakereq = FakeRequest().withSession("email" -> "hello@world.com","password"->"helloworld").withBody(json)
@@ -155,11 +162,41 @@ class ApplicationSpec extends Specification {
 		val savecircuit = Application.savecircuit(fakereq)
 		status(savecircuit) must equalTo(OK)
         contentType(savecircuit) must equalTo (Some("text/plain"))
-		DB.withConnection { implicit connection =>
-				val deleteLib = SQL(" DELETE FROM networkownedby WHERE networkname={name}")
-			    .on('name -> "testCircuit").executeUpdate()
+       }
+     }
+     
+   "remove circuit" in {
+	   running(FakeApplication()) {
+	     val json: JsValue = Json.parse ("""
+	         {"name":"testCircuit"}
+	         """)
+	     val fakereq = FakeRequest().withSession("email" -> "hello@world.com","password"->"helloworld").withBody(json)
+		 val removeCircuit = Application.removecircuit(fakereq)
+		 status(removeCircuit) must equalTo(OK)
+	     contentType(removeCircuit) must equalTo (Some("text/plain"))
+	   }
+   }
+   
+   "import library" in {
+      running(FakeApplication()) {
+       val json: JsValue = Json.parse ("""
+               {"name":"testLibrary",
+			    "and": "TF_1,TF_2,k_1,K_m,n\nA,B,4.5272,238.9569,3",
+    		   	"cds" : "Gene,k_2,d_1,d_2\nA,4.6337,0.0240,0.8466",
+    		   	"not" : "TF,k_1,K_m,n\nA,4.7313,224.0227,1"
+        		 }	""")
+       val fakereq = FakeRequest().withSession("email" -> "hello@world.com","password"->"helloworld").withBody(json)
+       val importLib = Application.importlibrary(fakereq)
+       status(importLib) must be equalTo(OK)
+       contentType(importLib) must equalTo (Some("text/plain"))
+       
+       DB.withConnection { implicit connection =>
+				val deleteLib = SQL(" DELETE FROM proteinlibraries WHERE libraryname={name}")
+			    .on('name -> "testLibrary").executeUpdate()
 				}
        }
      }
-  }  
+   
+   
+  }
 }

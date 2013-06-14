@@ -119,8 +119,11 @@ object Application extends Controller {
     val userID = User.findByEmail(request.session.get("email").get).get.id
     val libraryName = (json \ "name").as[String]
     val cds = (json \ "cds").as[String].split("\n")
+    println("cds:                       "+ cds)
     val and = (json \ "and").as[String].split("\n")
+    println("and:                        "+ and)
     val not = (json \ "not").as[String].split("\n")
+    println("not:                        "+ not)
     Ok(FileParser.saveParams(userID, libraryName, cds, and, not)).as("text/plain")
   }
 

@@ -21,8 +21,9 @@ class SeleniumSpec  extends Specification {
       /* 
        * Testing url with wrong information
        */
-      //Use this for testing the website : webDriver.get("http://80.112.151.137:9001")
-      webDriver.get("http://127.0.0.1:9000")
+      //Use this for testing the website : 
+        webDriver.get("http://80.112.151.137:9001")
+      //webDriver.get("http://127.0.0.1:9000")
       webDriver.findElement(By.id("email")).sendKeys("wrong@email.com")
       webDriver.findElement(By.id("password")).sendKeys("helloworld")
       webDriver.findElement(By.id("loginbutton")).click()
@@ -148,7 +149,6 @@ class SeleniumSpec  extends Specification {
       webDriver.close()
     }
   }
-  
 
 }
 

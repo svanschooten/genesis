@@ -11,6 +11,8 @@ import play.api.db.DB
 import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
+import factories.ODEFactory
+
 
 
 class NetworkSpec extends Specification {
@@ -80,6 +82,20 @@ class NetworkSpec extends Specification {
           }
          }
       }
+         /*
+      * mkTuple with codingseq as input
+      * return VectorD with corresponding concentration
+      */
+     "mkTuple" should {
+       "be correct" in {
+         running(FakeApplication()) {
+           val A = CodingSeq("A", List((0.3, 0.2)), false)
+           val csTupleA = ODEFactory.mkTuple(A)
+           val csString = csTupleA.toString
+           csString must contain("VectorD(0.3 0.2)")
+         }
+       }
+     }
      
 	running(FakeApplication()){
 		val pa = CodingSeq("A", List((0.1, 0.1)), true)
@@ -277,9 +293,9 @@ class NetworkSpec extends Specification {
 			            ]
 			    },
 			    "inputs":"t,A,B\n0,1,0\n10,0,1\n60,1,1\n90,0,0",
-			    "time":"5",
 			    "steps":"100",
-			    "library":"2"
+                "stepSize":"1",
+			    "library":"0"
         		 }	""")
            val simulate = Network.simulate(json,-1)
            val jsonName = (simulate \\ "name").map(_.as[JsValue])
