@@ -137,22 +137,22 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
      */
     def save(libraryid : Int) = {
     	Network.delete(userid,networkname)
-	    DB.withConnection { implicit connection =>
-	      SQL(
-	        """
-	         insert into networkownedby(userid,networkname,libraryid) values({user},{networkname},{libraryid})
-	        """
-	      ).on(
-	        'user -> userid,
-	        'networkname -> networkname,
-	        'libraryid -> libraryid
-	      ).executeUpdate()
-	      val id = getID
-		  for(cs:CodingSeq <- inputs) {
-		    cs.save(id,cs.isInput)
-		  }
-	    }
-    	inputs.foreach(cs => reset_readies(cs))
+	    DB.withConnection{ implicit connection =>  
+	    	SQL(
+		        """
+		         insert into networkownedby(userid,networkname,libraryid) values({user},{networkname},{libraryid})
+		        """
+		      ).on(
+		        'user -> userid,
+		        'networkname -> networkname,
+		        'libraryid -> libraryid
+		      ).executeUpdate()
+		      val id = getID
+			  for(cs:CodingSeq <- inputs) {
+			    cs.save(id,cs.isInput)
+			  }
+	    	inputs.foreach(cs => reset_readies(cs))
+    	}
 	  }
 
     /**
@@ -326,7 +326,7 @@ object Network {
      *  Generate a new Network based on JSON input.
      */
     def fromJSON(json: JsValue, userid: Int) = {
-    	println(json)
+    	println
         val net_name = (json \ "name").as[String]
         val libraryID = (json \ "library").as[String].toInt
         val stepSize = (json \ "stepSize").as[String].toDouble

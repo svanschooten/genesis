@@ -102,15 +102,14 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
 			}
 			case _ =>
 		  }
-	      
-	      for(l <- linksTo){
-			  l match{
-			    case _: Output =>
-		        case x: Gate => x.output.save(id,x.output.isInput)
-		        case _ =>
-		      }
+      }
+      for(l <- linksTo){
+		  l match{
+		    case _: Output =>
+	        case x: Gate => x.output.save(id,x.output.isInput)
+	        case _ =>
 	      }
-	    }
+      }
     }
 }
 
