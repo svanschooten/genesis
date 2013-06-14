@@ -164,11 +164,6 @@ header {
     padding-top: 0;
 }
 
-img.product{
-    height: 80px;
-    width: 80px;
-}
-
 #alertBox{
     position: absolute;
     bottom: 10px;

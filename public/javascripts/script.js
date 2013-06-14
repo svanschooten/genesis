@@ -47,7 +47,7 @@ function wrapModals(){
     loadModal = $("#loadModal");
     importLibModal = $("#importLibModal");
     deleteModal = $("#deleteModal");
-    setTimeout(getAvailableLibraries, 3000);
+    getAvailableLibraries();
 }
 
 
@@ -378,6 +378,7 @@ function saveCircuit() {
 function setCircuitName(name){
     circuitName = name;
     $("#circuitNameTag").text(name);
+    $("#circuitName").val(name);
 }
 
 function loadCircuit() {
