@@ -358,7 +358,7 @@ function connTargetHasOther(connection){
     });
     
     for(var i = 0; i < other.length; i++){
-        if(other[i] !== connection)
+        if(other[i] !== connection && other[i].protein !== undefined)
             return other[i].protein;
     }
     return "";

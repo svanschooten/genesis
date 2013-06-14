@@ -68,6 +68,7 @@ case class CodingSeq(val name: String, val libID: Int, var concentration: List[(
       //To prevent infinite loops when a cycle is present
       if(ready) return;
       ready = true;
+      println(name+" is ready!")
       DB.withConnection { implicit connection =>   
           for(l <- linksTo){
         	  val out = l match {

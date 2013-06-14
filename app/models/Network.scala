@@ -326,6 +326,7 @@ object Network {
      *  Generate a new Network based on JSON input.
      */
     def fromJSON(json: JsValue, userid: Int) = {
+    	println(json)
         val net_name = (json \ "name").as[String]
         val libraryID = (json \ "library").as[String].toInt
         val stepSize = (json \ "stepSize").as[String].toDouble
