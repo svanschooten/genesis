@@ -498,6 +498,7 @@ function makeOutput(){
 	            connections = jsPlumb.getConnections({target: 'output'});
                 connections.forEach(function(connection){
 					connection.bind("click", function(connection){ openProteinModal(connection); });
+					connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
 				    connection.bind("contextmenu", function(connection){ 
 				        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
 				            jsPlumb.detach(connection);
