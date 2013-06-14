@@ -182,6 +182,7 @@ function getLibrary(libraryId){
 function getAvailableLibraries(){
     jsRoutes.controllers.Application.getalllibraries().ajax({
         success: function(response) {
+            loaderReady();
             setupgetLibraries($.parseJSON(response));
         },
         error: function(response) { alertError("Library fetching failed."); }

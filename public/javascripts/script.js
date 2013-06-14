@@ -25,7 +25,6 @@ Method that fires when the document is loaded.
 Containing all the setup methods and listener setups.
 */
 $(document).ready(function(){
-
     loadArrayScripts("", scripts,
         loadArrayScripts("lib/", libraries,
             loadPageScript()));
@@ -34,9 +33,11 @@ $(document).ready(function(){
     setTimeout(checkJQuery, 100);
 });
 
+
 function checkJQuery(){
     (!jQuery)? setTimeout(checkJQuery, 100) : wrapModals();
 }
+
 
 function wrapModals(){
     proteinModal = $("#proteinModal");
