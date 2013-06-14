@@ -277,6 +277,7 @@ object Network {
      * Delete the network that corresponds with userid and networkname from the database
      */
     def delete(userid: Int, networkname: String){
+      println("Deleting: " + networkname + " from userid: " + userid)
       DB.withConnection { implicit connection =>
         val idResults = SQL(
 	          """
