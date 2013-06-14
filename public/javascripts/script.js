@@ -17,7 +17,7 @@ var libraries = [ 'bootstrap.min.js',
 var scripts = [  ];
 
 var proteinModal, resultModal, signalModal, setupModal, loadModal, importLibModal, deleteModal;
-var circuitName, numSteps, stepSize = "1";
+var circuitName, numSteps, stepSize = 1;
 var circuitList = {};
 
 /**
@@ -103,7 +103,7 @@ for different types of alerts use:
 - info (blue)
 */
 function notify(message, type) {
-    if(type === null) {
+    if(type === null || type == undefined) {
         type = "warning";
     }
     var notificationID = "notification" + Math.floor((Math.random()*100)+1);
@@ -168,21 +168,36 @@ function beginSimulation(){
     signalModal.modal("show");
     var textBox = $("#signalArea")[0];
     var inputs = jsPlumb.getConnections({source: "input"});
-    textBox.value = "t";
     var proteins = {};
     for(var i=0;i<inputs.length;i++){
     	proteins[inputs[i].protein] = inputs[i].protein;
     }
-    for(var key in proteins) textBox.value += ","+proteins[key];
-    textBox.value += "\n0";
-    for(var i=0;i<Object.keys(proteins).length;i++) textBox.value += ",1";
+    // only renew the contents of the signal box if it's not filled in...
+    var renew = false;
+    if(textBox.value.length === 0) {
+        renew = true;
+    // ...or if there are inputs currently in the network that it doesn't specify
+    } else {
+        var els = $("#signalArea")[0].value.split("\n")[0].split(",");
+        for(var key in proteins)
+            if(!els.some(function(el){ return el == key; }))
+                renew = true;
+    }
+    if(renew){
+        textBox.value = "t";
+        for(var key in proteins)
+            textBox.value += ","+proteins[key];
+        textBox.value += "\n0";
+        for(var i = 0; i < Object.keys(proteins).length; i++)
+            textBox.value += ",1";
+    }
 }
 
 function completeSimulation(){
     //TODO Checken van inputsignalen
-    var inputs = $("#signalArea")[0].value;
-    var numSteps = $("#simSteps")[0].value;
-    var stepSize = $("#simStepSize")[0].value;
+    inputs = $("#signalArea")[0].value;
+    numSteps = $("#simSteps")[0].value;
+    stepSize = $("#simStepSize")[0].value;
     if(inputs == ""){
         $("#signalErrorDiv").text("No input signal given.")
     } else {
@@ -228,25 +243,25 @@ function importLibrary(){
 }
 
 function deleteCircuit(){
-    var selected = $(".networkSelector").find('option:selected').text();
+    var selected = $("#deleteNetworkSelector").find('option:selected').text();
     var confirmed = confirm("Are you sure you want to remove this circuit?");
     if(confirmed) {
+        updateDelete(selected);
         jsRoutes.controllers.Application.removecircuit().ajax({
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify({name: selected}),
             success: function(response) {
-                notify(response);
-                updateDelete(selected);
+                notify(response, "success");
+                deleteModal.modal("hide");
             },
             error: function(response) { "Unable to load circuits."; }
         });
     }
 }
 
-function updateDelete(){
+function updateDelete(selected){
     getallCircuits();
-    deleteModal.modal("hide");
     if(selected.toUpperCase == circuitName.toUpperCase){
         hardReset();
     }
@@ -260,22 +275,21 @@ function showSelectionModal(modal, select){
     select.empty();
     modal.modal("show");
     $("<option></option>").text("Loading circuits...").appendTo(select);
-    getallCircuits(select);
+    getallCircuits();
 }
 
 function showLoadModal(){
     showSelectionModal(loadModal, $("#loadNetworkSelector"));
 }
 
-function getallCircuits(select) {
+function getallCircuits() {
 	jsRoutes.controllers.Application.getallcircuits().ajax({
         method: "POST",
         success: function(response) {
         	parseCircuits(response);
-      		fillSelection(select);
         },
         complete: function(){
-            fillSelection(select);
+            fillSelection();
         },
         error: function(response) { "Unable to load circuits."; }
     });
@@ -294,7 +308,7 @@ function parseCircuits(json) {
 			if(!(cs.next in inputs)) inputs[cs.next] = Array();
 			inputs[cs.next].push(cs.name);
 		}
-		
+
 		var network = {};
 	    network.vertices = [];
 	    network.edges = [];
@@ -335,7 +349,8 @@ function parseCircuits(json) {
 	circuitList = results;
 }
 
-function fillSelection(element){
+function fillSelection(){
+    var element = $(".networkSelect");
     element.empty();
     for (var key in circuitList){
  	    $("<option></option>").text(circuitList[key].name).appendTo(element);
@@ -343,6 +358,7 @@ function fillSelection(element){
 }
 
 function saveCircuit() {
+    stepSize = $("#simStepSize")[0].value;
 	var data = {name: circuitName, circuit: parseJsPlumb(), library: selectedLibrary, stepSize: stepSize};
     jsRoutes.controllers.Application.savecircuit().ajax({
         data: JSON.stringify(data),
@@ -404,7 +420,7 @@ function loadCircuit() {
 		connection.protein = cur.protein;
 		connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
 	    connection.bind("click", function(connection){ openProteinModal(connection); });
-	    connection.bind("contextmenu", function(connection){ 
+	    connection.bind("contextmenu", function(connection){
 	        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
 	            jsPlumb.detach(connection);
 	        }
