@@ -17,7 +17,7 @@ var libraries = [ 'bootstrap.min.js',
 var scripts = [  ];
 
 var proteinModal, resultModal, signalModal, setupModal, loadModal, importLibModal, deleteModal;
-var circuitName, numSteps, stepSize = 1;
+var circuitName = "", numSteps = 100, stepSize = 1;
 var circuitList = {};
 
 /**
@@ -484,6 +484,7 @@ function parseGates(json){
     // copy for showGates
     var data_parsed = [];
     // get it sorted out
+    $("#customGates").empty();
     data.forEach(function(gate) {
         var nodes = Array();
         var edges = Array();
