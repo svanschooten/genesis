@@ -4,7 +4,6 @@
 	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/home.css")">
     <link href=@routes.Assets.at("stylesheets/lib/rickshaw.min.css") rel='stylesheet' />
     <link href=@routes.Assets.at("stylesheets/main.css") rel='stylesheet' />
-    <script src=@routes.Assets.at("javascripts/lib/jquery-ui-1.10.2.min.js") ></script>
 	<script src=@routes.Assets.at("javascripts/lib/jquery.jsPlumb-1.4.0-all-min.js") ></script>
 	<script src=@routes.Assets.at("javascripts/plumbWorkspace.js") ></script>
 	<script src=@routes.Assets.at("javascripts/proteins.js") ></script>
@@ -29,14 +28,14 @@
                             <li>
                                 <a id="new" onclick="resetWorkspace()"> New </a>
                             </li>
-                            <li class="divider" />
+                            <li class="divider"></li>
                             <li>
                                 <a id="save" onclick="saveCircuit()"> Save </a>
                             </li>
                             <li>
                                 <a id="load" onclick="showLoadModal()"> Load </a>
                             </li>
-                            <li class="divider" />
+                            <li class="divider"></li>
                             <li>
                                 <a id="delete" onclick="showDeleteModal()"> Delete a circuit </a>
                             </li>
@@ -50,14 +49,14 @@
                             <li>
                                 <a id = "setup" onclick="showSetup()">Setup</a>
                             </li>
-                            <li class="divider" />
+                            <li class="divider"></li>
                             <li>
                                 <a id = "runcircuit" onclick="beginSimulation()">Run circuit</a>
                             </li>
                             <li id="viewResults" class="disabled">
                                 <a onclick="openResultModal()">View results</a>
                             </li>
-                            <li class="divider" />
+                            <li class="divider"></li>
                             <li>
                                 <a id ="import" onclick="showImportLibrary()">Import protein library</a>
                             </li>
@@ -66,8 +65,8 @@
                 </div><br><br><br>    
                 <div class="well inset-area">
 					<div>
-					    <div id="ag" class="product"><img height="80px" width="80px" src=@routes.Assets.at("images/AND_gate.png")></div>
-					    <div id="ng" class="product"><img height="80px" width="80px" src=@routes.Assets.at("images/NOT_gate.png")></div>
+					    <div id="ag" class="product"><img class="product" height="80px" width="80px" src=@routes.Assets.at("images/AND_gate.png")></div>
+					    <div id="ng" class="product"><img class="product" height="80px" width="80px" src=@routes.Assets.at("images/NOT_gate.png")></div>
 					</div>
                     <hr>
                     Modified gates :

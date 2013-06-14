@@ -47,7 +47,7 @@ function wrapModals(){
     loadModal = $("#loadModal");
     importLibModal = $("#importLibModal");
     deleteModal = $("#deleteModal");
-    getAvailableLibraries();
+    setTimeout(getAvailableLibraries, 3000);
 }
 
 
