@@ -88,7 +88,6 @@ function setLabel(con) {
 }
 
 function makeConnection(params) {
-	console.log(params);
     if(params.sourceId === params.targetId) {
         notify("Cannot connect to self.", "Warning");
         return false;
@@ -98,7 +97,7 @@ function makeConnection(params) {
         notify("Invalid element: " + params.sourceId, "Warning");
         return false;
     }
-    currentConnection = params.connection;    
+    currentConnection = params.connection;
     var other = connSourceOther(params.connection);
     if(other.length > 0){
     	var otherTarget = connTargetHasOther(params.connection);
@@ -109,7 +108,7 @@ function makeConnection(params) {
     	params.connection.protein = other[0].protein;
     	setLabel(params.connection);
     }
-    else params.connection.protein = "";  
+    else params.connection.protein = "";
      
     params.connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
     params.connection.bind("click", function(connection){ openProteinModal(connection); });
@@ -497,15 +496,8 @@ function makeOutput(){
         dropOptions: $.extend(dropOptions, 
             {drop: function(event, ui){
 	            connections = jsPlumb.getConnections({target: 'output'});
-                connections.forEach(function(connection){
-					connection.bind("click", function(connection){ openProteinModal(connection); });
-					connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
-				    connection.bind("contextmenu", function(connection){ 
-				        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
-				            jsPlumb.detach(connection);
-				        }
-				        return false;
-				    });
+                connections.forEach(function(con){
+                	makeConnection({connection:con, targetId:con.targetId, sourceId:con.sourceId});
 				});
 	        }}
         )
