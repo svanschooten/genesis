@@ -61,7 +61,7 @@ function openProteinModal(connection){
     currentConnection = connection;
     usedProteins = {};
     var cons = jsPlumb.getConnections();
-    for(var i=0;i<cons.length;i++) usedProteins[cons[i].protein] = true;
+    for(var i=0;i<cons.length;i++) usedProteins[cons[i].protein] = cons[i].sourceId;
     proteinModal.modal("show");
     makeProteinList(connection);
 }
