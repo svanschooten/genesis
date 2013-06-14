@@ -168,14 +168,29 @@ function beginSimulation(){
     signalModal.modal("show");
     var textBox = $("#signalArea")[0];
     var inputs = jsPlumb.getConnections({source: "input"});
-    textBox.value = "t";
     var proteins = {};
     for(var i=0;i<inputs.length;i++){
     	proteins[inputs[i].protein] = inputs[i].protein;
     }
-    for(var key in proteins) textBox.value += ","+proteins[key];
-    textBox.value += "\n0";
-    for(var i=0;i<Object.keys(proteins).length;i++) textBox.value += ",1";
+    // only renew the contents of the signal box if it's not filled in...
+    var renew = false;
+    if(textBox.value.length === 0) {
+        renew = true;
+    // ...or if there are inputs currently in the network that it doesn't specify
+    } else {
+        var els = $("#signalArea")[0].value.split("\n")[0].split(",");
+        for(var key in proteins)
+            if(!els.some(function(el){ return el == key; }))
+                renew = true;
+    }
+    if(renew){
+        textBox.value = "t";
+        for(var key in proteins)
+            textBox.value += ","+proteins[key];
+        textBox.value += "\n0";
+        for(var i = 0; i < Object.keys(proteins).length; i++)
+            textBox.value += ",1";
+    }
 }
 
 function completeSimulation(){
@@ -294,7 +309,7 @@ function parseCircuits(json) {
 			if(!(cs.next in inputs)) inputs[cs.next] = Array();
 			inputs[cs.next].push(cs.name);
 		}
-		
+
 		var network = {};
 	    network.vertices = [];
 	    network.edges = [];
@@ -404,7 +419,7 @@ function loadCircuit() {
 		connection.protein = cur.protein;
 		connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
 	    connection.bind("click", function(connection){ openProteinModal(connection); });
-	    connection.bind("contextmenu", function(connection){ 
+	    connection.bind("contextmenu", function(connection){
 	        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
 	            jsPlumb.detach(connection);
 	        }
