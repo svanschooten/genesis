@@ -31,8 +31,12 @@ $(document).ready(function(){
             loadPageScript()));
 
     getCustomGates();
-    setTimeout(wrapModals, 1000);
+    setTimeout(checkJQuery, 100);
 });
+
+function checkJQuery(){
+    (!jQuery)? setTimeout(checkJQuery, 100) : wrapModals();
+}
 
 function wrapModals(){
     proteinModal = $("#proteinModal");
@@ -275,6 +279,7 @@ function getallCircuits() {
         },
         complete: function(){
             fillSelection();
+            getCustomGates();
         },
         error: function(response) { "Unable to load circuits."; }
     });
