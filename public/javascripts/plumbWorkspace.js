@@ -105,8 +105,10 @@ function makeConnection(params) {
     		notify("Proteins "+other[0].protein+" and "+otherTarget+" can not lead to the same AND-gate with this library.", "Warning")
     		return false;
     	}
-    	params.connection.protein = other[0].protein;
-    	setLabel(params.connection);
+    	if(otherTarget !== ""){
+    		params.connection.protein = other[0].protein;
+    		setLabel(params.connection);
+    	}
     }
     else params.connection.protein = "";
      
