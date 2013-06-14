@@ -17,7 +17,7 @@ import factories.FileFactory
  *  desired. It can also be saved to an external database, and its companion enables
  *  loading back from such a database, as well as removal from it.
  */
-class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String, stepSize: Double = 1) {
+class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String, val stepSize: Double = 1) {
 
     // resets all the ready flags
     private def reset_readies(cs: CodingSeq) {
@@ -47,7 +47,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
             case _ => Nil
         }).toSet
 
-        val times = 0.0 to finish by stepSize
+        val times = 0.0 to (finish*stepSize) by stepSize
         inputs.foreach(reset_readies _)
         // do the required steps and save the concentrations each round
         times.foldRight(List(getConcs().toList.sortWith(_._1 < _._1)))((time,li)=>{
@@ -390,7 +390,7 @@ object Network {
       val network = fromJSON(json, userID)
       val inputs = (json \ "inputs").as[String].split("\n")
       val steps = (json \ "steps").as[String].toInt
-      network.setStartParameters(inputs, 100.0, 10.0, steps)
+      network.setStartParameters(inputs, 100.0, 10.0, steps*network.stepSize)
       val res = network.simJson(steps - 1)
       Json.arr(res._1, res._2)
     }
