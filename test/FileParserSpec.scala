@@ -56,7 +56,7 @@ class FileParserSpec extends Specification {
 		"NewAndParameters" should {
 			"correctly be saved" in {
 				running(FakeApplication()){
-				val saveParam = FileParser.saveParams(Array("","TESTA,TESTB,1,1,1"), "AND", -1, "default")
+				val saveParam = FileParser.saveParams(-1,"default",Array(""),Array("","TESTA,TESTB,1,1,1"),Array(""))
 					DB.withConnection { implicit connection =>
 						val andcds = SQL("select input1,input2,k1,km,n from andparams where input1={in1} and input2={in2}")
 						.on('in1 -> "TESTA", 'in2 -> "TESTB")
@@ -78,9 +78,9 @@ class FileParserSpec extends Specification {
 		}
 		
 		"NewAndParameters" should {
-			"cannot override old values" in {
+			"can override old values" in {
 				running(FakeApplication()){
-				val saveParam = FileParser.saveParams(Array("","TESTA,TESTB,2,2,2"), "AND", -1, "default")
+				val saveParam = FileParser.saveParams(-1,"default",Array(""),Array("","TESTA,TESTB,2,2,2"),Array(""))
 					DB.withConnection { implicit connection =>
 						val andcds = SQL("select input1,input2,k1,km,n from andparams where input1={in1} and input2={in2}")
 						.on('in1 -> "TESTA", 'in2 -> "TESTB")
@@ -92,9 +92,9 @@ class FileParserSpec extends Specification {
 						for(info <- andcds) {
 							info._1 must equalTo("TESTA")
 							info._2 must equalTo("TESTB")
-							info._3 must equalTo(1)
-							info._4 must equalTo(1)
-							info._5 must equalTo(1)
+							info._3 must equalTo(2)
+							info._4 must equalTo(2)
+							info._5 must equalTo(2)
 							}
 						val deleteLib = SQL(" DELETE FROM andparams WHERE input1={in1} and input2={in2}")
 						.on('in1 -> "TESTA", 'in2 -> "TESTB").executeUpdate()
@@ -106,7 +106,7 @@ class FileParserSpec extends Specification {
 		"NewNotParameters" should {
 			"correctly be saved" in {
 				running(FakeApplication()){
-				val saveParam = FileParser.saveParams(Array("","TEST,1,1,1"), "NOT", -1, "default")
+				val saveParam = FileParser.saveParams(-1,"default", Array(""),Array(""),Array("","TEST,1,1,1"))
 					DB.withConnection { implicit connection =>
 						val notcds = SQL("select input,k1,km,n from notparams where input={in}")
 						.on('in -> "TEST")
@@ -127,9 +127,9 @@ class FileParserSpec extends Specification {
 		}
 		
 		"NewNotParameters" should {
-			"cannot override old values" in {
+			"can override old values" in {
 				running(FakeApplication()){
-				val saveParam = FileParser.saveParams(Array("","TEST,2,2,2"), "NOT", -1, "default")
+				val saveParam = FileParser.saveParams(-1,"default", Array(""),Array(""),Array("","TEST,2,2,2"))
 					DB.withConnection { implicit connection =>
 						val notcds = SQL("select input,k1,km,n from notparams where input={in}")
 						.on('in -> "TEST")
@@ -140,9 +140,9 @@ class FileParserSpec extends Specification {
 						notcds.size must equalTo(1)
 						for(info <- notcds) {
 							info._1 must equalTo("TEST")
-							info._2 must equalTo(1)
-							info._3 must equalTo(1)
-							info._4 must equalTo(1)
+							info._2 must equalTo(2)
+							info._3 must equalTo(2)
+							info._4 must equalTo(2)
 							}
 						val deleteLib = SQL(" DELETE FROM notparams WHERE input={in} ")
 						.on('in -> "TEST").executeUpdate()
@@ -154,7 +154,7 @@ class FileParserSpec extends Specification {
 		"NewCDSParameters" should {
 			"correctly be saved" in {
 				running(FakeApplication()){
-				val saveParam = FileParser.saveParams(Array("","TEST,1,1,1"), "CDS", -1, "default")
+				val saveParam = FileParser.saveParams(-1,"default", Array("","TEST,1,1,1"), Array(""),Array(""))
 					DB.withConnection { implicit connection =>
 						val cds = SQL("select name,k2,d1,d2 from cdsparams where name={name}")
 						.on('name -> "TEST")
@@ -175,9 +175,9 @@ class FileParserSpec extends Specification {
 		}
 		
 		"NewCDSParameters" should {
-			"cannot override old values" in {
+			"can override old values" in {
 				running(FakeApplication()){
-				val saveParam = FileParser.saveParams(Array("","TEST,2,2,2"), "CDS", -1, "default")
+				val saveParam = FileParser.saveParams(-1,"default", Array("","TEST,2,2,2"), Array(""),Array(""))
 					DB.withConnection { implicit connection =>
 						val cds = SQL("select name,k2,d1,d2 from cdsparams where name={name}")
 						.on('name -> "TEST")
@@ -188,9 +188,9 @@ class FileParserSpec extends Specification {
 						cds.size must equalTo(1)
 						for(info <- cds) {
 							info._1 must equalTo("TEST")
-							info._2 must equalTo(1)
-							info._3 must equalTo(1)
-							info._4 must equalTo(1)
+							info._2 must equalTo(2)
+							info._3 must equalTo(2)
+							info._4 must equalTo(2)
 							}
 						val deleteLib = SQL(" DELETE FROM cdsparams WHERE name={name}")
 						.on('name-> "TEST").executeUpdate()
