@@ -61,7 +61,7 @@ function openProteinModal(connection){
     currentConnection = connection;
     usedProteins = {};
     var cons = jsPlumb.getConnections();
-    for(var i=0;i<cons.length;i++) usedProteins[cons[i].protein] = true;
+    for(var i=0;i<cons.length;i++) usedProteins[cons[i].protein] = cons[i].sourceId;
     proteinModal.modal("show");
     makeProteinList(connection);
 }
@@ -83,7 +83,7 @@ function setProtein() {
 
 function setLabel(con) {
     con.removeOverlay("label");
-    var location = (con.targetId === "Output")? 0.4 : 0.7;
+    var location = (con.targetId === "output")? 0.4 : 0.7;
     con.addOverlay([ "Label", {label: con.protein, location: location, cssClass: "aLabel", id:"label"}]);
 }
 
@@ -97,7 +97,7 @@ function makeConnection(params) {
         notify("Invalid element: " + params.sourceId, "Warning");
         return false;
     }
-    currentConnection = params.connection;    
+    currentConnection = params.connection;
     var other = connSourceOther(params.connection);
     if(other.length > 0){
     	var otherTarget = connTargetHasOther(params.connection);
@@ -105,10 +105,15 @@ function makeConnection(params) {
     		notify("Proteins "+other[0].protein+" and "+otherTarget+" can not lead to the same AND-gate with this library.", "Warning")
     		return false;
     	}
-    	params.connection.protein = other[0].protein;
-    	setLabel(params.connection);
+    	for(var i=0;i<other.length;i++){
+    		if(other[0].protein !== ""){
+	    		params.connection.protein = other[0].protein;
+	    		setLabel(params.connection);
+	    		break;
+	    	}
+    	}
     }
-    else params.connection.protein = "";  
+    else params.connection.protein = "";
      
     params.connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
     params.connection.bind("click", function(connection){ openProteinModal(connection); });
@@ -356,7 +361,7 @@ function connTargetHasOther(connection){
     });
     
     for(var i = 0; i < other.length; i++){
-        if(other[i] !== connection)
+        if(other[i] !== connection && other[i].protein !== undefined)
             return other[i].protein;
     }
     return "";
@@ -373,7 +378,7 @@ function connSourceOther(connection){
             source: sourceId
         });    
     for(var i = 0; i < other.length; i++){
-        if(other[i] !== connection && other[i].protein !== "") res.push(other[i]);
+        if(other[i] !== connection) res.push(other[i]);
     }
     return res;
 }
@@ -496,15 +501,8 @@ function makeOutput(){
         dropOptions: $.extend(dropOptions, 
             {drop: function(event, ui){
 	            connections = jsPlumb.getConnections({target: 'output'});
-                connections.forEach(function(connection){
-					connection.bind("click", function(connection){ openProteinModal(connection); });
-					connection.addOverlay([ "Arrow", { width:15, location: 0.65,height:10, id:"arrow" }]);
-				    connection.bind("contextmenu", function(connection){ 
-				        if (confirm("Delete connection from " + connection.sourceId + " to " + connection.targetId + "?")) {
-				            jsPlumb.detach(connection);
-				        }
-				        return false;
-				    });
+                connections.forEach(function(con){
+                	makeConnection({connection:con, targetId:con.targetId, sourceId:con.sourceId});
 				});
 	        }}
         )
