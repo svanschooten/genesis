@@ -17,7 +17,7 @@ var libraries = [ 'bootstrap.min.js',
 var scripts = [  ];
 
 var proteinModal, resultModal, signalModal, setupModal, loadModal, importLibModal, deleteModal;
-var circuitName, numSteps, stepSize = "1";
+var circuitName, numSteps, stepSize = 1;
 var circuitList = {};
 
 /**
@@ -103,7 +103,7 @@ for different types of alerts use:
 - info (blue)
 */
 function notify(message, type) {
-    if(type === null) {
+    if(type === null || type == undefined) {
         type = "warning";
     }
     var notificationID = "notification" + Math.floor((Math.random()*100)+1);
@@ -195,9 +195,9 @@ function beginSimulation(){
 
 function completeSimulation(){
     //TODO Checken van inputsignalen
-    var inputs = $("#signalArea")[0].value;
-    var numSteps = $("#simSteps")[0].value;
-    var stepSize = $("#simStepSize")[0].value;
+    inputs = $("#signalArea")[0].value;
+    numSteps = $("#simSteps")[0].value;
+    stepSize = $("#simStepSize")[0].value;
     if(inputs == ""){
         $("#signalErrorDiv").text("No input signal given.")
     } else {
@@ -243,25 +243,25 @@ function importLibrary(){
 }
 
 function deleteCircuit(){
-    var selected = $(".networkSelector").find('option:selected').text();
+    var selected = $("#deleteNetworkSelector").find('option:selected').text();
     var confirmed = confirm("Are you sure you want to remove this circuit?");
     if(confirmed) {
+        updateDelete(selected);
         jsRoutes.controllers.Application.removecircuit().ajax({
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify({name: selected}),
             success: function(response) {
-                notify(response);
-                updateDelete(selected);
+                notify(response, "success");
+                deleteModal.modal("hide");
             },
             error: function(response) { "Unable to load circuits."; }
         });
     }
 }
 
-function updateDelete(){
+function updateDelete(selected){
     getallCircuits();
-    deleteModal.modal("hide");
     if(selected.toUpperCase == circuitName.toUpperCase){
         hardReset();
     }
@@ -275,22 +275,21 @@ function showSelectionModal(modal, select){
     select.empty();
     modal.modal("show");
     $("<option></option>").text("Loading circuits...").appendTo(select);
-    getallCircuits(select);
+    getallCircuits();
 }
 
 function showLoadModal(){
     showSelectionModal(loadModal, $("#loadNetworkSelector"));
 }
 
-function getallCircuits(select) {
+function getallCircuits() {
 	jsRoutes.controllers.Application.getallcircuits().ajax({
         method: "POST",
         success: function(response) {
         	parseCircuits(response);
-      		fillSelection(select);
         },
         complete: function(){
-            fillSelection(select);
+            fillSelection();
         },
         error: function(response) { "Unable to load circuits."; }
     });
@@ -350,7 +349,8 @@ function parseCircuits(json) {
 	circuitList = results;
 }
 
-function fillSelection(element){
+function fillSelection(){
+    var element = $(".networkSelect");
     element.empty();
     for (var key in circuitList){
  	    $("<option></option>").text(circuitList[key].name).appendTo(element);
@@ -358,6 +358,7 @@ function fillSelection(element){
 }
 
 function saveCircuit() {
+    stepSize = $("#simStepSize")[0].value;
 	var data = {name: circuitName, circuit: parseJsPlumb(), library: selectedLibrary, stepSize: stepSize};
     jsRoutes.controllers.Application.savecircuit().ajax({
         data: JSON.stringify(data),
