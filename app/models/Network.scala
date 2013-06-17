@@ -192,7 +192,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
       }
       val secLine = input(1).split(",")
       for(j <- 1 to secLine.length-1){
-	      if(secLine(j).toInt==1) curConcs(j) = defaultConcs(TFInd(j))
+	      if(secLine(j).toInt==1) curConcs(j) = defaultConcs.getOrElse(TFInd(j),(10,100))
 	      else curConcs(j) = (0.0,0.0)
 	    }
       var t = 0.0
@@ -205,7 +205,7 @@ class Network(val inputs: List[CodingSeq], userid: Int, val networkname: String,
           t += stepSize
         }
         for(j <- 1 to curLine.length-1){
-	      if(curLine(j).toInt==1) curConcs(j) = defaultConcs(TFInd(j))
+	      if(curLine(j).toInt==1) curConcs(j) = defaultConcs.getOrElse(TFInd(j),(10,100))
 	      else curConcs(j) = (0.0,0.0)
 	    }
       }
@@ -277,7 +277,6 @@ object Network {
      * Delete the network that corresponds with userid and networkname from the database
      */
     def delete(userid: Int, networkname: String){
-      println("Deleting: " + networkname + " from userid: " + userid)
       DB.withConnection { implicit connection =>
         val idResults = SQL(
 	          """
@@ -326,7 +325,6 @@ object Network {
      *  Generate a new Network based on JSON input.
      */
     def fromJSON(json: JsValue, userid: Int) = {
-    	println
         val net_name = (json \ "name").as[String]
         val libraryID = (json \ "library").as[String].toInt
         val stepSize = (json \ "stepSize").as[String].toDouble
@@ -391,7 +389,7 @@ object Network {
       val network = fromJSON(json, userID)
       val inputs = (json \ "inputs").as[String].split("\n")
       val steps = (json \ "steps").as[String].toInt
-      network.setStartParameters(inputs, 100.0, 10.0, steps*network.stepSize)
+      network.setStartParameters(inputs, 100.0, 10.0, steps)
       val res = network.simJson(steps - 1)
       Json.arr(res._1, res._2)
     }
