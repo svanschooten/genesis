@@ -290,6 +290,8 @@ function showLoadModal(){
 function getallCircuits() {
 	jsRoutes.controllers.Application.getallcircuits().ajax({
         method: "POST",
+        data: JSON.stringify({lib: selectedLibrary}),
+        contentType: "application/json",
         success: function(response) {
         	parseCircuits(response);
         },
@@ -450,7 +452,7 @@ function applySetup(){
     } else if(name === ""){
         $("#setupErrorDiv").text("You must specify a name!");
     } else {
-    	if(lib !== selectedLibrary && selectedLibrary !== -1){
+    	if(lib !== selectedLibrary && selectedLibrary !== "-1"){
     		var confirmed = confirm("Are you sure you want to change the library? This will remove all selected proteins.");
     		if(!confirmed) return;
     		var cons = jsPlumb.getAllConnections();
@@ -462,7 +464,9 @@ function applySetup(){
 	    		}
 	    	}
     	}
-    	getLibrary($("#setupLibrarySelector option:selected")[0].value);	
+    	getLibrary($("#setupLibrarySelector option:selected")[0].value);
+        selectedLibrary=lib;
+        getallCircuits();
         $("#setupErrorDiv").text("");
         setCircuitName(name);
         makeInput();
@@ -483,6 +487,8 @@ function openResultModal(){
  */
 function getCustomGates(){
     jsRoutes.controllers.Application.getallcircuits().ajax({
+        data: JSON.stringify({lib: selectedLibrary}),
+        contentType: "application/json",
         success: function(response) {
             showGates(parseGates(response));
         },
