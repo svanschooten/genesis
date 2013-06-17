@@ -414,8 +414,6 @@ function makeCustomGate(id,posx,posy) {
     }
     // generate edges one at a time, making nodes as needed
     for(var i = 0; i < data.edges.length; i++) {
-        // firstTimeTarget is used to determine which endpoint of an and gate to connect to
-        var firstTimeTarget = false;
         var source = nodes[Object.getOwnPropertyNames(nodes).reduce(reduceFn(data.edges[i].source), undefined)];
         if(!source) {
             var src = data.nodes.reduce(reduceFn(data.edges[i].source),undefined);
@@ -424,19 +422,15 @@ function makeCustomGate(id,posx,posy) {
         }
         var target = nodes[Object.getOwnPropertyNames(nodes).reduce(reduceFn(data.edges[i].target),undefined)];
         if(!target){
-            firstTimeTarget = true;
             var tgt = data.nodes.reduce(reduceFn(data.edges[i].target), undefined);
-            target = tgt.type === "not" ? notGate(posx+(i+1)*100, posy+(i+1)*100) : andGate(posx+(i+1)*100, posy+(i+1)*100);
+            target = tgt.type === "not" ? notGate(posx+tgt.x, posy+tgt.y) : andGate(posx+tgt.x, posy+tgt.y);
             nodes[data.edges[i].target] = target;
         }
-        else
-            firstTimeTarget = false;
-        // thanks to Anton for figuring out it had to be the EPs, not just the DIVs
-        var srcEPs = jsPlumb.getEndpoints(source.id);
-        var tgtEPs = jsPlumb.getEndpoints(target.id);
+        var srcEP = jsPlumb.getEndpoints(source.id).filter(filterFn("isSource"))[0];
+        var tgtEP = jsPlumb.getEndpoints(target.id).filter(filterFn("isTarget")).reduce(function(prev,next){if(!prev && !next.isFull()) return next; return prev;},undefined);
         var conn = jsPlumb.connect({
-            "source": srcEPs.filter(filterFn("isSource"))[0],
-            "target": tgtEPs.filter(filterFn("isTarget"))[firstTimeTarget ? 0 : 1]
+            "source": srcEP,
+            "target": tgtEP
         });
         makeConnection({
             "sourceId": source.id,
