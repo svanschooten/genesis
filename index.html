@@ -14,7 +14,7 @@
 
         <div class="inline-block">
             <h2 class="inline">
-                A GENetic SImulation System, by team JAMES
+                A GENEtic SImulation System, by team JAMES
             </h2>
             &nbsp;&nbsp;
             <img class="inline" height="32px" width="32px" src="images/teamJamesLogoSmall128x128-inv.png">
@@ -76,9 +76,6 @@
         <a href="#advanced">Guide for more advanced circuits.</a>
     </li>
     <li>
-        <a href="#functionality">Core functionality.</a>
-    </li>
-    <li>
         <a href="#wanted">Wanted extra functionality.</a>
     </li>
     <li>
@@ -122,37 +119,41 @@
             Now you will see an input and an output gate. These will act as a source and sink to the circuit. Drag
             and drop the pictures of gates on the right into the workspace to create a new gate instance.<br>
             You can also drag the names under Modified gates into the workspace to import an existing circuit.
-            The circuit will be drawn just the way it was saved, so you won't have to reorder everything.
+            The circuit will be drawn just the way it was saved, so you won't have to reorder everything. It
+            will be drawn at a slight offset from the place where it is dropped, because it is drawn relative to
+            that position.
         </li>
         <li>
             When you create a new instance, endpoints are added to the gate. Use these to connect your gates,
-            but
-            remember, gates have inputs and outputs, and they can only be dragged in one way!<br>
+            but remember, gates have inputs and outputs, and you can only drag a connection from the blue output
+            circles to the green input circles.<br>
             After connecting you see the connection and on that connection will be an arrow indicating the
             direction of the connection.
         </li>
         <li>
             When two gates are linked up, you can click that connection to select the protein that should be
-            used in
-            that connection. Be careful not to chose the same protein multiple times.<br>
-            After selecting you will see a label appear on the connection indicating what protein is used.
+            used in that connection. Be careful not to choose the same protein multiple times.<br>
+            After selecting a label will appear on the connection indicating which protein is used.
         </li>
         <li>
-            When you are content with your circuit, you can click on "Simulation" and then "Run circuit" to
-            start
-            the simulation process.<br>
-            !! This can take a while for larger circuits, but when the simulation is ready the results will show
-            automatically. So be patient. !!
+            When you are satisfied with your circuit, you can click on "Simulation". Another modal will show that
+            enables you to specify an input for each protein that comes from the source (the big input box). A
+            default input where all signals are on is provided. You can make it more interesting by specifying
+            more lines of input according to the format in the <a href="#inputs">Inputs</a> section.
         </li>
         <li>
-            But first you must input the input vectors, more will be explained in section <a
-                href="#inputs"><strong>Inputs</strong></a>
+            You can also specify the number of steps to take, and how big the steps should be. It is advised not to
+            take more than two thousand steps, because that will probably cause your machine to slow down when you try
+            to interact with the results (see below and in the <a href="#outputs">Output</a> section). Also, if the step
+            size is greater than four the simulation will become so inaccurate that some of the values in the system
+            will tend to infinity and the simulator doesn't know what to do with that, so it will give back an error.
+            The default value of one should be just fine in most cases.
         </li>
         <li>
-            Finally you click "Apply" and the simulation will start. When done you will be presented with a
-            graph
-            and a button to download a .csv with the results. More info about the output in the <a
-                href="#outputs"><strong>Outputs</strong></a> section.
+            Once you've specified the input parameters, click "Apply" and the simulation will start. When it is done
+            you will be presented with a graph and a button to download a <acronym title="Comma Separated Values">CSV
+            </acronym> file with the results. More info about the output is given in the <a href="#outputs">Outputs</a>
+            section.
         </li>
     </ol>
     <a class="small" href="#welcome-to-project-genesis">Back to top!</a>
@@ -162,9 +163,8 @@
 
     <p>
         The inputs are specified in a vector format, meaning that all the values that belong together should be
-        beneath each other.
-        This is ordering is column based, and the first column should be the time at which the input should
-        change.<br>
+        beneath each other. This is ordering is column based, and the first column should be the time at which
+        the input should change.<br>
         For simpler use of this system, a binary input was chosen what will be parsed to weighed signals in the
         backend.<br>
         At the top of the vectors should be the identifiers, the first one being <q>t</q> for the time. Next
@@ -172,6 +172,14 @@
         Here is an example (though it's a cropped version better viewing of this page.):
     </p>
     <img src="images/inputs.png" alt="cropped inputs">
+
+    <p>
+        More concretely, on the first line the time and input proteins are specified. These will be filled in
+        automatically for you. The next lines are each of the format &lt;time&gt;,0,0,1,1,0,1,0,0,... Here the
+        first number is the time step at which the inputs are specified, and the zeros and ones say which
+        input is on at this time. The inputs will maintain this state until the time of the next line, or
+        until the end of the simulation if this is the last line.
+    </p>
 
     <p>
         This is a simple input method so we could focus on getting the primary functionality working. In the
@@ -187,10 +195,17 @@
         The output is specified by the circuit you designed, proteins you used, the library and the input signal. This
         is then sent to the back-end to be parsed into a full memory model, but more on that in the section about the
         <a href="#inner">inner workings</a>. The output is then given back is the form of series data, for each input
-        protein you get both the MRNA and protein levels as result. These levels are plotted in an interactive graph,
-        meaning you can zoom horizontally for better insight in the change of levels. Also a .csv can be downloaded that
-        will have the same form as the <a href="#inputs">input signal</a>. This can be used for further analysis and
-        plotting outside of the GENESIS environment.
+        protein you get both the mRNA and protein levels as result. These levels are plotted in an interactive graph,
+        which enables you to zoom horizontally. In the graph the mRNA concentrations are turned off by default, but you
+        can use the legend on the right to enable them again. You can click on the ticks in this legend to enable or
+        disable a specific protein or mRNA concentration, and you can also click on the name of one of the items to display
+        just that item.
+    </p>
+    <p>
+        Also a CSV file can be downloaded that will have a similar form as the <a href="#inputs">input signal</a>. This
+        can be used for further analysis and plotting outside of the GENESIS environment. The only difference between the
+        input and this file is that instead of just proteins, the mRNA and protein levels are given, and instead of just
+        ones and zeros, the actual concentrations are given.
     </p>
     <a class="small" href="#welcome-to-project-genesis">Back to top!</a>
 </div>
@@ -198,15 +213,14 @@
     <h2 id="inner">How does GENESIS work:</h2>
 
     <p>
-        GENESIS is built upon the idea that proteins can be chained together to form simple circuits. This is a very
-        abstracted idea, since external (other processes inside a cell) processes can and will influence the circuit.
-        Since the notion is that a protein is released into the cell body fluid and not directed to a specific
-        target/location, the best way to approach the levels and working of these proteins is through using differential
-        equations.<br>
-        On the back-end of the GENESIS system a full-memory model is used to extract the differential equation model
-        using the levels of the MRNA and protein as variables, creating differentiable functions pointing to these
-        specific levels, according to the circuit YOU designed. This system is solved in the specified number of steps
-        over the specified time-span.
+        GENESIS is built upon the idea that pieces of DNA can be chained together to form genetic material that can act as
+        a simple circuit. This is a simplified model, since other processes can and will influence this circuit.
+        Since a protein is released into the cell body fluid, which is a continuous process, and not directed to a specific
+        target/location, which would be more discrete, the best way to keep track of the current level of proteins is
+        through the use of differential equations.<br>
+        On the back-end of the GENESIS system a memory model is used to generate the appropriate equations using the levels
+        of the mRNA and protein as variables, according to the circuit you designed. This system is solved in the specified
+        number of steps with the specified step size.
     </p>
 
     <p>
@@ -215,19 +229,19 @@
             href="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">MVC</a>) framework that can be
         built using Java and/or Scala. The front-end is built using HTML templates with Scala identifiers to inject
         other templates, data, raw HTML or a combination. To make the front-end appealing and interactive Javascript and
-        CSS are used, like any other "normal" website.
+        CSS are used, a common practice on the modern web.
     </p>
 
     <p>
-        Within this framework objects and classes are used to represent the data, which in turn can be used to store in
+        Within this framework objects and classes are used to represent the data, which in turn can stored in
         a database. We opted for an off-site database so everyone could use the same data and stay consistent. This
-        database is a POSTGRESQL database, since is offers simple and efficient access to data as well as advanced
+        database is a POSTGRESQL database, since it offers simple and efficient access to data as well as advanced
         functionality, like update rules and user login roles.<br>
         The most important information is stored inside the database, and only the most important. This is done to keep
         the database small and fast while being able to extract all useful information. This is why neither inputs or
-        simulation results are stored. For longer simulations the results can consist of thousands of entries, or even
-        millions. The same goes for the input, though on a smaller scale and on top of that, why would you want to use
-        the same inputs every time you simulate?
+        simulation results are stored. For longer simulations the results can consist of thousands of entries. The same
+        goes for the input, though on a smaller scale and on top of that, why would you want to use the same inputs
+        every time you simulate?
     </p>
     <a class="small" href="#welcome-to-project-genesis">Back to top!</a>
 </div>
@@ -235,38 +249,73 @@
     <h2 id="advanced">More advanced GENESIS functions:</h2>
 
     <p>
-        Some functionality is not that straightforward and will be listed below for clarification:
+        Other functionality of the system is as listed below:
     </p>
     <ul>
         <li>
-            You can specify a timespan over which you want to simulate. Standard is 5 seconds, but feel free to increase
-            or decrease this amount as you feel fit.
-        </li>
-        <li>
-            Also adjustable is the number of steps you want to simulate over, the more steps, the more detailed but
-            also simulation will take longer. Remember that is the total number of simulated steps, not the number of
-            steps per second.
-        </li>
-        <li>
-            You can also save a circuit into the database, for use in further projects. To do this you click on
+            You can save a circuit into the database, for use in further projects. To do this you click on
             "Circuit" and then "Save" to save your circuit.<br>
-            If you want to save it as a different circuit you have to rerun the setup. This can be done by clicking
-            "Simulation" and then "Setup". Now the setup modal will show again.
+            If you want to save it under a different you have to rerun the setup. This can be done by clicking
+            "Simulation" and then "Setup". Now the setup modal will show again.<br>
+            Once a circuit has been saved, its name will appear under the modified gates and can be dragged
+            into the workspace. There it will be expanded just the way it was saved.
         </li>
         <li>
             If you want to load a circuit, click "Circuit" and then "Load". You will be presented with a list of
-            your (or public) circuits you can load, and then edit or simulate.
+            your circuits you can load, and then edit or simulate. The list will also contain public circuits that
+            anyone can load or edit.
+        </li>
+        <li>
+            To reset the workspace, click on Circuit and the New. This will remove all gates from your workspace,
+            but remember to save first because else all your hard work will be lost.
+        </li>
+        <li>
+            In the Circuit menu, there is also an option to Delete a circuit. This does the obvious: it removes
+            the current circuit from the database.
+        </li>
+        <li>
+            If after simulating you accidentally (or otherwise) close the result modal, there's no need to panic.
+            The Simulation menu also contains an option to view the results, so there's no need to redo the
+            simulation.
+        </li>
+        <li>
+            Finally, the Simulation menu also contains an option to import your own library. Here, obviously,
+            you can import a library of your choice. Simply paste the parameters of all the coding sequences
+            and gates in the appropriate boxes. Coding sequences are formatted as four-tuples, with the name
+            coming first, followed by the k<sub>2</sub>, d<sub>1</sub> and d<sub>2</sub> parameters, separated
+            by commas. NOT gates are specified as (input name, k<sub>1</sub>, K<sub>m</sub>, n) tuples, and AND
+            gates the same way, except there are two names instead of one for the two inputs.
         </li>
     </ul>
     <a class="small" href="#welcome-to-project-genesis">Back to top!</a>
 </div>
 <div class="section">
-    <h2 id="functionality">Implemented functionality:</h2>
-
-    <a class="small" href="#welcome-to-project-genesis">Back to top!</a>
-</div>
-<div class="section">
     <h2 id="wanted">Wanted functionality for further development:</h2>
+
+    <p>
+        We would have liked to make the input specification a little bit more advanced. In particular, we were
+        thinking about making an input field where the user could draw a graph of the input concentration using
+        the mouse. This graph would then be sampled and the samples used as the inputs for the simulation.
+    </p>
+    <p>
+        It would have been nice to have a little tooltip appear when a custom gate is dragged into the workspace.
+        This would show the user what the gate looked like, in case they forgot. Another way to achieve this
+        would be to draw a kind of ghost image of the gates that would be drawn, then when the user releases
+        the mouse, to make them concrete.
+    </p>
+    <p>
+        The administration page is currently very limited. It only supports the creation of new users. It
+        would be better if the administrator were able to administer for instance which custom circuits are
+        public, and which users are allowed to see which circuits. Another good option would be to regulate
+        the privileges that users have with respect to the creation and deletion of circuits. Users creating a publicly
+        accessible circuit may not be desirable, and deleting such a circuit almost certainly is not.
+    </p>
+    <p>
+        We were going to implement the simulator as a multithreaded program. This would have enabled the user
+        to cancel a simulation if it took too long. It could also relieve the server if there are many users
+        trying to simulate circuits. Unfortunately, time was short and there were other, more urgent things that
+        needed to be attended to before we could implement this feature.
+    </p>
 
     <a class="small" href="#welcome-to-project-genesis">Back to top!</a>
 </div>
@@ -290,10 +339,7 @@
         Developer: Anton<br>
     </p>
     <p>
-        Thanks to: <br>
-        Delft University of Technology <br>
-        <br>
-        In special:<br>
+        Special thanks to:<br>
         Dick de Ridder <br>
         Marcel Reinders <br>
         Alexey Gritsenko <br>
@@ -322,6 +368,12 @@
         </li>
         <li>
             <a href="http://d3js.org/">d3.js</a>
+        </li>
+        <li>
+            <a href="http://qunitjs.com/">QUnit</a>
+        </li>
+        <li>
+            <a href="http://blanketjs.org/">Blanket</a>
         </li>
     </ul>
 
