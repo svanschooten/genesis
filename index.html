@@ -41,25 +41,22 @@
          class="inline"
          src="images/genesis.png">
 </div>
-<p>
-    This piece of software is currently under development and will increase in size, quality and
-    functionality!
-</p>
 
 <p>
     We are team JAMES, which is an acronym for our names. But what's more important is what we are developing: A
-    piece of software that will enable biologists, or actually everyone, to design and simulate protein chain
-    models. So now you can design your own micro-processes using proteins!
+    piece of software that will enable biologists, or actually everyone, to design and simulate genetic circuits.
+    So now you can design your own micro-processes using proteins!
 </p>
 
 <p>
-    The idea behind this is that proteins could somewhat behave like electrical circuits, but inside a cell!
-    Certain combinations of proteins behave like AND gates, while other proteins behave like NOT gates. This
-    enables the creation of logical circuits that also can be simulated.
+    The idea behind this is genetic material can behave somewhat like logical gates. How this works is quite
+    simple. Proteins are generated when certain other proteins attach to the DNA. When those proteins repress
+    production, you get a NOT gate, and when there are two proteins that form a single complex that enhances
+    production, you get an AND gate. This enables you to simulate an electrical circuit with them.
 </p>
 
 <p>
-    However, since this is an abstraction of the mechanics behind proteins, this model is not very representative
+    However, since this is an abstraction of the mechanics of a cell, this model is not very representative
     for a real-life application. Though purely scientific, it's also fun to play around with!
 </p>
 <ul class="contentNav">
@@ -107,29 +104,25 @@
             Please contact the system administrator if you don't have or have forgotten your credentials.
         </li>
         <li>
-            Log into the login page, check the remember me checkbox if necessary.<br>
-            This is functionality that still has to be implemented, but feel free to check the box ;)
-            <!-- TODO aanpassen bij implementatie -->
+            Log into the login page by filling in your credentials and clicking the Sign in button. <br>
+            N.B. Your username is your email.
         </li>
         <li>
-            Now you will be confronted with a setup modal. Pick the library you want to use. These are bound to
-            your
-            account or public.<br>
-            These libraries contain the proteins that can be used and picked, so investigate into the libraries
+            Now you will be confronted with a setup modal. Pick the library you want to use. You can pick a
+            library you uploaded previously or one that is public.<br>
+            These libraries contain the proteins that can be used in your circuit, so investigate into the libraries
             so you know which one to pick.<br>
+            You will also have to provide a name for your circuit. No need to think of very complex names,
+            these names only have to be unique within your account. It wouldn't hurt to use a name that represents
+            the circuit you want to design, because you can include this circuit in others after you save it, see
+            the <a href="#advanced">advanced functionality</a>.<br>
             Click "Apply setup" to finish the setup and close the modal.
         </li>
         <li>
-            Next you will have to name your circuit. No need to think of very complex names, these names only
-            have
-            to be unique within your account.
-        </li>
-        <li>
-            Now you will see an input and an output gate. These will act as your input and output (duh..)! Drag
-            and drop
-            the corresponding elements on the right into the workspace to create a new gate instance.<br>
-            While behind the hood these gates behave differently, the system is designed in such a way that the
-            user can make his circuits easily.
+            Now you will see an input and an output gate. These will act as a source and sink to the circuit. Drag
+            and drop the pictures of gates on the right into the workspace to create a new gate instance.<br>
+            You can also drag the names under Modified gates into the workspace to import an existing circuit.
+            The circuit will be drawn just the way it was saved, so you won't have to reorder everything.
         </li>
         <li>
             When you create a new instance, endpoints are added to the gate. Use these to connect your gates,
