@@ -78,6 +78,7 @@ function setProtein() {
     	other[i].protein = selectedProtein.input1;
     	setLabel(other[i]);
     }
+    setUsedProteins();
     proteinModal.modal("hide");
 }
 
@@ -438,10 +439,13 @@ function makeCustomGate(id,posx,posy) {
             "scope": jsPlumb.Defaults.Scope,
             "connection": conn
         });
-        conn.protein = data.edges[i].protein;
-        conn.removeOverlay("Label");
-        conn.addOverlay([ "Label", {label: data.edges[i].protein, location: 0.7, cssClass: "aLabel", id:"label"}]);
-    }
+        if(usedProteins[data.edges[i].protein] === undefined){
+	        conn.protein = data.edges[i].protein;
+	        conn.removeOverlay("Label");
+	        conn.addOverlay([ "Label", {label: data.edges[i].protein, location: 0.7, cssClass: "aLabel", id:"label"}]);
+		}
+	}
+    setUsedProteins();
 }
 
 /**
