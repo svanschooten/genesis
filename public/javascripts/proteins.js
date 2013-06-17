@@ -173,7 +173,7 @@ function getLibrary(libraryId){
         success: function(response) {
             selectedLibrary = libraryId;
             parseLibrary(response);
-            selectLibrary(libraryId)
+            selectLibrary(libraryId);
             notify("Protein library successfully loaded!", "success");
         },
         error: function(response) { alertError("Could not load library."); }
