@@ -258,7 +258,9 @@
             If you want to save it under a different you have to rerun the setup. This can be done by clicking
             "Simulation" and then "Setup". Now the setup modal will show again.<br>
             Once a circuit has been saved, its name will appear under the modified gates and can be dragged
-            into the workspace. There it will be expanded just the way it was saved.
+            into the workspace. There it will be expanded just the way it was saved. N.B. Its name will only
+            appear after you reload the page, because it doesn't make much sense to drag the circuit you're
+            currently working (and just saved) on into the workspace.
         </li>
         <li>
             If you want to load a circuit, click "Circuit" and then "Load". You will be presented with a list of
@@ -270,8 +272,9 @@
             but remember to save first because else all your hard work will be lost.
         </li>
         <li>
-            In the Circuit menu, there is also an option to Delete a circuit. This does the obvious: it removes
-            the current circuit from the database.
+            In the Circuit menu, there is also an option to Delete a circuit. Clicking this will show a modal
+            with a dropdown menu to select which circuit to delete. Select the circuit you want to delete and click
+            Delete to delete it. When you do this, it will also disappear from the list of custom gates.
         </li>
         <li>
             If after simulating you accidentally (or otherwise) close the result modal, there's no need to panic.
