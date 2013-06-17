@@ -449,8 +449,20 @@ function applySetup(){
     } else if(name === ""){
         $("#setupErrorDiv").text("You must specify a name!");
     } else {
+    	if(lib !== selectedLibrary && selectedLibrary !== -1){
+    		var confirmed = confirm("Are you sure you want to change the library? This will remove all selected proteins.");
+    		if(!confirmed) return;
+    		var cons = jsPlumb.getAllConnections();
+    		for(key in cons){
+    			console.log(cons[key]);
+	    		for(var i=0;i<cons[key].length;i++){
+	    			cons[key][i].protein = "";
+	    			cons[key][i].removeOverlay("label");
+	    		}
+	    	}
+    	}
+    	getLibrary($("#setupLibrarySelector option:selected")[0].value);	
         $("#setupErrorDiv").text("");
-        getLibrary($("#setupLibrarySelector option:selected")[0].value);
         setCircuitName(name);
         makeInput();
         makeOutput();
