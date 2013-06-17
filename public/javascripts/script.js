@@ -438,6 +438,7 @@ function loadCircuit() {
 	}
 	getLibrary(network.libraryid.toString());
     disableResults();
+    setUsedProteins();
 	loadModal.modal("hide");
 }
 

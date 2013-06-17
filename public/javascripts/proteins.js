@@ -212,3 +212,9 @@ function setupLibrarySelector(libraries, elem) {
 function resetInputs() {
     inputs = "";
 }
+
+function setUsedProteins() {
+	usedProteins = {};
+    var cons = jsPlumb.getConnections();
+    for(var i=0;i<cons.length;i++) usedProteins[cons[i].protein] = cons[i].sourceId;
+}
