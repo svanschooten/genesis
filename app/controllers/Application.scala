@@ -83,12 +83,14 @@ object Application extends Controller {
     Ok(jsonObject).as("text/plain")
   }
 
-  def getallcircuits = Action { implicit request =>
+  def getallcircuits = Action(parse.json) { implicit request =>
     request.session.get("email") match{
       case Some(email) => {
         User.findByEmail(email) match{
           case Some(u) => {
-            Ok(Network.getNetworks(u.id)).as("text/plain")
+            //println("wut: "+(request.body \ "lib").as[Int])
+            val libId = (request.body \ "lib").as[String].toInt
+            Ok(Network.getNetworks(u.id,libId)).as("text/plain")
           }
           case _ => BadRequest("No user found")
         }

@@ -10,7 +10,7 @@ var inputs = "";
 var cdsMap = {};
 var andMap = {};
 var selectedProtein = "";
-var selectedLibrary = -1;
+var selectedLibrary = "-1";
 var usedProteins = {};
 
 function makeProteinList(connection){

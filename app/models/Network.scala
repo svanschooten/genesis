@@ -401,15 +401,16 @@ object Network {
 		Json.toJson("Circuit correctly saved.")
 	}
 
-    def getNetworks(userId: Int) = {
+    def getNetworks(userId: Int, libId: Int) = {
       DB.withConnection { implicit connection =>
         val networks = SQL(
           """
 	          select networkname from networkownedby
-	          where userid={userid} or userid=-1
+	          where (userid={userid} or userid=-1) and libraryid={libraryid}
           """
         ).on(
-          'userid -> userId
+          'userid -> userId,
+          'libraryid -> libId
         ).as { get[String]("networkname")* }
         val resMap = Map(networks map {s => (s, Network.load(userId,s))} : _*)
         Json.toJson(networks.map(x => {
