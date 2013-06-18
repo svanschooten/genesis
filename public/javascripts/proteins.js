@@ -51,7 +51,7 @@ function makeProteinList(connection){
 		var ind = 0;
 		var proteinArray = Array();
 	    for(var key in cdsMap) {
-	    	if(usedProteins[key]) continue;
+	    	if((usedProteins[key] === "input" && fromSource) || usedProteins[key] === undefined)
 	    	proteinArray.push(key);
 	    }
 	    proteinArray.sort();
