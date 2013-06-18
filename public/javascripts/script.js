@@ -280,17 +280,17 @@ function showSelectionModal(modal, select){
     select.empty();
     modal.modal("show");
     $("<option></option>").text("Loading circuits...").appendTo(select);
-    getallCircuits();
+    getallCircuits(true);
 }
 
 function showLoadModal(){
     showSelectionModal(loadModal, $("#loadNetworkSelector"));
 }
 
-function getallCircuits() {
+function getallCircuits(a) {
 	jsRoutes.controllers.Application.getallcircuits().ajax({
         method: "POST",
-        data: JSON.stringify({lib: selectedLibrary}),
+        data: (!a) ? JSON.stringify({lib: selectedLibrary}) : JSON.stringify({lib: "-1"}),
         contentType: "application/json",
         success: function(response) {
         	parseCircuits(response);
