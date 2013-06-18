@@ -403,7 +403,18 @@ object Network {
 
     def getNetworks(userId: Int, libId: Int) = {
       DB.withConnection { implicit connection =>
-        val networks = SQL(
+        val networks = if(libId < 0)
+        SQL(
+          """
+	          select networkname from networkownedby
+	          where userid={userid} or userid=-1
+          """
+        ).on(
+          'userid -> userId,
+          'libraryid -> libId
+        ).as { get[String]("networkname")* }
+        else
+        SQL(
           """
 	          select networkname from networkownedby
 	          where (userid={userid} or userid=-1) and libraryid={libraryid}
